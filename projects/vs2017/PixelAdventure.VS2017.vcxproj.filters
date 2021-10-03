@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Container">
+      <UniqueIdentifier>{3F0F2748-ABCF-A27E-740A-ECFBE089E75A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Game">
+      <UniqueIdentifier>{F6C81ECF-E295-79DA-0BAF-6782F7DAAE68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Math">
+      <UniqueIdentifier>{261422CF-12E1-7CDA-3BFA-6A822726B268}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Native">
+      <UniqueIdentifier>{23F24C22-0FAA-8E6F-78B1-67CB64882960}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Renderer">
+      <UniqueIdentifier>{73D1DFBF-5F34-6F64-08BA-A71AF4FB3AE7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="unit_tests">
+      <UniqueIdentifier>{972265CA-83DA-A617-ECE1-7F73D8B84108}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="unit_tests\cases">
+      <UniqueIdentifier>{B58EA95A-A187-C8AC-CAB9-AD31B611A8B8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\Container\Array.hpp">
+      <Filter>src\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Container\HashTable.hpp">
+      <Filter>src\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Game\Components.h">
+      <Filter>src\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Game\Game.h">
+      <Filter>src\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Math\VectorMathCrazy.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Math\VectorMathSSE.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Math\VectorMathSSE2Neon.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Math\VectorMathScalars.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Math\VectorTypes.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Math\VectorTypesCrazy.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Native\FileSystem.h">
+      <Filter>src\Native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Native\Thread.h">
+      <Filter>src\Native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Native\Window.h">
+      <Filter>src\Native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Renderer\OpenGL.h">
+      <Filter>src\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Renderer\Renderer.h">
+      <Filter>src\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Renderer\SpriteBatch.h">
+      <Filter>src\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\unit_tests\test_framework.h">
+      <Filter>unit_tests</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\Game\Components.c">
+      <Filter>src\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Game\Game.cpp">
+      <Filter>src\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Native\FileSystem.c">
+      <Filter>src\Native</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Native\Thread.c">
+      <Filter>src\Native</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Native\Window.c">
+      <Filter>src\Native</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Renderer\OpenGL.c">
+      <Filter>src\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Renderer\Renderer_OpenGL.c">
+      <Filter>src\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Renderer\Renderer_Vulkan.c">
+      <Filter>src\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Renderer\SpriteBatch.c">
+      <Filter>src\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Renderer\StbImpl.c">
+      <Filter>src\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\unit_tests\cases\test_mat4.cpp">
+      <Filter>unit_tests\cases</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\unit_tests\cases\test_vec2.cpp">
+      <Filter>unit_tests\cases</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\unit_tests\cases\test_vec3.cpp">
+      <Filter>unit_tests\cases</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\..\src\Math\VectorTypes.natvis">
+      <Filter>src\Math</Filter>
+    </Natvis>
+  </ItemGroup>
+</Project>

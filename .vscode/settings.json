@@ -1,0 +1,16 @@
+{
+    "files.associations": {
+        "type_traits": "cpp",
+        "xiosbase": "c",
+        "array": "cpp",
+        "compare": "cpp",
+        "functional": "cpp",
+        "memory": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp",
+        "xmemory": "cpp",
+        "xstring": "cpp",
+        "xtr1common": "cpp",
+        "xutility": "cpp"
+    }
+}

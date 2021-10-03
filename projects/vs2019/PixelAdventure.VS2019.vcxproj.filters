@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="3rd_party">
+      <UniqueIdentifier>{BD86B353-29F1-67CA-722F-1970DED8451F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rd_party\LDtkLoader">
+      <UniqueIdentifier>{928959D8-7E18-E3A1-2737-F79C13A5F347}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rd_party\LDtkLoader\src">
+      <UniqueIdentifier>{A9C06316-95E5-B296-BE30-9826AAB4B1B4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rd_party\imgui">
+      <UniqueIdentifier>{E7EDCA53-5379-3818-5C8A-BB0CC8949418}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Container">
+      <UniqueIdentifier>{3F0F2748-ABCF-A27E-740A-ECFBE089E75A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Framework">
+      <UniqueIdentifier>{EAC3A871-5684-24A8-1FBF-6D258B3E6984}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Game">
+      <UniqueIdentifier>{F6C81ECF-E295-79DA-0BAF-6782F7DAAE68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Graphics">
+      <UniqueIdentifier>{0D564864-F9B8-D708-A23E-10BF8E80A38B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Math">
+      <UniqueIdentifier>{261422CF-12E1-7CDA-3BFA-6A822726B268}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Misc">
+      <UniqueIdentifier>{083622CF-F402-7DDA-1D1C-6B820948B268}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Native">
+      <UniqueIdentifier>{23F24C22-0FAA-8E6F-78B1-67CB64882960}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Native\Win32">
+      <UniqueIdentifier>{45F8F432-31F1-1385-5A23-F909467BF390}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Text">
+      <UniqueIdentifier>{61FC25CF-4DC9-80DA-76E2-6E82620EB668}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ThirdPartyImpl">
+      <UniqueIdentifier>{797FC56F-6563-86C5-CEC3-8018BAC67047}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ThirdPartyImpl\Win32">
+      <UniqueIdentifier>{1BAEF369-07D3-42EA-301E-287A1CA24108}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="unit_tests">
+      <UniqueIdentifier>{972265CA-83DA-A617-ECE1-7F73D8B84108}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="unit_tests\cases">
+      <UniqueIdentifier>{B58EA95A-A187-C8AC-CAB9-AD31B611A8B8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\3rd_party\imgui\imconfig.h">
+      <Filter>3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd_party\imgui\imgui.h">
+      <Filter>3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd_party\imgui\imgui_internal.h">
+      <Filter>3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd_party\imgui\imstb_rectpack.h">
+      <Filter>3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd_party\imgui\imstb_textedit.h">
+      <Filter>3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd_party\imgui\imstb_truetype.h">
+      <Filter>3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Application.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Container\Array.h">
+      <Filter>src\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Container\HashTable.h">
+      <Filter>src\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Framework\InputSystem.h">
+      <Filter>src\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Framework\JobSystem.h">
+      <Filter>src\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Framework\Timer.h">
+      <Filter>src\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Game\Components.h">
+      <Filter>src\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Game\Game.h">
+      <Filter>src\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\Graphics.h">
+      <Filter>src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGL.h">
+      <Filter>src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\SpriteBatch.h">
+      <Filter>src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Math\MathEx.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Math\SSE2Neon.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Math\VectorMath.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Math\VectorMathScalars.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Math\VectorMathSimd.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Math\VectorTypes.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Misc\Compiler.h">
+      <Filter>src\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Misc\Random.h">
+      <Filter>src\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Native\FileSystem.h">
+      <Filter>src\Native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Native\HeapLayers.h">
+      <Filter>src\Native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Native\Memory.h">
+      <Filter>src\Native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Native\Thread.h">
+      <Filter>src\Native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Native\Window.h">
+      <Filter>src\Native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Text\Json.h">
+      <Filter>src\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Text\JsonSchema.h">
+      <Filter>src\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Text\String.h">
+      <Filter>src\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ThirdPartyImpl\Win32\imgui_impl_win32.h">
+      <Filter>src\ThirdPartyImpl\Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ThirdPartyImpl\imgui_impl_opengl3.h">
+      <Filter>src\ThirdPartyImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\unit_tests\test_framework.h">
+      <Filter>unit_tests</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\3rd_party\LDtkLoader\src\DataTypes.cpp">
+      <Filter>3rd_party\LDtkLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd_party\LDtkLoader\src\Entity.cpp">
+      <Filter>3rd_party\LDtkLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd_party\LDtkLoader\src\EntityDef.cpp">
+      <Filter>3rd_party\LDtkLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd_party\LDtkLoader\src\Enum.cpp">
+      <Filter>3rd_party\LDtkLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd_party\LDtkLoader\src\FieldsContainer.cpp">
+      <Filter>3rd_party\LDtkLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd_party\LDtkLoader\src\Layer.cpp">
+      <Filter>3rd_party\LDtkLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd_party\LDtkLoader\src\LayerDef.cpp">
+      <Filter>3rd_party\LDtkLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd_party\LDtkLoader\src\Level.cpp">
+      <Filter>3rd_party\LDtkLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd_party\LDtkLoader\src\Tileset.cpp">
+      <Filter>3rd_party\LDtkLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd_party\LDtkLoader\src\Utils.cpp">
+      <Filter>3rd_party\LDtkLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd_party\LDtkLoader\src\World.cpp">
+      <Filter>3rd_party\LDtkLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd_party\imgui\imgui.cpp">
+      <Filter>3rd_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd_party\imgui\imgui_demo.cpp">
+      <Filter>3rd_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd_party\imgui\imgui_draw.cpp">
+      <Filter>3rd_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd_party\imgui\imgui_tables.cpp">
+      <Filter>3rd_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd_party\imgui\imgui_widgets.cpp">
+      <Filter>3rd_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Application.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Framework\InputSystem.cpp">
+      <Filter>src\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Framework\JobSystem.cpp">
+      <Filter>src\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Framework\Timer.cpp">
+      <Filter>src\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Game\Components.cpp">
+      <Filter>src\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Game\Game.cpp">
+      <Filter>src\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\Graphics.cpp">
+      <Filter>src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGL.c">
+      <Filter>src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\SpriteBatch.cpp">
+      <Filter>src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Misc\Random.cpp">
+      <Filter>src\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Native\FileSystem.cpp">
+      <Filter>src\Native</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Native\HeapLayers.cpp">
+      <Filter>src\Native</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Native\Memory.cpp">
+      <Filter>src\Native</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Native\Win32\Thread_Win32.cpp">
+      <Filter>src\Native\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Native\Win32\Window_Win32.c">
+      <Filter>src\Native\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Text\Json.c">
+      <Filter>src\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Text\JsonSchema.c">
+      <Filter>src\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Text\String.c">
+      <Filter>src\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ThirdPartyImpl\StbImpl.cpp">
+      <Filter>src\ThirdPartyImpl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ThirdPartyImpl\Win32\imgui_impl_win32.cpp">
+      <Filter>src\ThirdPartyImpl\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ThirdPartyImpl\imgui_impl_opengl3.cpp">
+      <Filter>src\ThirdPartyImpl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\unit_tests\cases\test_float.cpp">
+      <Filter>unit_tests\cases</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\unit_tests\cases\test_json.cpp">
+      <Filter>unit_tests\cases</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\unit_tests\cases\test_mat4.cpp">
+      <Filter>unit_tests\cases</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\unit_tests\cases\test_vec2.cpp">
+      <Filter>unit_tests\cases</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\unit_tests\cases\test_vec3.cpp">
+      <Filter>unit_tests\cases</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\..\src\Math\VectorTypes.natvis">
+      <Filter>src\Math</Filter>
+    </Natvis>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,7 @@
+.vs
+
+/projects/**/vs
+/projects/**/bin
+/projects/**/obj
+
+/unit_tests/out

@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PixelAdventure.VS2019", "PixelAdventure.VS2019.vcxproj", "{78287BC2-E494-36BD-AD88-CE1A19B45825}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+		VulkanDebug|Win32 = VulkanDebug|Win32
+		VulkanDebug|x64 = VulkanDebug|x64
+		VulkanRelease|Win32 = VulkanRelease|Win32
+		VulkanRelease|x64 = VulkanRelease|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.Debug|Win32.ActiveCfg = Debug|Win32
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.Debug|Win32.Build.0 = Debug|Win32
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.Debug|x64.ActiveCfg = Debug|x64
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.Debug|x64.Build.0 = Debug|x64
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.Release|Win32.ActiveCfg = Release|Win32
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.Release|Win32.Build.0 = Release|Win32
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.Release|x64.ActiveCfg = Release|x64
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.Release|x64.Build.0 = Release|x64
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.VulkanDebug|Win32.ActiveCfg = VulkanDebug|Win32
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.VulkanDebug|Win32.Build.0 = VulkanDebug|Win32
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.VulkanDebug|x64.ActiveCfg = VulkanDebug|x64
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.VulkanDebug|x64.Build.0 = VulkanDebug|x64
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.VulkanRelease|Win32.ActiveCfg = VulkanRelease|Win32
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.VulkanRelease|Win32.Build.0 = VulkanRelease|Win32
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.VulkanRelease|x64.ActiveCfg = VulkanRelease|x64
+		{78287BC2-E494-36BD-AD88-CE1A19B45825}.VulkanRelease|x64.Build.0 = VulkanRelease|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
