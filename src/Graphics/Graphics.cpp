@@ -264,7 +264,7 @@ bool Graphics::LoadSpriteSheet(SpriteSheet* spriteSheet, const char* file, int32
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     char existsPath[1024];
-    if (!FileSystem_GetExistsPath(existsPath, sizeof(existsPath), file))
+    if (!FileSystem::GetExistsPath(existsPath, sizeof(existsPath), file))
     {
         return false;
     }
@@ -476,7 +476,7 @@ void Graphics::DrawQuadLine(vec2 start, vec2 end, vec3 color)
 
 void Graphics::DrawSpriteBatch(const SpriteBatch* spriteBatch)
 {
-    assert(spriteBatch->flags == SpriteBatchFlags_Idle);
+    assert(spriteBatch->state == SpriteBatchState::Idle);
 
     glBindVertexArray(spriteBatch->vertexArrayId);
 

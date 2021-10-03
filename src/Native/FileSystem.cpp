@@ -1,9 +1,10 @@
-#include "FileSystem.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
+#include "Memory.h"
+#include "FileSystem.h"
 
 enum
 {
@@ -14,7 +15,7 @@ enum
 static int32_t  gSearchPathCount;
 static char     gSearchPaths[SEARCH_PATH_MAX_COUNT][SEARCH_PATH_MAX_LENGTH];
 
-static int32_t FileSystem_IndexOfSearchPath(const char* path)
+static int32_t IndexOfSearchPath(const char* path)
 {
     for (int32_t i = 0; i < gSearchPathCount; i++)
     {
@@ -27,9 +28,9 @@ static int32_t FileSystem_IndexOfSearchPath(const char* path)
     return -1;
 }
 
-bool FileSystem_AddSearchPath(const char* path)
+bool FileSystem::AddSearchPath(const char* path)
 {
-    if (FileSystem_IndexOfSearchPath(path) == -1)
+    if (IndexOfSearchPath(path) == -1)
     {
         assert(gSearchPathCount < SEARCH_PATH_MAX_COUNT);
         strcpy(gSearchPaths[gSearchPathCount++], path);
@@ -39,9 +40,9 @@ bool FileSystem_AddSearchPath(const char* path)
     return false;
 }
 
-bool FileSystem_RemoveSearchPath(const char* path)
+bool FileSystem::RemoveSearchPath(const char* path)
 {
-    int32_t index = FileSystem_IndexOfSearchPath(path);
+    int32_t index = IndexOfSearchPath(path);
     if (index > -1)
     {
         if (index < gSearchPathCount - 1)
@@ -56,7 +57,7 @@ bool FileSystem_RemoveSearchPath(const char* path)
     return false;
 }
 
-bool FileSystem_GetExistsPath(char* buffer, int32_t length, const char* path)
+bool FileSystem::GetExistsPath(char* buffer, int32_t length, const char* path)
 {
     FILE* file = fopen(path, "r");
     if (file)
@@ -84,109 +85,120 @@ bool FileSystem_GetExistsPath(char* buffer, int32_t length, const char* path)
     return false;
 }
 
-bool FileSystem_GetAbsolutePath(char* buffer, int32_t length, const char* path);
-bool FileSystem_GetRelativePath(char* buffer, int32_t length, const char* path);
+//bool FileSystem::GetAbsolutePath(char* buffer, int32_t length, const char* path);
+//bool FileSystem::GetRelativePath(char* buffer, int32_t length, const char* path);
 
 // -------------------------------------------------------------
-// FileSystem functions prototype
+// FileInterface functions prototype
 // -------------------------------------------------------------
 
-static bool     FileSystem_MemoryStream_Open(FileSystem* system, void* buffer, int32_t bufferSizeInBytes, FileStream* outStream);
-static bool     FileSystem_MemoryStream_Close(FileStream* stream);
+namespace FileSystem
+{
+    namespace MemoryStream
+    {
+        static bool     Open(FileInterface* inteface, void* buffer, int32_t bufferSizeInBytes, FileStream* outStream);
+        static bool     Close(FileStream* inteface);
 
-static int32_t  FileSystem_MemoryStream_Read(FileStream* stream, void* outputBuffer, int32_t bufferSizeInBytes);
-static int32_t  FileSystem_MemoryStream_Write(FileStream* stream, const void* inputBuffer, int32_t bufferSizeInBytes);
+        static int32_t  Read(FileStream* stream, void* outputBuffer, int32_t bufferSizeInBytes);
+        static int32_t  Write(FileStream* stream, const void* inputBuffer, int32_t bufferSizeInBytes);
 
-static bool     FileSystem_MemoryStream_Seek(FileStream* stream, SeekBaseOffset offset, int32_t count);
-static int32_t  FileSystem_MemoryStream_GetSize(const FileStream* stream);
-static int32_t  FileSystem_MemoryStream_GetCursor(const FileStream* stream);
+        static bool     Seek(FileStream* stream, SeekOffset offset, int32_t count);
+        static int32_t  GetSize(const FileStream* stream);
+        static int32_t  GetCursor(const FileStream* stream);
 
-static bool     FileSystem_MemoryStream_Flush(FileStream* stream);
-static bool     FileSystem_MemoryStream_IsAtEnd(const FileStream* stream);
+        static bool     Flush(FileStream* stream);
+        static bool     IsAtEnd(const FileStream* stream);
+    }
 
-static bool     FileSystem_StdIO_Open(FileSystem* system, const char* fileNamee, FileMode mode, FileStream* outStream);
-static bool     FileSystem_StdIO_Close(FileStream* stream);
+    namespace StdIO
+    {
+        static bool     Open(FileInterface* system, const char* fileNamee, FileMode mode, FileStream* outStream);
+        static bool     Close(FileStream* stream);
 
-static int32_t  FileSystem_StdIO_Read(FileStream* stream, void* outputBuffer, int32_t bufferSizeInBytes);
-static int32_t  FileSystem_StdIO_Write(FileStream* stream, const void* inputBuffer, int32_t bufferSizeInBytes);
+        static int32_t  Read(FileStream* stream, void* outputBuffer, int32_t bufferSizeInBytes);
+        static int32_t  Write(FileStream* stream, const void* inputBuffer, int32_t bufferSizeInBytes);
 
-static bool     FileSystem_StdIO_Seek(FileStream* stream, SeekBaseOffset offset, int32_t count);
-static int32_t  FileSystem_StdIO_GetSize(const FileStream* stream);
-static int32_t  FileSystem_StdIO_GetCursor(const FileStream* stream);
+        static bool     Seek(FileStream* stream, SeekOffset offset, int32_t count);
+        static int32_t  GetSize(const FileStream* stream);
+        static int32_t  GetCursor(const FileStream* stream);
 
-static bool     FileSystem_StdIO_Flush(FileStream* stream);
-static bool     FileSystem_StdIO_IsAtEnd(const FileStream* stream);
+        static bool     Flush(FileStream* stream);
+        static bool     IsAtEnd(const FileStream* stream);
+    }
+}
 
 // -------------------------------------------------------------
-// FileSystems
+// FileInterfaces
 // -------------------------------------------------------------
 
-static FileSystem gMemoryFileSystem = {
-    FileSystem_MemoryStream_Close,
+static FileInterface gMemoryFileSystem = {
+    FileSystem::MemoryStream::Open,
+    FileSystem::MemoryStream::Close,
 
-    FileSystem_MemoryStream_Read,
-    FileSystem_MemoryStream_Write,
+    FileSystem::MemoryStream::Read,
+    FileSystem::MemoryStream::Write,
 
-    FileSystem_MemoryStream_Seek,
-    FileSystem_MemoryStream_GetSize,
-    FileSystem_MemoryStream_GetCursor,
+    FileSystem::MemoryStream::Seek,
+    FileSystem::MemoryStream::GetSize,
+    FileSystem::MemoryStream::GetCursor,
 
-    FileSystem_MemoryStream_Flush,
-    FileSystem_MemoryStream_IsAtEnd
+    FileSystem::MemoryStream::Flush,
+    FileSystem::MemoryStream::IsAtEnd
 };
 
-static FileSystem gStdFileSystem = {
-    FileSystem_StdIO_Close,
+static FileInterface gStdFileSystem = {
+    FileSystem::StdIO::Open,
+    FileSystem::StdIO::Close,
 
-    FileSystem_StdIO_Read,
-    FileSystem_StdIO_Write,
+    FileSystem::StdIO::Read,
+    FileSystem::StdIO::Write,
 
-    FileSystem_StdIO_Seek,
-    FileSystem_StdIO_GetSize,
-    FileSystem_StdIO_GetCursor,
+    FileSystem::StdIO::Seek,
+    FileSystem::StdIO::GetSize,
+    FileSystem::StdIO::GetCursor,
 
-    FileSystem_StdIO_Flush,
-    FileSystem_StdIO_IsAtEnd
+    FileSystem::StdIO::Flush,
+    FileSystem::StdIO::IsAtEnd
 };
 
 // -------------------------------------------------------------
 // FileStream functions
 // -------------------------------------------------------------
 
-bool FileStream_OpenFromPath(const char* path, FileMode mode, FileStream* outStream)
+bool FileStream::Open(const char* path, FileMode mode)
 {
-    return FileSystem_StdIO_Open(&gStdFileSystem, path, mode, outStream);
+    return FileSystem::StdIO::Open(&gStdFileSystem, path, mode, this);
 }
 
-bool FileStream_OpenFromMemory(void* buffer, int32_t bufferSizeInBytes, FileStream* outStream)
+bool FileStream::Open(void* buffer, int32_t bufferSize)
 {
-    return FileSystem_MemoryStream_Open(&gMemoryFileSystem, buffer, bufferSizeInBytes, outStream);
+    return FileSystem::MemoryStream::Open(&gMemoryFileSystem, buffer, bufferSize, this);
 }
 
 // -------------------------------------------------------------
-// FileSystem functions define
+// FileInterface functions define
 // -------------------------------------------------------------
 
-bool FileSystem_MemoryStream_Open(FileSystem* system, void* inputBuffer, int32_t bufferSizeInBytes, FileStream* outStream)
+bool FileSystem::MemoryStream::Open(FileInterface* inteface, void* inputBuffer, int32_t bufferSizeInBytes, FileStream* outStream)
 {
     FileStream stream;
-    stream.system = system;
+    stream.inteface      = inteface;
     stream.memory.buffer = inputBuffer;
     stream.memory.length = bufferSizeInBytes;
     stream.memory.cursor = 0;
-    stream.memory.flags  = 0;
+    stream.memory.flags  = (::MemoryStream::Flags)0;
 
     *outStream = stream;
     return true;
 }
 
-bool FileSystem_MemoryStream_Close(FileStream* stream)
+bool FileSystem::MemoryStream::Close(FileStream* stream)
 {
-    if (stream && stream->system == &gMemoryFileSystem)
+    if (stream && stream->inteface == &gMemoryFileSystem)
     {
-        if (stream->memory.flags & MemoryStreamFlags_BufferOwner)
+        if (stream->memory.flags & ::MemoryStream::BufferOwner)
         {
-            _aligned_free(stream->memory.buffer);
+            MemoryFree(stream->memory.buffer);
         }
 
         return true;
@@ -195,7 +207,7 @@ bool FileSystem_MemoryStream_Close(FileStream* stream)
     return false;
 }
 
-int32_t FileSystem_MemoryStream_Read(FileStream* stream, void* outputBuffer, int32_t bufferSizeInBytes)
+int32_t FileSystem::MemoryStream::Read(FileStream* stream, void* outputBuffer, int32_t bufferSizeInBytes)
 {
     const int32_t readBytes = stream->memory.cursor + bufferSizeInBytes > stream->memory.length 
         ? stream->memory.length - stream->memory.cursor
@@ -206,7 +218,7 @@ int32_t FileSystem_MemoryStream_Read(FileStream* stream, void* outputBuffer, int
     return readBytes;
 }
 
-int32_t FileSystem_MemoryStream_Write(FileStream* stream, const void* inputBuffer, int32_t bufferSizeInBytes)
+int32_t FileSystem::MemoryStream::Write(FileStream* stream, const void* inputBuffer, int32_t bufferSizeInBytes)
 {
     const int32_t writeBytes = stream->memory.cursor + bufferSizeInBytes > stream->memory.length
         ? stream->memory.length - stream->memory.cursor
@@ -217,21 +229,26 @@ int32_t FileSystem_MemoryStream_Write(FileStream* stream, const void* inputBuffe
     return writeBytes;
 }
 
-bool FileSystem_MemoryStream_Seek(FileStream* stream, SeekBaseOffset offset, int32_t count)
+bool FileSystem::MemoryStream::Seek(FileStream* stream, SeekOffset offset, int32_t count)
 {
     int32_t cursor;
     switch (offset)
     {
-    case SeekBaseOffset_CurrentPosition:
+    case SeekOffset::CurrentPosition:
         cursor = stream->memory.cursor + count;
         break;
 
-    case SeekBaseOffset_EndOfFile:
+    case SeekOffset::EndOfFile:
         cursor = stream->memory.length - count;
         break;
 
-    case SeekBaseOffset_StartOfFile:
+    case SeekOffset::StartOfFile:
         cursor = count;
+        break;
+
+    default:
+        assert(false && "Invalid seek offset");
+        cursor = -1;
         break;
     }
 
@@ -244,47 +261,47 @@ bool FileSystem_MemoryStream_Seek(FileStream* stream, SeekBaseOffset offset, int
     return true;
 }
 
-int32_t FileSystem_MemoryStream_GetSize(const FileStream* stream)
+int32_t FileSystem::MemoryStream::GetSize(const FileStream* stream)
 {
     return stream->memory.length;
 }
 
-int32_t FileSystem_MemoryStream_GetCursor(const FileStream* stream)
+int32_t FileSystem::MemoryStream::GetCursor(const FileStream* stream)
 {
     return stream->memory.cursor;
 }
 
-bool FileSystem_MemoryStream_Flush(FileStream* stream)
+bool FileSystem::MemoryStream::Flush(FileStream* stream)
 {
     return true;
 }
 
-bool FileSystem_MemoryStream_IsAtEnd(const FileStream* stream)
+bool FileSystem::MemoryStream::IsAtEnd(const FileStream* stream)
 {
     return stream->memory.cursor == stream->memory.length;
 }
 
-bool FileSystem_StdIO_Open(FileSystem* system, const char* fileName, FileMode mode, FileStream* outStream)
+bool FileSystem::StdIO::Open(FileInterface* system, const char* fileName, FileMode mode, FileStream* outStream)
 {
     char stdMode[6];
     char* ptrMode = stdMode;
 
-    if (mode & FileMode_Read)
+    if (mode & FileMode::Read)
     {
         *ptrMode++ = 'r';
     }
 
-    if (mode & FileMode_Write)
+    if (mode & FileMode::Write)
     {
         *ptrMode++ = 'w';
     }
 
-    if (mode & FileMode_Binary)
+    if (mode & FileMode::Binary)
     {
         *ptrMode++ = 'b';
     }
 
-    if (mode & FileMode_Append)
+    if (mode & FileMode::Append)
     {
         *ptrMode++ = '+';
     }
@@ -298,16 +315,16 @@ bool FileSystem_StdIO_Open(FileSystem* system, const char* fileName, FileMode mo
     }
 
     FileStream stream;
-    stream.system = system;
-    stream.handle = handle;
+    stream.inteface = system;
+    stream.handle   = handle;
 
     *outStream = stream;
     return true;
 }
 
-bool FileSystem_StdIO_Close(FileStream* stream)
+bool FileSystem::StdIO::Close(FileStream* stream)
 {
-    if (stream && stream->system == &gStdFileSystem)
+    if (stream && stream->inteface == &gStdFileSystem)
     {
         fclose((FILE*)stream->handle);
         stream->handle = NULL;
@@ -317,38 +334,43 @@ bool FileSystem_StdIO_Close(FileStream* stream)
     return false;
 }
 
-int32_t FileSystem_StdIO_Read(FileStream* stream, void* outputBuffer, int32_t bufferSizeInBytes)
+int32_t FileSystem::StdIO::Read(FileStream* stream, void* outputBuffer, int32_t bufferSizeInBytes)
 {
     return (int32_t)fread(outputBuffer, 1, bufferSizeInBytes, (FILE*)stream->handle);
 }
 
-int32_t FileSystem_StdIO_Write(FileStream* stream, const void* inputBuffer, int32_t bufferSizeInBytes)
+int32_t FileSystem::StdIO::Write(FileStream* stream, const void* inputBuffer, int32_t bufferSizeInBytes)
 {
     return (int32_t)fwrite(inputBuffer, 1, bufferSizeInBytes, (FILE*)stream->handle);
 }
 
-bool FileSystem_StdIO_Seek(FileStream* stream, SeekBaseOffset offset, int32_t count)
+bool FileSystem::StdIO::Seek(FileStream* stream, SeekOffset offset, int32_t count)
 {
     long whence;
     switch (offset)
     {
-    case SeekBaseOffset_CurrentPosition:
+    case SeekOffset::CurrentPosition:
         whence = SEEK_CUR;
         break;
 
-    case SeekBaseOffset_EndOfFile:
+    case SeekOffset::EndOfFile:
         whence = SEEK_END;
         break;
 
-    case SeekBaseOffset_StartOfFile:
+    case SeekOffset::StartOfFile:
         whence = SEEK_SET;
+        break;
+
+    default:
+        assert(false && "Invalid seek offset");
+        whence = -1;
         break;
     }
 
     return fseek((FILE*)stream->handle, whence, count) > 0;
 }
 
-int32_t FileSystem_StdIO_GetSize(const FileStream* stream)
+int32_t FileSystem::StdIO::GetSize(const FileStream* stream)
 {
     int32_t cursor = ftell((FILE*)stream->handle);
 
@@ -359,17 +381,17 @@ int32_t FileSystem_StdIO_GetSize(const FileStream* stream)
     return size;
 }
 
-int32_t FileSystem_StdIO_GetCursor(const FileStream* stream)
+int32_t FileSystem::StdIO::GetCursor(const FileStream* stream)
 {
     return ftell((FILE*)stream->handle);
 }
 
-bool FileSystem_StdIO_Flush(FileStream* stream)
+bool FileSystem::StdIO::Flush(FileStream* stream)
 {
     return fflush((FILE*)stream->handle) != 0;
 }
 
-bool FileSystem_StdIO_IsAtEnd(const FileStream* stream)
+bool FileSystem::StdIO::IsAtEnd(const FileStream* stream)
 {
     return feof((FILE*)stream->handle);
 }

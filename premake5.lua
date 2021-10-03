@@ -24,7 +24,7 @@ do
     language "C++"
     location (path.join(BUILD_DIR, _ACTION))
 
-    configurations { "Debug", "Release", "VulkanDebug", "VulkanRelease" }
+    configurations { "Debug", "Release" }
     platforms { "x32", "x64" }
 
     flags {
@@ -49,7 +49,7 @@ do
     do
         optimize "Off"
         defines {
-            "NDEBUG",
+            --"_DEBUG",
             "SUBSYSTEM_CONSOLE"
         }
 
@@ -130,35 +130,6 @@ do
             linkoptions "/SUBSYSTEM:WINDOWS"
         end
         
-        filter {}
-    end
-
-    -- Configuration for vulkan
-    filter "configurations:Vulkan*"
-    do
-        links {
-            "vulkan-1"
-        }
-
-        includedirs {
-            -- HARD CODE, CHANGE IN YOUR SYSTEM
-            path.join(ENV.VULKAN_DIR, "Include")
-        }
-
-        filter "platforms:x32"
-        do
-            libdirs {
-                path.join(ENV.VULKAN_DIR, "Lib32")
-            }
-        end
-    
-        filter "platforms:x64"
-        do
-            libdirs {
-                path.join(ENV.VULKAN_DIR, "Lib")
-            }
-        end
-
         filter {}
     end
 

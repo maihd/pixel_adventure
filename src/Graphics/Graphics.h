@@ -9,23 +9,24 @@ struct SpriteBatch;
 
 struct Sprite
 {
-    float           width;
-    float           height;
+    float           width       = 0.0f;
+    float           height      = 0.0f;
     
-    vec2            uv0, uv1;
+    vec2            uv0         = vec2{0, 0};
+    vec2            uv1         = vec2{0, 0};
 
-    uint32_t        textureId;
+    uint32_t        textureId   = 0;
 };
 
 struct SpriteSheet
 {
-    uint32_t        textureId;
+    uint32_t        textureId   = 0;
 
-    int32_t         cols;
-    int32_t         rows;
-    int32_t         spriteCount;
+    int32_t         cols        = 0;
+    int32_t         rows        = 0;
+    int32_t         spriteCount = 0;
 
-    Sprite*         sprites;
+    Sprite*         sprites     = nullptr;
 };
 
 enum struct GraphicsError : uint32_t

@@ -175,7 +175,7 @@ void CreateSpriteSheet(SpriteSheet* spriteSheet, const ldtk::Tileset& tileset)
     int32_t rows = tileset.texture_size.y / tileset.tile_size;
     
     char absPath[1024];
-    FileSystem_GetExistsPath(absPath, sizeof(absPath), tileset.path.c_str());
+    FileSystem::GetExistsPath(absPath, sizeof(absPath), tileset.path.c_str());
 
     Graphics::LoadSpriteSheet(spriteSheet, absPath, cols, rows);
 }
@@ -191,9 +191,9 @@ void CreateSpriteBatch(const ldtk::Layer* layer)
     const SpriteSheet spritesheet = spritesheets[tileset->uid];
 
     SpriteBatch spriteBatch = {};
-    SpriteBatch_Create(&spriteBatch, &spritesheets[tileset->uid], layer->allTiles().size() * 6);
+    spriteBatch.Create(&spritesheets[tileset->uid], layer->allTiles().size() * 6);
     
-    SpriteBatch_Begin(&spriteBatch);
+    spriteBatch.Begin();
     for (ldtk::Tile tile : layer->allTiles())
     {
         const int32_t cols = tile.texture_position.x / tileset->tile_size;
@@ -201,20 +201,20 @@ void CreateSpriteBatch(const ldtk::Layer* layer)
         const Sprite* sprite = &spritesheet.sprites[rows * spritesheet.cols + cols];
         const vec2 position = vec2_new(tile.position.x + tileset->tile_size * 0.5f, layer->level->size.y - tile.position.y - tileset->tile_size * 0.5f);
         const vec2 scale = vec2_new(tile.flipX ? -1.0f : 1.0f, tile.flipY ? -1.0f : 1.0f);
-        SpriteBatch_DrawSprite(&spriteBatch, sprite, position, 0.0f, scale, vec3_new1(1.0f));
+        spriteBatch.DrawSprite(sprite, position, 0.0f, scale, vec3_new1(1.0f));
     }
-    SpriteBatch_End(&spriteBatch);
+    spriteBatch.End();
 
     spriteBatchs[layer->getName()] = spriteBatch;
 }
 
 void Game_Setup()
 {
-    FileSystem_AddSearchPath("assets");
-    FileSystem_AddSearchPath("../../assets");
+    FileSystem::AddSearchPath("assets");
+    FileSystem::AddSearchPath("../../assets");
 
     char worldPath[1024];
-    if (!FileSystem_GetExistsPath(worldPath, sizeof(worldPath), "pixel_adventure.ldtk"))
+    if (!FileSystem::GetExistsPath(worldPath, sizeof(worldPath), "pixel_adventure.ldtk"))
     {
         return;
     }

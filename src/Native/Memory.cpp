@@ -8,9 +8,6 @@
 #include "Memory.h"
 #include "HeapLayers.h"
 
-using GlobalHeap = StrictSegHeap<10, StrictSegHeapTraits, SizeHeap<PagedFreeList>, SizeHeap<PagedHeap>>;
-static GlobalHeap gHeap;
-
 #if !defined(NDEBUG)
 
 // ----------------------
@@ -147,24 +144,24 @@ static void RemoveAlloc(void* ptr, const char* func, const char* file, int32_t l
     gAllocStore.allocations--;
 }
 
-void* MemoryAllocDebug(int32_t size, const char* func, const char* file, int32_t line)
+void* MemoryAllocDebug(int32_t size, int32_t align, const char* func, const char* file, int32_t line)
 {
     assert(size > 0 && "Request size must be greater than 0.");
 
     gAllocStore.allocCalled++;
 
-    void* ptr = gHeap.Alloc(size);
+    void* ptr = _aligned_malloc((size_t)size, (size_t)align);
     AddAlloc(ptr, size, func, file, line);
     return ptr;
 }
 
-void* MemoryReallocDebug(void* ptr, int32_t size, const char* func, const char* file, int32_t line)
+void* MemoryReallocDebug(void* ptr, int32_t size, int32_t align, const char* func, const char* file, int32_t line)
 {
     assert(size > 0 && "Request size must be greater than 0.");
 
     gAllocStore.reallocCalled++;
 
-    void* newPtr = gHeap.Realloc(ptr, size);
+    void* newPtr = _aligned_realloc(ptr, (size_t)size, (size_t)align);
     if (ptr == nullptr)
     {
         AddAlloc(newPtr, size, func, file, line);
@@ -184,7 +181,7 @@ void MemoryFreeDebug(void* ptr, const char* func, const char* file, int32_t line
     if (ptr)
     {
         RemoveAlloc(ptr, func, file, line);
-        gHeap.Free(ptr);
+        _aligned_free(ptr);
     }
 }
 
@@ -227,19 +224,19 @@ MemoryTracker::~MemoryTracker()
 }
 // END OF #if !defined(NDEBUG)
 #else
-void* MemoryAlloc(int32_t size)
+void* MemoryAlloc(int32_t size, int32_t align)
 {
-    return gHeap.Alloc(size);
+    return _aligned_malloc((size_t)size, (size_t)align);
 }
 
-void* MemoryRealloc(void* ptr, int32_t size)
+void* MemoryRealloc(void* ptr, int32_t size, int32_t align)
 {
-    return gHeap.Realloc(ptr, size);
+    return _aligned_realloc(ptr, (size_t)size, (size_t)align);
 }
 
 void MemoryFree(void* ptr)
 {
-    gHeap.Free(ptr);
+    _aligned_free(ptr);
 }
 
 void MemoryDumpAllocs(void)

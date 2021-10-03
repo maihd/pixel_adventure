@@ -99,6 +99,9 @@
     <ClInclude Include="..\..\src\Game\Game.h">
       <Filter>src\Game</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\Canvas.h">
+      <Filter>src\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Graphics\Graphics.h">
       <Filter>src\Graphics</Filter>
     </ClInclude>
@@ -106,6 +109,9 @@
       <Filter>src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Graphics\SpriteBatch.h">
+      <Filter>src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\Texture.h">
       <Filter>src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Math\MathEx.h">
@@ -233,6 +239,9 @@
     <ClCompile Include="..\..\src\Game\Game.cpp">
       <Filter>src\Game</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\Canvas.cpp">
+      <Filter>src\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Graphics\Graphics.cpp">
       <Filter>src\Graphics</Filter>
     </ClCompile>
@@ -240,6 +249,9 @@
       <Filter>src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Graphics\SpriteBatch.cpp">
+      <Filter>src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\Texture.cpp">
       <Filter>src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Main.cpp">

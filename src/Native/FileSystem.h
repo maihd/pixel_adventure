@@ -2,89 +2,104 @@
 
 #include <stdint.h>
 
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
+struct FileInterface;
 
-typedef enum FileMode
+namespace FileModes
 {
-    FileMode_None,
-    FileMode_Read       = 1 << 0,
-    FileMode_Write      = 1 << 1,
-    FileMode_Append     = 1 << 2,
-    FileMode_Binary     = 1 << 3,
+    enum Type : uint32_t
+    {
+        None               = 0,
+        Read               = 1 << 0,
+        Write              = 1 << 1,
+        Append             = 1 << 2,
+        Binary             = 1 << 3,
 
-    FileMode_ReadBinary         = FileMode_Read | FileMode_Binary,
-    FileMode_WriteBinary        = FileMode_Write | FileMode_Binary,
+        ReadBinary         = Read | Binary,
+        WriteBinary        = Write | Binary,
 
-    FileMode_ReadWrite          = FileMode_Read | FileMode_Write,
-    FileMode_ReadWriteBinary    = FileMode_Read | FileMode_Write | FileMode_Binary,
-} FileMode;
+        ReadWrite          = Read | Write,
+        ReadWriteBinary    = Read | Write | Binary,
+    };
+}
+using FileMode = FileModes::Type;
 
-typedef enum SeekBaseOffset
+enum struct SeekOffset : uint32_t
 {
-    SeekBaseOffset_StartOfFile,
-    SeekBaseOffset_CurrentPosition,
-    SeekBaseOffset_EndOfFile,
-} SeekBaseOffset;
+    StartOfFile,
+    CurrentPosition,
+    EndOfFile,
+};
 
-typedef enum MemoryStreamFlags
+struct MemoryStream
 {
-    MemoryStreamFlags_None,
-    MemoryStreamFlags_BufferOwner = 1 << 0
-} MemoryStreamFlags; 
+    enum Flags : uint32_t
+    {
+        BufferOwner = 1 << 0
+    };
 
-typedef struct MemoryStream
-{
     void*               buffer;
     int32_t             length;
     int32_t             cursor;
-    uint32_t            flags;
-} MemoryStream;
+    Flags               flags;
+};
 
-typedef struct FileStream
+struct FileStream
 {
-    struct FileSystem*  system;
+    FileInterface*      inteface;
     union
     {
         void*           handle;
         MemoryStream    memory;
     };
-} FileStream;
 
-typedef struct FileSystem
+    bool                Open(const char* path, const FileMode mode);
+    bool                Open(void* buffer, int32_t bufferSize);
+    bool                Close(void);
+
+    int32_t             Read(void* outputBuffer, int32_t bufferSizeInBytes);
+    int32_t             Write(const void* inputBuffer, int32_t bufferSizeInBytes);
+
+    bool                Seek(SeekOffset offset, int32_t position);
+    bool                Flush(void);
+
+    int32_t             GetSize(void) const;
+    int32_t             GetCursor(void) const;
+    bool                IsAtEnd(void) const;
+};
+
+struct FileInterface
 {
-    bool                (*Close)(FileStream* stream);
+    void*                 const Open;
+    bool                (*const Close)(FileStream* stream);
 
-    int32_t             (*Read)(FileStream* stream, void* outputBuffer, int32_t bufferSizeInBytes);
-    int32_t             (*Write)(FileStream* stream, const void* inputBuffer, int32_t bufferSizeInBytes);
+    int32_t             (*const Read)(FileStream* stream, void* outputBuffer, int32_t bufferSizeInBytes);
+    int32_t             (*const Write)(FileStream* stream, const void* inputBuffer, int32_t bufferSizeInBytes);
 
-    bool                (*Seek)(FileStream* stream, SeekBaseOffset offset, int32_t position);
-    int32_t             (*GetSize)(const FileStream* stream);
-    int32_t             (*GetCursor)(const FileStream* stream);
+    bool                (*const Seek)(FileStream* stream, SeekOffset offset, int32_t position);
+    int32_t             (*const GetSize)(const FileStream* stream);
+    int32_t             (*const GetCursor)(const FileStream* stream);
     
-    bool                (*Flush)(FileStream* stream);
-    bool                (*IsAtEnd)(const FileStream* stream);
-} FileSystem;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+    bool                (*const Flush)(FileStream* stream);
+    bool                (*const IsAtEnd)(const FileStream* stream);
+};
 
 // -------------------------------------------------------------
 // FileSystem functions
 // -------------------------------------------------------------
 
-bool            FileSystem_AddSearchPath(const char* path);
-bool            FileSystem_RemoveSearchPath(const char* path);
+namespace FileSystem
+{
+    bool            AddSearchPath(const char* path);
+    bool            RemoveSearchPath(const char* path);
 
-bool            FileSystem_GetExistsPath(char* buffer, int32_t length, const char* path);
+    bool            GetExistsPath(char* buffer, int32_t length, const char* path);
 
-//bool            FileSystem_GetAbsolutePath(char* buffer, int32_t length, const char* path);
-//bool            FileSystem_GetRelativePath(char* buffer, int32_t length, const char* path);
+    //bool            GetAbsolutePath(char* buffer, int32_t length, const char* path);
+    //bool            GetRelativePath(char* buffer, int32_t length, const char* path);
 
-bool            FileSystem_LoadZipFile(const char* path);
-bool            FileSystem_UnloadZipFile(const char* path);
+    bool            LoadZipFile(const char* path);
+    bool            UnloadZipFile(const char* path);
+}
 
 // -------------------------------------------------------------
 // FilePath functions
@@ -94,49 +109,42 @@ bool            FileSystem_UnloadZipFile(const char* path);
 // FileStream functions
 // -------------------------------------------------------------
 
-bool FileStream_OpenFromPath(const char* path, FileMode mode, FileStream* outStream);
-bool FileStream_OpenFromMemory(void* buffer, int32_t bufferSizeInBytes, FileStream* outStream);
-
-inline bool FileStream_Close(FileStream* stream)
+inline bool FileStream::Close(void)
 {
-    return stream->system->Close(stream);
+    return this->inteface->Close(this);
 }
 
-inline int32_t FileStream_Read(FileStream* stream, void* outputBuffer, int32_t bufferSizeInBytes)
+inline int32_t FileStream::Read(void* outputBuffer, int32_t bufferSizeInBytes)
 {
-    return stream->system->Read(stream, outputBuffer, bufferSizeInBytes);
+    return this->inteface->Read(this, outputBuffer, bufferSizeInBytes);
 }
 
-inline int32_t FileStream_Write(FileStream* stream, const void* inputBuffer, int32_t bufferSizeInBytes)
+inline int32_t FileStream::Write(const void* inputBuffer, int32_t bufferSizeInBytes)
 {
-    return stream->system->Write(stream, inputBuffer, bufferSizeInBytes);
+    return this->inteface->Write(this, inputBuffer, bufferSizeInBytes);
 }
 
-inline bool FileStream_Seek(FileStream* stream, SeekBaseOffset offset, int32_t position)
+inline bool FileStream::Seek(SeekOffset offset, int32_t position)
 {
-    return stream->system->Seek(stream, offset, position);
+    return this->inteface->Seek(this, offset, position);
 }
 
-inline int32_t FileStream_GetSize(const FileStream* stream)
+inline int32_t FileStream::GetSize(void) const
 {
-    return stream->system->GetSize(stream);
+    return this->inteface->GetSize(this);
 }
 
-inline int32_t FileStream_GetCursor(const FileStream* stream)
+inline int32_t FileStream::GetCursor(void) const
 {
-    return stream->system->GetCursor(stream);
+    return this->inteface->GetCursor(this);
 }
 
-inline bool FileStream_Flush(FileStream* stream)
+inline bool FileStream::Flush(void)
 {
-    return stream->system->Flush(stream);
+    return this->inteface->Flush(this);
 }
 
-inline bool FileStream_IsAtEnd(const FileStream* stream)
+inline bool FileStream::IsAtEnd(void) const
 {
-    return stream->system->IsAtEnd(stream);
+    return this->inteface->IsAtEnd(this);
 }
-
-#ifdef __cplusplus
-}
-#endif
