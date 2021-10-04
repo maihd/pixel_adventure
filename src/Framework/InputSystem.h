@@ -222,10 +222,6 @@ typedef enum KeyCode
     KeyCode_F24,
 } KeyCode;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void            InputSystem_Setup(void);
 void            InputSystem_Shutdown(void);
 
@@ -267,7 +263,3 @@ float           InputSystem_GetAxis(int gamepadID, GamepadAxis axis);
 bool            InputSystem_GetButton(int gamepadID, GamepadButton button);
 bool            InputSystem_GetButtonUp(int gamepadID, GamepadButton button);
 bool            InputSystem_GetButtonDown(int gamepadID, GamepadButton button);
-
-#ifdef __cplusplus
-}
-#endif

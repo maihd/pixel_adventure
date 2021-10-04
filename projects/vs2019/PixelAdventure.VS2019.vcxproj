@@ -216,7 +216,6 @@
     <ClInclude Include="..\..\src\Game\Game.h" />
     <ClInclude Include="..\..\src\Graphics\Canvas.h" />
     <ClInclude Include="..\..\src\Graphics\Graphics.h" />
-    <ClInclude Include="..\..\src\Graphics\OpenGL.h" />
     <ClInclude Include="..\..\src\Graphics\SpriteBatch.h" />
     <ClInclude Include="..\..\src\Graphics\Texture.h" />
     <ClInclude Include="..\..\src\Math\MathEx.h" />
@@ -265,7 +264,6 @@
     <ClCompile Include="..\..\src\Game\Game.cpp" />
     <ClCompile Include="..\..\src\Graphics\Canvas.cpp" />
     <ClCompile Include="..\..\src\Graphics\Graphics.cpp" />
-    <ClCompile Include="..\..\src\Graphics\OpenGL.c" />
     <ClCompile Include="..\..\src\Graphics\SpriteBatch.cpp" />
     <ClCompile Include="..\..\src\Graphics\Texture.cpp" />
     <ClCompile Include="..\..\src\Main.cpp" />
@@ -274,8 +272,7 @@
     <ClCompile Include="..\..\src\Native\HeapLayers.cpp" />
     <ClCompile Include="..\..\src\Native\Memory.cpp" />
     <ClCompile Include="..\..\src\Native\Win32\Thread_Win32.cpp" />
-    <ClCompile Include="..\..\src\Native\Win32\Window_Win32.c" />
-    <ClCompile Include="..\..\src\Native\Window.c" />
+    <ClCompile Include="..\..\src\Native\Window.cpp" />
     <ClCompile Include="..\..\src\Text\Json.c" />
     <ClCompile Include="..\..\src\Text\JsonSchema.c" />
     <ClCompile Include="..\..\src\Text\String.c" />

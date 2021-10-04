@@ -8,99 +8,102 @@
 #include "Native/Window.h"
 #include "Framework/InputSystem.h"
 
-static WindowDesc*      gMainWindow;
-
-static KeyCode s_keyCodeMap[256] = { 
-    [SDL_SCANCODE_SPACE]        = KeyCode_Space,
-    [SDL_SCANCODE_BACKSPACE]    = KeyCode_Backspace,
-    [SDL_SCANCODE_RETURN]       = KeyCode_Return,
-    [SDL_SCANCODE_TAB]          = KeyCode_Tab,
-
-    [SDL_SCANCODE_UP]           = KeyCode_UpArrow,
-    [SDL_SCANCODE_DOWN]         = KeyCode_DownArrow,
-    [SDL_SCANCODE_LEFT]         = KeyCode_LeftArrow,
-    [SDL_SCANCODE_RIGHT]        = KeyCode_RightArrow,
-
-    [SDL_SCANCODE_HOME]         = KeyCode_Home,
-    [SDL_SCANCODE_END]          = KeyCode_End,
-    [SDL_SCANCODE_PAGEUP]       = KeyCode_PageUp,
-    [SDL_SCANCODE_PAGEDOWN]     = KeyCode_PageDown,
-    [SDL_SCANCODE_INSERT]       = KeyCode_Insert,
-    [SDL_SCANCODE_DELETE]       = KeyCode_Delete,
-
-    [SDL_SCANCODE_LCTRL]        = KeyCode_LeftControl,
-    [SDL_SCANCODE_RCTRL]        = KeyCode_RightControl,
-
-    [SDL_SCANCODE_LSHIFT]       = KeyCode_LeftShift,
-    [SDL_SCANCODE_RSHIFT]       = KeyCode_RightShift,
-
-    [SDL_SCANCODE_LALT]         = KeyCode_LeftAlt,
-    [SDL_SCANCODE_RALT]         = KeyCode_RightAlt,
-
-    [SDL_SCANCODE_KP_MULTIPLY]  = KeyCode_NumpadMultiply,
-    [SDL_SCANCODE_KP_DIVIDE]    = KeyCode_NumpadDivide,
-    [SDL_SCANCODE_KP_PLUS]      = KeyCode_NumpadAdd,
-    [SDL_SCANCODE_KP_MINUS]     = KeyCode_NumpadSubtract,
-    [SDL_SCANCODE_KP_0]         = KeyCode_Numpad0,
-    [SDL_SCANCODE_KP_1]         = KeyCode_Numpad1,
-    [SDL_SCANCODE_KP_2]         = KeyCode_Numpad2,
-    [SDL_SCANCODE_KP_3]         = KeyCode_Numpad3,
-    [SDL_SCANCODE_KP_4]         = KeyCode_Numpad4,
-    [SDL_SCANCODE_KP_5]         = KeyCode_Numpad5,
-    [SDL_SCANCODE_KP_6]         = KeyCode_Numpad6,
-    [SDL_SCANCODE_KP_7]         = KeyCode_Numpad7,
-    [SDL_SCANCODE_KP_8]         = KeyCode_Numpad8,
-    [SDL_SCANCODE_KP_9]         = KeyCode_Numpad9,
-
-    [SDL_SCANCODE_PERIOD]       = KeyCode_Period,
-    [SDL_SCANCODE_MINUS]        = KeyCode_Minus,
-    [SDL_SCANCODE_COMMA]        = KeyCode_Comma,
-    [SDL_SCANCODE_EQUALS]       = KeyCode_Equal,
-    [SDL_SCANCODE_SEMICOLON]    = KeyCode_SemiColon,
-    [SDL_SCANCODE_LEFTBRACKET]  = KeyCode_LeftBracket,
-    [SDL_SCANCODE_RIGHTBRACKET] = KeyCode_RightBracket,
-    [SDL_SCANCODE_SLASH]        = KeyCode_Slash,
-    [SDL_SCANCODE_BACKSLASH]    = KeyCode_BackSlash,
-    [SDL_SCANCODE_GRAVE]        = KeyCode_BackQuote,
-
-    [SDL_SCANCODE_0]           = KeyCode_Keypad0,
-    [SDL_SCANCODE_1]           = KeyCode_Keypad1,
-    [SDL_SCANCODE_2]           = KeyCode_Keypad2,
-    [SDL_SCANCODE_3]           = KeyCode_Keypad3,
-    [SDL_SCANCODE_4]           = KeyCode_Keypad4,
-    [SDL_SCANCODE_5]           = KeyCode_Keypad5,
-    [SDL_SCANCODE_6]           = KeyCode_Keypad6,
-    [SDL_SCANCODE_7]           = KeyCode_Keypad7,
-    [SDL_SCANCODE_8]           = KeyCode_Keypad8,
-    [SDL_SCANCODE_9]           = KeyCode_Keypad9,
-
-    [SDL_SCANCODE_A]           = KeyCode_A,
-    [SDL_SCANCODE_B]           = KeyCode_B,
-    [SDL_SCANCODE_C]           = KeyCode_C,
-    [SDL_SCANCODE_D]           = KeyCode_D,
-    [SDL_SCANCODE_E]           = KeyCode_E,
-    [SDL_SCANCODE_G]           = KeyCode_G,
-    [SDL_SCANCODE_H]           = KeyCode_H,
-    [SDL_SCANCODE_I]           = KeyCode_I,
-    [SDL_SCANCODE_J]           = KeyCode_J,
-    [SDL_SCANCODE_K]           = KeyCode_K,
-    [SDL_SCANCODE_L]           = KeyCode_L,
-    [SDL_SCANCODE_M]           = KeyCode_M,
-    [SDL_SCANCODE_O]           = KeyCode_O,
-    [SDL_SCANCODE_P]           = KeyCode_P,
-    [SDL_SCANCODE_R]           = KeyCode_R,
-    [SDL_SCANCODE_S]           = KeyCode_S,
-    [SDL_SCANCODE_T]           = KeyCode_T,
-    [SDL_SCANCODE_U]           = KeyCode_U,
-    [SDL_SCANCODE_V]           = KeyCode_V,
-    [SDL_SCANCODE_W]           = KeyCode_W,
-    [SDL_SCANCODE_X]           = KeyCode_X,
-    [SDL_SCANCODE_Y]           = KeyCode_Y,
-    [SDL_SCANCODE_Z]           = KeyCode_Z,
-};
+static WindowDesc* gMainWindow;
 
 static inline KeyCode ConvertKeyCode(int nativeKey)
 {
+    static bool     s_init = false;
+    static KeyCode  s_keyCodeMap[256];
+    if (!s_init)
+    {
+        s_keyCodeMap[SDL_SCANCODE_SPACE]        = KeyCode_Space;
+        s_keyCodeMap[SDL_SCANCODE_BACKSPACE]    = KeyCode_Backspace;
+        s_keyCodeMap[SDL_SCANCODE_RETURN]       = KeyCode_Return;
+        s_keyCodeMap[SDL_SCANCODE_TAB]          = KeyCode_Tab;
+
+        s_keyCodeMap[SDL_SCANCODE_UP]           = KeyCode_UpArrow;
+        s_keyCodeMap[SDL_SCANCODE_DOWN]         = KeyCode_DownArrow;
+        s_keyCodeMap[SDL_SCANCODE_LEFT]         = KeyCode_LeftArrow;
+        s_keyCodeMap[SDL_SCANCODE_RIGHT]        = KeyCode_RightArrow;
+
+        s_keyCodeMap[SDL_SCANCODE_HOME]         = KeyCode_Home;
+        s_keyCodeMap[SDL_SCANCODE_END]          = KeyCode_End;
+        s_keyCodeMap[SDL_SCANCODE_PAGEUP]       = KeyCode_PageUp;
+        s_keyCodeMap[SDL_SCANCODE_PAGEDOWN]     = KeyCode_PageDown;
+        s_keyCodeMap[SDL_SCANCODE_INSERT]       = KeyCode_Insert;
+        s_keyCodeMap[SDL_SCANCODE_DELETE]       = KeyCode_Delete;
+
+        s_keyCodeMap[SDL_SCANCODE_LCTRL]        = KeyCode_LeftControl;
+        s_keyCodeMap[SDL_SCANCODE_RCTRL]        = KeyCode_RightControl;
+
+        s_keyCodeMap[SDL_SCANCODE_LSHIFT]       = KeyCode_LeftShift;
+        s_keyCodeMap[SDL_SCANCODE_RSHIFT]       = KeyCode_RightShift;
+
+        s_keyCodeMap[SDL_SCANCODE_LALT]         = KeyCode_LeftAlt;
+        s_keyCodeMap[SDL_SCANCODE_RALT]         = KeyCode_RightAlt;
+
+        s_keyCodeMap[SDL_SCANCODE_KP_MULTIPLY]  = KeyCode_NumpadMultiply;
+        s_keyCodeMap[SDL_SCANCODE_KP_DIVIDE]    = KeyCode_NumpadDivide;
+        s_keyCodeMap[SDL_SCANCODE_KP_PLUS]      = KeyCode_NumpadAdd;
+        s_keyCodeMap[SDL_SCANCODE_KP_MINUS]     = KeyCode_NumpadSubtract;
+        s_keyCodeMap[SDL_SCANCODE_KP_0]         = KeyCode_Numpad0;
+        s_keyCodeMap[SDL_SCANCODE_KP_1]         = KeyCode_Numpad1;
+        s_keyCodeMap[SDL_SCANCODE_KP_2]         = KeyCode_Numpad2;
+        s_keyCodeMap[SDL_SCANCODE_KP_3]         = KeyCode_Numpad3;
+        s_keyCodeMap[SDL_SCANCODE_KP_4]         = KeyCode_Numpad4;
+        s_keyCodeMap[SDL_SCANCODE_KP_5]         = KeyCode_Numpad5;
+        s_keyCodeMap[SDL_SCANCODE_KP_6]         = KeyCode_Numpad6;
+        s_keyCodeMap[SDL_SCANCODE_KP_7]         = KeyCode_Numpad7;
+        s_keyCodeMap[SDL_SCANCODE_KP_8]         = KeyCode_Numpad8;
+        s_keyCodeMap[SDL_SCANCODE_KP_9]         = KeyCode_Numpad9;
+
+        s_keyCodeMap[SDL_SCANCODE_PERIOD]       = KeyCode_Period;
+        s_keyCodeMap[SDL_SCANCODE_MINUS]        = KeyCode_Minus;
+        s_keyCodeMap[SDL_SCANCODE_COMMA]        = KeyCode_Comma;
+        s_keyCodeMap[SDL_SCANCODE_EQUALS]       = KeyCode_Equal;
+        s_keyCodeMap[SDL_SCANCODE_SEMICOLON]    = KeyCode_SemiColon;
+        s_keyCodeMap[SDL_SCANCODE_LEFTBRACKET]  = KeyCode_LeftBracket;
+        s_keyCodeMap[SDL_SCANCODE_RIGHTBRACKET] = KeyCode_RightBracket;
+        s_keyCodeMap[SDL_SCANCODE_SLASH]        = KeyCode_Slash;
+        s_keyCodeMap[SDL_SCANCODE_BACKSLASH]    = KeyCode_BackSlash;
+        s_keyCodeMap[SDL_SCANCODE_GRAVE]        = KeyCode_BackQuote;
+
+        s_keyCodeMap[SDL_SCANCODE_0]           = KeyCode_Keypad0;
+        s_keyCodeMap[SDL_SCANCODE_1]           = KeyCode_Keypad1;
+        s_keyCodeMap[SDL_SCANCODE_2]           = KeyCode_Keypad2;
+        s_keyCodeMap[SDL_SCANCODE_3]           = KeyCode_Keypad3;
+        s_keyCodeMap[SDL_SCANCODE_4]           = KeyCode_Keypad4;
+        s_keyCodeMap[SDL_SCANCODE_5]           = KeyCode_Keypad5;
+        s_keyCodeMap[SDL_SCANCODE_6]           = KeyCode_Keypad6;
+        s_keyCodeMap[SDL_SCANCODE_7]           = KeyCode_Keypad7;
+        s_keyCodeMap[SDL_SCANCODE_8]           = KeyCode_Keypad8;
+        s_keyCodeMap[SDL_SCANCODE_9]           = KeyCode_Keypad9;
+
+        s_keyCodeMap[SDL_SCANCODE_A]           = KeyCode_A;
+        s_keyCodeMap[SDL_SCANCODE_B]           = KeyCode_B;
+        s_keyCodeMap[SDL_SCANCODE_C]           = KeyCode_C;
+        s_keyCodeMap[SDL_SCANCODE_D]           = KeyCode_D;
+        s_keyCodeMap[SDL_SCANCODE_E]           = KeyCode_E;
+        s_keyCodeMap[SDL_SCANCODE_G]           = KeyCode_G;
+        s_keyCodeMap[SDL_SCANCODE_H]           = KeyCode_H;
+        s_keyCodeMap[SDL_SCANCODE_I]           = KeyCode_I;
+        s_keyCodeMap[SDL_SCANCODE_J]           = KeyCode_J;
+        s_keyCodeMap[SDL_SCANCODE_K]           = KeyCode_K;
+        s_keyCodeMap[SDL_SCANCODE_L]           = KeyCode_L;
+        s_keyCodeMap[SDL_SCANCODE_M]           = KeyCode_M;
+        s_keyCodeMap[SDL_SCANCODE_O]           = KeyCode_O;
+        s_keyCodeMap[SDL_SCANCODE_P]           = KeyCode_P;
+        s_keyCodeMap[SDL_SCANCODE_R]           = KeyCode_R;
+        s_keyCodeMap[SDL_SCANCODE_S]           = KeyCode_S;
+        s_keyCodeMap[SDL_SCANCODE_T]           = KeyCode_T;
+        s_keyCodeMap[SDL_SCANCODE_U]           = KeyCode_U;
+        s_keyCodeMap[SDL_SCANCODE_V]           = KeyCode_V;
+        s_keyCodeMap[SDL_SCANCODE_W]           = KeyCode_W;
+        s_keyCodeMap[SDL_SCANCODE_X]           = KeyCode_X;
+        s_keyCodeMap[SDL_SCANCODE_Y]           = KeyCode_Y;
+        s_keyCodeMap[SDL_SCANCODE_Z]           = KeyCode_Z;
+    }
+
     return s_keyCodeMap[nativeKey];
 }
 
@@ -199,7 +202,7 @@ static void HandleEvent(const SDL_Event* event)
 bool Window_Open(WindowDesc* window)
 {
     // Convert to native flags
-    WindowFlags flags = window->flags;
+    WindowFlags flags = (WindowFlags)window->flags;
     Uint32 nativeFlags = SDL_WINDOW_OPENGL;
     if (flags & WindowFlags_Visible)
     {
@@ -291,7 +294,7 @@ void Window_Close(WindowDesc* window)
 
     // Destroyed native handle
     SDL_GL_DeleteContext(window->context);
-    SDL_DestroyWindow(window->handle);
+    SDL_DestroyWindow((SDL_Window*)window->handle);
 
     // Handle quit message
     Window_PollEvents();
@@ -369,7 +372,7 @@ void Window_SetBorderless(void)
     {
         gMainWindow->flags |=  WindowFlags_Borderless;
         gMainWindow->flags &= ~WindowFlags_Fullscreen;
-        SDL_SetWindowFullscreen(gMainWindow->handle, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        SDL_SetWindowFullscreen((SDL_Window*)gMainWindow->handle, SDL_WINDOW_FULLSCREEN_DESKTOP);
     }
 }
 
@@ -379,18 +382,18 @@ void Window_SetFullscreen(void)
     {
         gMainWindow->flags &= ~WindowFlags_Borderless;
         gMainWindow->flags |=  WindowFlags_Fullscreen;
-        SDL_SetWindowFullscreen(gMainWindow->handle, SDL_WINDOW_FULLSCREEN);
+        SDL_SetWindowFullscreen((SDL_Window*)gMainWindow->handle, SDL_WINDOW_FULLSCREEN);
     }
 }
 
 bool Window_IsBorderless(void)
 {
-    return gMainWindow && SDL_GetWindowFlags(gMainWindow->handle) & SDL_WINDOW_FULLSCREEN_DESKTOP;
+    return gMainWindow && SDL_GetWindowFlags((SDL_Window*)gMainWindow->handle) & SDL_WINDOW_FULLSCREEN_DESKTOP;
 }
 
 bool Window_IsFullscreen(void)
 {
-    return gMainWindow && SDL_GetWindowFlags(gMainWindow->handle) & SDL_WINDOW_FULLSCREEN;
+    return gMainWindow && SDL_GetWindowFlags((SDL_Window*)gMainWindow->handle) & SDL_WINDOW_FULLSCREEN;
 }
 
 bool Window_IsWindowed(void)
@@ -404,14 +407,14 @@ void Window_SetWindowed(void)
     {
         gMainWindow->flags &= ~WindowFlags_Borderless;
         gMainWindow->flags &= ~WindowFlags_Fullscreen;
-        SDL_SetWindowFullscreen(gMainWindow->handle, 0);
-        SDL_SetWindowSize(gMainWindow->handle, gMainWindow->width, gMainWindow->height);
+        SDL_SetWindowFullscreen((SDL_Window*)gMainWindow->handle, 0);
+        SDL_SetWindowSize((SDL_Window*)gMainWindow->handle, gMainWindow->width, gMainWindow->height);
     }
 }
 
 bool Window_IsVisible(void)
 {
-    return gMainWindow && SDL_GetWindowFlags(gMainWindow->handle) & SDL_WINDOW_SHOWN;
+    return gMainWindow && SDL_GetWindowFlags((SDL_Window*)gMainWindow->handle) & SDL_WINDOW_SHOWN;
 }
 
 void Window_SetVisible(bool visible)
@@ -421,12 +424,12 @@ void Window_SetVisible(bool visible)
         if (visible)
         {
             gMainWindow->flags |= WindowFlags_Visible;
-            SDL_ShowWindow(gMainWindow->handle);
+            SDL_ShowWindow((SDL_Window*)gMainWindow->handle);
         }
         else
         {
             gMainWindow->flags &= ~WindowFlags_Visible;
-            SDL_ShowWindow(gMainWindow->handle);
+            SDL_ShowWindow((SDL_Window*)gMainWindow->handle);
         }
     }
 }
@@ -435,7 +438,7 @@ void Window_SetCenter(void)
 {
     if (gMainWindow && Window_IsWindowed())
     {
-        SDL_SetWindowPosition(gMainWindow->handle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+        SDL_SetWindowPosition((SDL_Window*)gMainWindow->handle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     }
 }
 

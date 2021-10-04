@@ -63,8 +63,16 @@ void InputSystem_UpdateCharInput(int character)
 
 void InputSystem_UpdateTextInput(const char* string)
 {
-    strcat(gInputText, string);
-    gInputTextLength += strlen(string);
+    int32_t length = (int32_t)strlen(string);
+    if (gInputTextLength + length >= sizeof(gInputText))
+    {
+        length = sizeof(gInputText) - gInputTextLength - 1;
+    }
+
+    memcpy(gInputText + gInputTextLength, string, length);
+    gInputTextLength += length;
+
+    gInputText[gInputTextLength] = '\0';
 }
 
 void InputSystem_UpdateKey(KeyCode key, bool down)

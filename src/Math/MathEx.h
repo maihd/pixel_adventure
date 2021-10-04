@@ -20,7 +20,7 @@
 #endif
 
 // constexpr is helpful
-#ifndef __cplusplus && !defined(constexpr)
+#if !defined(__cplusplus) && !defined(constexpr)
 #   define constexpr static const
 #endif
 
