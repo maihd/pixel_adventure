@@ -224,33 +224,33 @@ static void HandleEvent(const SDL_Event* event)
     }
 }
 
-bool Window_Open(WindowDesc* window)
+bool Window::Open(WindowDesc* window)
 {
     // Convert to native flags
-    WindowFlags flags = (WindowFlags)window->flags;
+    uint32_t flags = window->flags;
     Uint32 nativeFlags = SDL_WINDOW_OPENGL;
-    if (flags & WindowFlags_Visible)
+    if (flags & WindowFlags::Visible)
     {
         nativeFlags |= SDL_WINDOW_SHOWN;
     }
-    if (flags & WindowFlags_Resizable)
+    if (flags & WindowFlags::Resizable)
     {
         nativeFlags |= SDL_WINDOW_RESIZABLE;
     }
 
-    if (flags & WindowFlags_Minimize)
+    if (flags & WindowFlags::Minimize)
     {
         nativeFlags |= SDL_WINDOW_MINIMIZED;
     }
-    if (flags & WindowFlags_Maximize)
+    if (flags & WindowFlags::Maximize)
     {
         nativeFlags |= SDL_WINDOW_MAXIMIZED;
     }
-    if (flags & WindowFlags_Minimizable)
+    if (flags & WindowFlags::Minimizable)
     {
         //nativeFlags |= SDL_WINDOW_;
     }
-    if (flags & WindowFlags_Maximizable)
+    if (flags & WindowFlags::Maximizable)
     {
         //nativeFlags |= WS_MAXIMIZEBOX;
     }
@@ -273,22 +273,22 @@ bool Window_Open(WindowDesc* window)
     gMainWindow = window;
     
     // Apply borderless or fullscreen
-    switch (flags & (WindowFlags_Borderless | WindowFlags_Fullscreen))
+    switch (flags & (WindowFlags::Borderless | WindowFlags::Fullscreen))
     {
-    case WindowFlags_Borderless:
-    case WindowFlags_Borderless | WindowFlags_Fullscreen:
-        Window_SetBorderless();
+    case WindowFlags::Borderless:
+    case WindowFlags::Borderless | WindowFlags::Fullscreen:
+        Window::SetBorderless();
         break;
 
-    case WindowFlags_Fullscreen:
-        Window_SetFullscreen();
+    case WindowFlags::Fullscreen:
+        Window::SetFullscreen();
         break;
     }
 
     return true;
 }
 
-void Window_Close(WindowDesc* window)
+void Window::Close(WindowDesc* window)
 {
     assert(window != NULL);
     assert(gMainWindow == window);
@@ -297,14 +297,14 @@ void Window_Close(WindowDesc* window)
     SDL_DestroyWindow((SDL_Window*)window->handle);
 
     // Handle quit message
-    Window_PollEvents();
+    Window::PollEvents();
 
     // Reset window state
     window->handle = nullptr;
     gMainWindow = nullptr;
 }
 
-bool Window_PollEvents(void)
+bool Window::PollEvents(void)
 {
     bool quit = false;
 
@@ -324,7 +324,7 @@ bool Window_PollEvents(void)
     return !quit;
 }
 
-bool Window_WaitAndPollEvents(void)
+bool Window::WaitAndPollEvents(void)
 {
     SDL_Event event;
     if (SDL_WaitEvent(&event))
@@ -354,123 +354,123 @@ bool Window_WaitAndPollEvents(void)
     return true;
 }
 
-float Window_GetWidth(void)
+float Window::GetWidth(void)
 {
     return (float)gMainWindow->width;
 }
 
-float Window_GetHeight(void)
+float Window::GetHeight(void)
 {
     return (float)gMainWindow->height;
 }
 
-void Window_SetBorderless(void)
+void Window::SetBorderless(void)
 {
     if (gMainWindow)
     {
-        gMainWindow->flags |=  WindowFlags_Borderless;
-        gMainWindow->flags &= ~WindowFlags_Fullscreen;
+        gMainWindow->flags |=  WindowFlags::Borderless;
+        gMainWindow->flags &= ~WindowFlags::Fullscreen;
         SDL_SetWindowFullscreen((SDL_Window*)gMainWindow->handle, SDL_WINDOW_FULLSCREEN_DESKTOP);
     }
 }
 
-void Window_SetFullscreen(void)
+void Window::SetFullscreen(void)
 {
     if (gMainWindow)
     {
-        gMainWindow->flags &= ~WindowFlags_Borderless;
-        gMainWindow->flags |=  WindowFlags_Fullscreen;
+        gMainWindow->flags &= ~WindowFlags::Borderless;
+        gMainWindow->flags |=  WindowFlags::Fullscreen;
         SDL_SetWindowFullscreen((SDL_Window*)gMainWindow->handle, SDL_WINDOW_FULLSCREEN);
     }
 }
 
-bool Window_IsBorderless(void)
+bool Window::IsBorderless(void)
 {
     return gMainWindow && SDL_GetWindowFlags((SDL_Window*)gMainWindow->handle) & SDL_WINDOW_FULLSCREEN_DESKTOP;
 }
 
-bool Window_IsFullscreen(void)
+bool Window::IsFullscreen(void)
 {
     return gMainWindow && SDL_GetWindowFlags((SDL_Window*)gMainWindow->handle) & SDL_WINDOW_FULLSCREEN;
 }
 
-bool Window_IsWindowed(void)
+bool Window::IsWindowed(void)
 {
-    return !Window_IsBorderless() || !Window_IsFullscreen();
+    return !Window::IsBorderless() || !Window::IsFullscreen();
 }
 
-void Window_SetWindowed(void)
+void Window::SetWindowed(void)
 {
     if (gMainWindow)
     {
-        gMainWindow->flags &= ~WindowFlags_Borderless;
-        gMainWindow->flags &= ~WindowFlags_Fullscreen;
+        gMainWindow->flags &= ~WindowFlags::Borderless;
+        gMainWindow->flags &= ~WindowFlags::Fullscreen;
         SDL_SetWindowFullscreen((SDL_Window*)gMainWindow->handle, 0);
         SDL_SetWindowSize((SDL_Window*)gMainWindow->handle, gMainWindow->width, gMainWindow->height);
     }
 }
 
-bool Window_IsVisible(void)
+bool Window::IsVisible(void)
 {
     return gMainWindow && SDL_GetWindowFlags((SDL_Window*)gMainWindow->handle) & SDL_WINDOW_SHOWN;
 }
 
-void Window_SetVisible(bool visible)
+void Window::SetVisible(bool visible)
 {
     if (gMainWindow)
     {
         if (visible)
         {
-            gMainWindow->flags |= WindowFlags_Visible;
+            gMainWindow->flags |= WindowFlags::Visible;
             SDL_ShowWindow((SDL_Window*)gMainWindow->handle);
         }
         else
         {
-            gMainWindow->flags &= ~WindowFlags_Visible;
+            gMainWindow->flags &= ~WindowFlags::Visible;
             SDL_ShowWindow((SDL_Window*)gMainWindow->handle);
         }
     }
 }
 
-void Window_SetCenter(void)
+void Window::SetCenter(void)
 {
-    if (gMainWindow && Window_IsWindowed())
+    if (gMainWindow && Window::IsWindowed())
     {
         SDL_SetWindowPosition((SDL_Window*)gMainWindow->handle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     }
 }
 
-void Window_EnableVSync(void)
+void Window::EnableVSync(void)
 {
-    Window_SetVSyncEnabled(true);
+    Window::SetVSyncEnabled(true);
 }
 
-void Window_DisableVSync(void)
+void Window::DisableVSync(void)
 {
-    Window_SetVSyncEnabled(false);
+    Window::SetVSyncEnabled(false);
 }
 
-bool Window_IsVSyncEnabled(void)
+bool Window::IsVSyncEnabled(void)
 {
     return SDL_GL_GetSwapInterval();
 }
 
-void Window_SetVSyncEnabled(bool vsync)
+void Window::SetVSyncEnabled(bool vsync)
 {
     SDL_GL_SetSwapInterval(vsync);
 }
 
-bool Window_HasInputFocus(void)
+bool Window::HasInputFocus(void)
 {
     return gMainWindow && SDL_GetKeyboardFocus() == gMainWindow->handle;
 }
 
-bool Window_HasMouseFocus(void)
+bool Window::HasMouseFocus(void)
 {
     return gMainWindow && SDL_GetMouseFocus() == gMainWindow->handle;
 }
 
-const WindowDesc* Window_GetMainWindow(void)
+const WindowDesc* Window::GetMainWindow(void)
 {
     return gMainWindow;
 }

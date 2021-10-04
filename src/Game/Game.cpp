@@ -257,7 +257,7 @@ void Game_Setup()
     Graphics::LoadSpriteSheet(&spriteBatch_FrogWallCollide, "main_characters/frog_wall_holding.png", spriteCols_FrogWallCollide, spriteRows_FrogWallCollide);
 
     frogScale = vec2_new(1.0f, 1.0f);
-    frogPosition = vec2_new((float)Window_GetWidth() * 0.5f, (float)Window_GetHeight() * 0.5f);
+    frogPosition = vec2_new((float)Window::GetWidth() * 0.5f, (float)Window::GetHeight() * 0.5f);
 
     const ldtk::Layer* layer = world.getLevel("Level0")->getLayer("Collisions");
     

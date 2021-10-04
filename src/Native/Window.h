@@ -1,36 +1,39 @@
 #pragma once
 
 #include <stdint.h>
-#include <stdbool.h>
-
-#ifdef __cplusplus
 #include <assert.h> // For auto unclosed window attempt to be destroyed
-#endif
 
-typedef enum WindowFlags
+namespace WindowFlags
 {
-    WindowFlags_None          = 0,
-    WindowFlags_Visible       = 1 << 0,
-    WindowFlags_Resizable     = 1 << 1,
-    WindowFlags_Fullscreen    = 1 << 2,
-    WindowFlags_Borderless    = 1 << 3,
+    enum Type : uint32_t
+    {
+        None          = 0,
+        Visible       = 1 << 0,
+        Resizable     = 1 << 1,
+        Fullscreen    = 1 << 2,
+        Borderless    = 1 << 3,
 
-    WindowFlags_Minimize      = 1 << 5,
-    WindowFlags_Maximize      = 1 << 6,
-    WindowFlags_Minimizable   = 1 << 7,
-    WindowFlags_Maximizable   = 1 << 8,
+        Minimize      = 1 << 5,
+        Maximize      = 1 << 6,
+        Minimizable   = 1 << 7,
+        Maximizable   = 1 << 8,
 
-    WindowFlags_Default       = WindowFlags_Visible | WindowFlags_Minimizable,
-} WindowFlags;
+        Default       = Visible | Minimizable,
+    };
+}
 
-typedef enum WindowResetScenario
+namespace WindowResetScenarios
 {
-    WindowResetScenario_None        = 0x0,
-    WindowResetScenario_Reload      = 0x1,
-    WindowResetScenario_DeviceLost  = 0x2,
-} WindowResetScenario;
+    enum Type : uint32_t
+    {
+        None        = 0x0,
+        Reload      = 0x1,
+        DeviceLost  = 0x2,
+    };
+}
+using WindowResetScenario = WindowResetScenarios::Type;
 
-typedef struct WindowDesc
+struct WindowDesc
 {
     void*               handle;
 
@@ -47,13 +50,13 @@ typedef struct WindowDesc
     #ifdef __cplusplus
     inline WindowDesc()
         : handle(nullptr)
-        , flags(WindowFlags_None)
+        , flags(WindowFlags::None)
         , title("")
         , width(0)
         , height(0)
         , x(-1)
         , y(-1)
-        , resetScenario(WindowResetScenario_None)
+        , resetScenario(WindowResetScenario::None)
     {
     }
 
@@ -62,55 +65,49 @@ typedef struct WindowDesc
         assert(handle == nullptr);
     }
     #endif
-} WindowDesc;
+};
 
 // -------------------------------------------------------------
 // Main functions
 // -------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace Window
+{
+    bool                Open(WindowDesc* window);
+    void                Close(WindowDesc* window);
 
-bool                Window_Open(WindowDesc* window);
-void                Window_Close(WindowDesc* window);
+    /// Process all coming events
+    /// Return true if the window is alive, false otherwise, and the loop should shutdown
+    bool                PollEvents(void); 
 
-/// Process all coming events
-/// Return true if the window is alive, false otherwise, and the loop should shutdown
-bool                Window_PollEvents(void); 
+    /// Wait a events and then process all coming events
+    /// Return true if the window is alive, false otherwise, and the loop should shutdown
+    bool                WaitAndPollEvents(void);
 
-/// Wait a events and then process all coming events
-/// Return true if the window is alive, false otherwise, and the loop should shutdown
-bool                Window_WaitAndPollEvents(void);
+    float               GetWidth(void);
+    float               GetHeight(void);
 
-float               Window_GetWidth(void);
-float               Window_GetHeight(void);
+    bool                IsBorderless(void);
+    bool                IsFullscreen(void);
 
-bool                Window_IsBorderless(void);
-bool                Window_IsFullscreen(void);
-//bool              Window_IsFullscreenSettings(void);
+    void                SetBorderless(void);
+    void                SetFullscreen(void);
 
-void                Window_SetBorderless(void);
-void                Window_SetFullscreen(void);
+    bool                IsWindowed(void);
+    void                SetWindowed(void);
 
-bool                Window_IsWindowed(void);
-void                Window_SetWindowed(void);
+    bool                IsVisible(void);
+    void                SetVisible(bool visible);
 
-bool                Window_IsVisible(void);
-void                Window_SetVisible(bool visible);
+    void                SetCenter(void);
 
-void                Window_SetCenter(void);
+    void                EnableVSync(void);
+    void                DisableVSync(void);
+    bool                IsVSyncEnabled(void);
+    void                SetVSyncEnabled(bool value);
 
-void                Window_EnableVSync(void);
-void                Window_DisableVSync(void);
-bool                Window_IsVSyncEnabled(void);
-void                Window_SetVSyncEnabled(bool value);
+    bool                HasInputFocus(void);
+    bool                HasMouseFocus(void);
 
-bool                Window_HasInputFocus(void);
-bool                Window_HasMouseFocus(void);
-
-const WindowDesc*   Window_GetMainWindow(void);
-
-#ifdef __cplusplus
+    const WindowDesc*   GetMainWindow(void);
 }
-#endif

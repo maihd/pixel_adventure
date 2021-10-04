@@ -23,10 +23,10 @@ static void Application_RenderProfiler(float deltaTime)
     vec2 fpsTextSize = vec2_mul1(Graphics::TextSize(fpsText), 2.0f);
 
     Graphics::DrawQuad(
-        vec2_new(0.0f, (float)Window_GetHeight()),
-        vec2_new(fpsTextSize.x + 10.0f, (float)Window_GetHeight() - 1.5f * fpsTextSize.y - 10.0f),
+        vec2_new(0.0f, (float)Window::GetHeight()),
+        vec2_new(fpsTextSize.x + 10.0f, (float)Window::GetHeight() - 1.5f * fpsTextSize.y - 10.0f),
         vec3_new1(0.0f));
-    Graphics::DrawText(fpsText, vec2_new(5.0f, (float)Window_GetHeight() - 5.0f), vec3_new(0.25f, 0.5f, 1.0f));
+    Graphics::DrawText(fpsText, vec2_new(5.0f, (float)Window::GetHeight() - 5.0f), vec3_new(0.25f, 0.5f, 1.0f));
 }
 
 static void Application_HandleWindowError()
@@ -47,8 +47,8 @@ int ApplicationMain(int argc, char* argv[])
     window.y = -1;
     window.width = 448;
     window.height = 256;
-    window.flags = WindowFlags_Default;
-    if (!Window_Open(&window))
+    window.flags = WindowFlags::Default;
+    if (!Window::Open(&window))
     {
         Application_HandleWindowError();
         return -1;
@@ -58,7 +58,7 @@ int ApplicationMain(int argc, char* argv[])
     if (graphicsError != GraphicsError::None)
     {
         Application_HandleRendererError(graphicsError);
-        Window_Close(&window);
+        Window::Close(&window);
         return -1;
     }
 
@@ -68,7 +68,7 @@ int ApplicationMain(int argc, char* argv[])
 
     Game_Setup();
 
-    while (Window_PollEvents())
+    while (Window::PollEvents())
     {
         // Handle window state
         //if (window.resetScenario != WindowResetScenario_None)
@@ -123,6 +123,6 @@ int ApplicationMain(int argc, char* argv[])
     
     Graphics::Shutdown(&window);
 
-    Window_Close(&window);
+    Window::Close(&window);
     return 0;
 }
