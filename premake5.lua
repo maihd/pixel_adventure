@@ -76,10 +76,16 @@ do
 
     defines {
     }
+
+    links {
+        "SDL2",
+        "SDL2main"
+    }
     
     includedirs {
         path.join(ROOT_DIR, "src"),
         path.join(ROOT_DIR, "3rd_party"),
+        path.join(ROOT_DIR, "3rd_party/glad/include"),
         path.join(ROOT_DIR, "3rd_party/LDtkLoader/include"),
     }
 
@@ -100,6 +106,7 @@ do
         "src/Native",
         
         "3rd_party/imgui",
+        "3rd_party/glad/src",
         "3rd_party/LDtkLoader/src",
 
         "src/ThirdPartyImpl",
@@ -116,6 +123,12 @@ do
 
     filter "action:vs*"
     do
+        local SDL_PATH = path.join(ROOT_DIR, "3rd_party/SDL2-devel-2.0.16-VC")
+
+        includedirs {
+            path.join(SDL_PATH, "include")
+        }
+
         filedirs { 
             "src/Native/Win32",
             "src/ThirdPartyImpl/Win32",
@@ -128,6 +141,28 @@ do
         filter "configurations:*Release"
         do
             linkoptions "/SUBSYSTEM:WINDOWS"
+        end
+
+        filter "platforms:x32"
+        do
+            libdirs {
+                path.join(SDL_PATH, "lib/x86")
+            }
+
+            postbuildcommands {
+                "xcopy \"" .. path.join(SDL_PATH, "lib/x86/SDL2.dll") .. "\" \"$(OutDir)\" /D /E /I /F /Y"
+            }
+        end
+
+        filter "platforms:x64"
+        do
+            libdirs {
+                path.join(SDL_PATH, "lib/x64")
+            }
+
+            postbuildcommands {
+                "xcopy \"" .. path.join(SDL_PATH, "lib/x64/SDL2.dll") .. "\" \"$(OutDir)\" /D /E /I /F /Y"
+            }
         end
         
         filter {}

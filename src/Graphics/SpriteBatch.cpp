@@ -2,7 +2,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "OpenGL.h"
+#include <glad/glad.h>
+
 #include "Graphics.h"
 #include "SpriteBatch.h"
 #include "Native/Memory.h"

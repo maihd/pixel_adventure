@@ -1,10 +1,9 @@
 #pragma once
 
 #include <stdint.h>
-
-#ifndef __cplusplus
 #include <stdbool.h>
-#else
+
+#ifdef __cplusplus
 #include <assert.h> // For auto unclosed window attempt to be destroyed
 #endif
 
@@ -33,8 +32,8 @@ typedef enum WindowResetScenario
 
 typedef struct WindowDesc
 {
-    uintptr_t           handle;
-    uintptr_t           device;
+    void*               handle;
+    void*               context;
 
     uint32_t            flags;
     const char*         title;
@@ -48,8 +47,8 @@ typedef struct WindowDesc
 
     #ifdef __cplusplus
     inline WindowDesc()
-        : handle(0)
-        , device(0)
+        : handle(nullptr)
+        , context(nullptr)
         , flags(WindowFlags_None)
         , title("")
         , width(0)
@@ -62,7 +61,7 @@ typedef struct WindowDesc
 
     inline ~WindowDesc()
     {
-        assert(handle == 0 && device == 0);
+        assert(handle == nullptr && context == nullptr);
     }
     #endif
 } WindowDesc;

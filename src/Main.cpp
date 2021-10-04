@@ -9,12 +9,9 @@
 #   include "../unit_tests/test_framework.h"
 #endif
 
-#if defined(_WIN32) && defined(SUBSYSTEM_WINDOWS)
-#include <Windows.h>
-int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nShowCmd)
-#else
-int main(const int argc, const char* argv[])
-#endif
+#include <SDL2/SDL_main.h>
+
+int main(int argc, char* argv[])
 {
 #ifndef NDEBUG
     int runTestsStatus = RunAllUnitTests(argc, argv);
@@ -22,11 +19,6 @@ int main(const int argc, const char* argv[])
     {
         return runTestsStatus;
     }
-#endif
-
-#if defined(_WIN32) && defined(SUBSYSTEM_WINDOWS)
-    int         argc    = 0;
-    const char* argv[]  = { "" };
 #endif
     
     return ApplicationMain(argc, argv);

@@ -6,6 +6,7 @@
 struct Sprite;
 struct SpriteSheet;
 struct SpriteBatch;
+struct WindowDesc;
 
 struct Sprite
 {
@@ -39,8 +40,8 @@ enum struct GraphicsError : uint32_t
 
 namespace Graphics
 {
-    GraphicsError   Setup(struct WindowDesc* window);
-    void            Shutdown(struct WindowDesc* window);
+    GraphicsError   Setup(WindowDesc* window);
+    void            Shutdown(WindowDesc* window);
 
     void            Clear(void);
     void            Present(void);

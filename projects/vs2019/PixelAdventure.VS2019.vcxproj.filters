@@ -10,6 +10,12 @@
     <Filter Include="3rd_party\LDtkLoader\src">
       <UniqueIdentifier>{A9C06316-95E5-B296-BE30-9826AAB4B1B4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3rd_party\glad">
+      <UniqueIdentifier>{E41743EB-D0E5-36F1-B979-A717A5E61256}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rd_party\glad\src">
+      <UniqueIdentifier>{FB273085-E70B-F1DA-506C-EB2D3C6FDB5C}</UniqueIdentifier>
+    </Filter>
     <Filter Include="3rd_party\imgui">
       <UniqueIdentifier>{E7EDCA53-5379-3818-5C8A-BB0CC8949418}</UniqueIdentifier>
     </Filter>
@@ -206,6 +212,9 @@
     <ClCompile Include="..\..\3rd_party\LDtkLoader\src\World.cpp">
       <Filter>3rd_party\LDtkLoader\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\3rd_party\glad\src\glad.c">
+      <Filter>3rd_party\glad\src</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\3rd_party\imgui\imgui.cpp">
       <Filter>3rd_party\imgui</Filter>
     </ClCompile>
@@ -274,6 +283,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Native\Win32\Window_Win32.c">
       <Filter>src\Native\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Native\Window.c">
+      <Filter>src\Native</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Text\Json.c">
       <Filter>src\Text</Filter>

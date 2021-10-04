@@ -1,38 +1,30 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include "OpenGL.h"
+#include <stb/stb_image.h>
+#include <stb/stb_easy_font.h>
+
+#include <SDL2/SDL.h>
+#include <glad/glad.h>
+
 #include "Graphics.h"
 #include "SpriteBatch.h"
 #include "Native/Window.h"
 #include "Native/FileSystem.h"
 #include "Math/VectorMathSimd.h"
 
-#include <stb/stb_image.h>
-#include <stb/stb_easy_font.h>
+static WindowDesc*      gMainWindow;
+static SDL_GLContext    gGLContext;
 
-// Platform dependent
-#if defined(_WIN32)
-#   define NOMINMAX
-#   define VC_EXTRALEAN
-#   define WIN32_LEAN_AND_MEAN
-#   include <Windows.h>
-#else
-#   include <SDL2/SDL.h>
-#endif
+static uint32_t         gProgramDrawText;
+static uint32_t         gProgramDrawSprite;
+static uint32_t         gProgramSpriteBatch;
 
-static WindowDesc*  gMainWindow;
-static void*        gGLContext;
+static uint32_t         gVao;
+static uint32_t         gVbo;
+static uint32_t         gIbo;
 
-static uint32_t     gProgramDrawText;
-static uint32_t     gProgramDrawSprite;
-static uint32_t     gProgramSpriteBatch;
-
-static uint32_t     gVao;
-static uint32_t     gVbo;
-static uint32_t     gIbo;
-
-static mat4         gProjection;
+static mat4             gProjection;
 
 static const char* vshader_src =
     "#version 330 core\n"
@@ -164,20 +156,12 @@ GraphicsError Graphics::Setup(struct WindowDesc* window)
 {
     assert(gMainWindow == NULL && gGLContext == NULL);
 
-    GLLoadError loadError = glLoadFunctions();
-    if (loadError != GLLoadError_None)
+    if (!gladLoadGL())
     {
-        switch (loadError)
-        {
-        case GLLoadError_LoadDriverFailed:
-            return GraphicsError::LoadDriverFailed;
-
-        default:
-            return GraphicsError::InternalFatal;
-        }
+        return GraphicsError::LoadDriverFailed;
     }
 
-    gGLContext = glCreateContext(window);
+    gGLContext = window->context;
     if (!gGLContext)
     {
         return GraphicsError::CreateContextFailed;
@@ -222,8 +206,6 @@ void Graphics::Shutdown(struct WindowDesc* window)
         gProgramDrawSprite = 0;
         gProgramDrawText = 0;
 
-        glDeleteContext(gGLContext);
-
         gGLContext  = NULL;
         gMainWindow = NULL;
     }
@@ -235,6 +217,7 @@ void Graphics::Clear()
     
     gProjection = mat4_ortho(0, (float)gMainWindow->width, 0, (float)gMainWindow->height, -10.0f, 10.0f);
 
+    SDL_GL_MakeCurrent((SDL_Window*)gMainWindow->handle, gGLContext);
     glViewport(0, 0, gMainWindow->width, gMainWindow->height);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -244,13 +227,8 @@ void Graphics::Present()
 {
     assert(gMainWindow != NULL && gGLContext != NULL);
 
-    glMakeContextCurrent(gMainWindow, gGLContext);
-
-#if defined(_WIN32)
-    SwapBuffers((HDC)gMainWindow->device);
-#else
+    SDL_GL_MakeCurrent((SDL_Window*)gMainWindow->handle, gGLContext);
     SDL_GL_SwapWindow((SDL_Window*)gMainWindow->handle);
-#endif
 }
 
 bool Graphics::LoadSpriteSheet(SpriteSheet* spriteSheet, const char* file, int32_t cols, int32_t rows)
@@ -276,7 +254,7 @@ bool Graphics::LoadSpriteSheet(SpriteSheet* spriteSheet, const char* file, int32
         return false;
     }
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, channels == 4 ? GL_RGBA : GL_RGB, GL_UINT8, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, channels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, pixels);
     free(pixels);
     
     int32_t spriteCount = cols * rows;
@@ -370,7 +348,6 @@ vec2 Graphics::TextSize(const char* text)
     return vec2_mul1(vec2_new((float)stb_easy_font_width((char*)text), (float)stb_easy_font_height((char*)text)), 3.0f);
 }
 
-#undef DrawText
 void Graphics::DrawText(const char* text, vec2 position, vec3 color)
 {
     static float    vertices[4 * 10 * 1024]; // ~2000 chars
@@ -407,7 +384,7 @@ void Graphics::DrawText(const char* text, vec2 position, vec3 color)
     glUniformMatrix4fv(glGetUniformLocation(gProgramDrawText, "Projection"), 1, false, (const float*)&gProjection);
     glUniform3f(glGetUniformLocation(gProgramDrawText, "Color"), color.x, color.y, color.z);
 
-    glDrawElements(GL_TRIANGLES, indexCount, GL_UINT16, NULL);
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_SHORT, NULL);
 }
 
 void Graphics::DrawQuad(vec2 start, vec2 end, vec3 color)

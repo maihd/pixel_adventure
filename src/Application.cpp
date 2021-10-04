@@ -39,7 +39,7 @@ static void Application_HandleRendererError(GraphicsError error)
 
 }
 
-int ApplicationMain(const int argc, const char* argv[])
+int ApplicationMain(int argc, char* argv[])
 {
     WindowDesc window;
     window.title = "Pixel Adventure";
@@ -58,6 +58,7 @@ int ApplicationMain(const int argc, const char* argv[])
     if (graphicsError != GraphicsError::None)
     {
         Application_HandleRendererError(graphicsError);
+        Window_Close(&window);
         return -1;
     }
 

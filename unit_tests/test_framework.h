@@ -186,9 +186,9 @@ int UnitTest::TestFailed(const char* file, const int line)
 }
 
 #if defined(UNIT_TESTS_MAIN)
-int UNIT_TESTS_MAIN(const int argc, const char* argv[])
+int UNIT_TESTS_MAIN(int argc, char* argv[])
 #else
-int main(const int argc, const char* argv[])
+int main(int argc, char* argv[])
 #endif
 {
     if (argc > 1)
