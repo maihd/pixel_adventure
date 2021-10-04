@@ -33,7 +33,6 @@ typedef enum WindowResetScenario
 typedef struct WindowDesc
 {
     void*               handle;
-    void*               context;
 
     uint32_t            flags;
     const char*         title;
@@ -48,7 +47,6 @@ typedef struct WindowDesc
     #ifdef __cplusplus
     inline WindowDesc()
         : handle(nullptr)
-        , context(nullptr)
         , flags(WindowFlags_None)
         , title("")
         , width(0)
@@ -61,7 +59,7 @@ typedef struct WindowDesc
 
     inline ~WindowDesc()
     {
-        assert(handle == nullptr && context == nullptr);
+        assert(handle == nullptr);
     }
     #endif
 } WindowDesc;

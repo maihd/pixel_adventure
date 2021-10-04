@@ -244,32 +244,8 @@ bool Window_Open(WindowDesc* window)
         return false;
     }
 
-    // Create OpenGL Context
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GLContext context = SDL_GL_CreateContext(handle);
-    if (!context)
-    {
-        SDL_DestroyWindow(handle);
-        return false;
-    }
-
-    gMainWindow = window;
-
     window->handle = handle;
-    window->context = context;
+    gMainWindow = window;
     
     // Apply borderless or fullscreen
     switch (flags & (WindowFlags_Borderless | WindowFlags_Fullscreen))
@@ -293,17 +269,14 @@ void Window_Close(WindowDesc* window)
     assert(gMainWindow == window);
 
     // Destroyed native handle
-    SDL_GL_DeleteContext(window->context);
     SDL_DestroyWindow((SDL_Window*)window->handle);
 
     // Handle quit message
     Window_PollEvents();
 
     // Reset window state
-    window->handle = NULL;
-    window->context = NULL;
-
-    gMainWindow = NULL;
+    window->handle = nullptr;
+    gMainWindow = nullptr;
 }
 
 bool Window_PollEvents(void)

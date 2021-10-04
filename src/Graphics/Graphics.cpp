@@ -204,23 +204,41 @@ GraphicsError Graphics::Setup(struct WindowDesc* window)
 {
     assert(gMainWindow == NULL && gGLContext == NULL);
 
-    if (!gladLoadGL())
-    {
-        return GraphicsError::LoadDriverFailed;
-    }
-
-    gGLContext = window->context;
+    // Create OpenGL Context
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    gGLContext = SDL_GL_CreateContext((SDL_Window*)window->handle);
     if (!gGLContext)
     {
         return GraphicsError::CreateContextFailed;
     }
 
+    // Load OpenGL Driver
+    if (!gladLoadGL())
+    {
+        return GraphicsError::LoadDriverFailed;
+    }
+
+    // Store main window for use later
+    gMainWindow = window;
+
+    // Bind debugger
 #ifndef NDEBUG
     glDebugMessageCallback(DebugOutput, nullptr);
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-#endif    
-
-    gMainWindow = window;
+#endif
     
     // Apply default settings
     glEnable(GL_BLEND);
@@ -259,8 +277,9 @@ void Graphics::Shutdown(struct WindowDesc* window)
         gProgramDrawSprite = 0;
         gProgramDrawText = 0;
 
-        gGLContext  = NULL;
-        gMainWindow = NULL;
+        SDL_GL_DeleteContext(gGLContext);
+        gGLContext  = nullptr;
+        gMainWindow = nullptr;
     }
 }
 
