@@ -191,7 +191,7 @@ void CreateSpriteBatch(const ldtk::Layer* layer)
     const SpriteSheet spritesheet = spritesheets[tileset->uid];
 
     SpriteBatch spriteBatch = {};
-    spriteBatch.Create(&spritesheets[tileset->uid], layer->allTiles().size() * 6);
+    spriteBatch.Create(&spritesheets[tileset->uid], (int32_t)layer->allTiles().size() * 6);
     
     spriteBatch.Begin();
     for (ldtk::Tile tile : layer->allTiles())
@@ -314,7 +314,7 @@ void Game_Unload()
 
 void Game_Update(float totalTime, float deltaTime)
 {
-    if (InputSystem_GetKey(KeyCode_LeftArrow))
+    if (InputSystem_GetKey(KeyCode::LeftArrow))
     {
         frog.ratioVelocity.x = -4.0f;
 
@@ -322,7 +322,7 @@ void Game_Update(float totalTime, float deltaTime)
         frogPosition.x -= 100.0f * deltaTime;
     }
 
-    if (InputSystem_GetKey(KeyCode_RightArrow))
+    if (InputSystem_GetKey(KeyCode::RightArrow))
     {
         frog.ratioVelocity.x = 4.0f;
 
@@ -330,7 +330,7 @@ void Game_Update(float totalTime, float deltaTime)
         frogPosition.x += 100.0f * deltaTime;
     }
 
-    if (InputSystem_GetKeyDown(KeyCode_Space))
+    if (InputSystem_GetKeyDown(KeyCode::Space))
     {
         if (EntityOnGround(frog, grid))
         {
