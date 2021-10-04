@@ -152,6 +152,54 @@ static uint32_t CreateProgram(const char* vshaderSource, const char* fshaderSour
     return program;
 }
 
+static void APIENTRY DebugOutput(GLenum source,
+    GLenum type,
+    unsigned int id,
+    GLenum severity,
+    GLsizei length,
+    const char* message,
+    const void* userParam)
+{
+    // ignore non-significant error/warning codes
+    if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+
+    printf("---------------\n");
+    printf("Debug message (%d): %s\n", id, message);
+
+    switch (source)
+    {
+    case GL_DEBUG_SOURCE_API:             printf("Source: API\n");              break;
+    case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   printf("Source: Window System\n");    break;
+    case GL_DEBUG_SOURCE_SHADER_COMPILER: printf("Source: Shader Compiler\n");  break;
+    case GL_DEBUG_SOURCE_THIRD_PARTY:     printf("Source: Third Party\n");      break;
+    case GL_DEBUG_SOURCE_APPLICATION:     printf("Source: Application\n");      break;
+    case GL_DEBUG_SOURCE_OTHER:           printf("Source: Other\n");            break;
+    };
+
+    switch (type)
+    {
+    case GL_DEBUG_TYPE_ERROR:               printf("Type: Error\n");                break;
+    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: printf("Type: Deprecated Behaviour\n"); break;
+    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  printf("Type: Undefined Behaviour\n");  break;
+    case GL_DEBUG_TYPE_PORTABILITY:         printf("Type: Portability\n");          break;
+    case GL_DEBUG_TYPE_PERFORMANCE:         printf("Type: Performance\n");          break;
+    case GL_DEBUG_TYPE_MARKER:              printf("Type: Marker\n");               break;
+    case GL_DEBUG_TYPE_PUSH_GROUP:          printf("Type: Push Group\n");           break;
+    case GL_DEBUG_TYPE_POP_GROUP:           printf("Type: Pop Group\n");            break;
+    case GL_DEBUG_TYPE_OTHER:               printf("Type: Other\n");                break;
+    };
+
+    switch (severity)
+    {
+    case GL_DEBUG_SEVERITY_HIGH:         printf("Severity: high\n");            break;
+    case GL_DEBUG_SEVERITY_MEDIUM:       printf("Severity: medium\n");          break;
+    case GL_DEBUG_SEVERITY_LOW:          printf("Severity: low\n");             break;
+    case GL_DEBUG_SEVERITY_NOTIFICATION: printf("Severity: notification\n");    break;
+    };
+
+    printf("---------------\n");
+}
+
 GraphicsError Graphics::Setup(struct WindowDesc* window)
 {
     assert(gMainWindow == NULL && gGLContext == NULL);
@@ -166,7 +214,12 @@ GraphicsError Graphics::Setup(struct WindowDesc* window)
     {
         return GraphicsError::CreateContextFailed;
     }
-    
+
+#ifndef NDEBUG
+    glDebugMessageCallback(DebugOutput, nullptr);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+#endif    
+
     gMainWindow = window;
     
     // Apply default settings
