@@ -5,8 +5,8 @@
 
 #include <SDL2/SDL.h>
 
+#include "Native/Input.h"
 #include "Native/Window.h"
-#include "Framework/InputSystem.h"
 
 static WindowDesc* gMainWindow;
 
@@ -145,27 +145,27 @@ static void HandleEvent(const SDL_Event* event)
     case SDL_MOUSEBUTTONDOWN: {
         if (event->button.button & SDL_BUTTON_LEFT)
         {
-            InputSystem_UpdateMouse(MouseButton::Left, false);
+            Input::UpdateMouse(MouseButton::Left, false);
         }
 
         if (event->button.button & SDL_BUTTON_RIGHT)
         {
-            InputSystem_UpdateMouse(MouseButton::Right, false);
+            Input::UpdateMouse(MouseButton::Right, false);
         }
 
         if (event->button.button & SDL_BUTTON_MIDDLE)
         {
-            InputSystem_UpdateMouse(MouseButton::Middle, false);
+            Input::UpdateMouse(MouseButton::Middle, false);
         }
 
         if (event->button.button & SDL_BUTTON_X1)
         {
-            InputSystem_UpdateMouse(MouseButton::XButton1, false);
+            Input::UpdateMouse(MouseButton::XButton1, false);
         }
 
         if (event->button.button & SDL_BUTTON_X2)
         {
-            InputSystem_UpdateMouse(MouseButton::XButton2, false);
+            Input::UpdateMouse(MouseButton::XButton2, false);
         }
         break;
     }
@@ -173,49 +173,49 @@ static void HandleEvent(const SDL_Event* event)
     case SDL_MOUSEBUTTONUP: {
         if (event->button.button & SDL_BUTTON_LEFT)
         {
-            InputSystem_UpdateMouse(MouseButton::Left, true);
+            Input::UpdateMouse(MouseButton::Left, true);
         }
 
         if (event->button.button & SDL_BUTTON_RIGHT)
         {
-            InputSystem_UpdateMouse(MouseButton::Right, true);
+            Input::UpdateMouse(MouseButton::Right, true);
         }
 
         if (event->button.button & SDL_BUTTON_MIDDLE)
         {
-            InputSystem_UpdateMouse(MouseButton::Middle, true);
+            Input::UpdateMouse(MouseButton::Middle, true);
         }
 
         if (event->button.button & SDL_BUTTON_X1)
         {
-            InputSystem_UpdateMouse(MouseButton::XButton1, true);
+            Input::UpdateMouse(MouseButton::XButton1, true);
         }
 
         if (event->button.button & SDL_BUTTON_X2)
         {
-            InputSystem_UpdateMouse(MouseButton::XButton2, true);
+            Input::UpdateMouse(MouseButton::XButton2, true);
         }
         break;
     }
 
     case SDL_MOUSEMOTION:
-        InputSystem_UpdateMouseMove((float)event->motion.x, (float)event->motion.y);
+        Input::UpdateMouseMove((float)event->motion.x, (float)event->motion.y);
         break;
 
     case SDL_MOUSEWHEEL:
-        InputSystem_UpdateMouseWheel((float)event->wheel.x, (float)event->wheel.y);
+        Input::UpdateMouseWheel((float)event->wheel.x, (float)event->wheel.y);
         break;
 
     case SDL_KEYUP:
-        InputSystem_UpdateKey(ConvertKeyCode((int)event->key.keysym.scancode), false);
+        Input::UpdateKey(ConvertKeyCode((int)event->key.keysym.scancode), false);
         break;
 
     case SDL_KEYDOWN:
-        InputSystem_UpdateKey(ConvertKeyCode((int)event->key.keysym.scancode), true);
+        Input::UpdateKey(ConvertKeyCode((int)event->key.keysym.scancode), true);
         break;
 
     case SDL_TEXTINPUT:
-        InputSystem_UpdateTextInput(event->text.text);
+        Input::UpdateTextInput(event->text.text);
         break;
 
     case SDL_WINDOWEVENT:

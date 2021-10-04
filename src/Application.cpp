@@ -3,6 +3,7 @@
 
 #include "Application.h"
 
+#include "Native/Input.h"
 #include "Native/Window.h"
 #include "Native/Thread.h"
 
@@ -10,7 +11,6 @@
 
 #include "Framework/Timer.h"
 #include "Framework/JobSystem.h"
-#include "Framework/InputSystem.h"
 
 #include "Game/Game.h"
 #include "Math/VectorMathSimd.h"
@@ -64,7 +64,7 @@ int ApplicationMain(int argc, char* argv[])
 
     // Shutdown subsystems
     JobSystem_Setup();
-    InputSystem_Setup();
+    Input::Setup();
 
     Game_Setup();
 
@@ -95,7 +95,7 @@ int ApplicationMain(int argc, char* argv[])
 
         // Start new frame
         Timer_NewFrame();
-        InputSystem_NewFrame();
+        Input::NewFrame();
         
         float totalTime = Timer_GetTotalTime();
         float deltaTime = Timer_GetDeltaTime();
@@ -111,14 +111,14 @@ int ApplicationMain(int argc, char* argv[])
         Graphics::Present();
 
         // Frame end
-        InputSystem_EndFrame();
+        Input::EndFrame();
         Timer_EndFrame();
     }
 
     Game_Shutdown();
 
     // Shutdown subsystems
-    InputSystem_Shutdown();
+    Input::Shutdown();
     JobSystem_Shutdown();
     
     Graphics::Shutdown(&window);

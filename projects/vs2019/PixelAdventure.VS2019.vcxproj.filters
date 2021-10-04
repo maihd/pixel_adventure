@@ -90,9 +90,6 @@
     <ClInclude Include="..\..\src\Container\HashTable.h">
       <Filter>src\Container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Framework\InputSystem.h">
-      <Filter>src\Framework</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Framework\JobSystem.h">
       <Filter>src\Framework</Filter>
     </ClInclude>
@@ -145,6 +142,9 @@
       <Filter>src\Native</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Native\HeapLayers.h">
+      <Filter>src\Native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Native\Input.h">
       <Filter>src\Native</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Native\Memory.h">
@@ -230,9 +230,6 @@
     <ClCompile Include="..\..\src\Application.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Framework\InputSystem.cpp">
-      <Filter>src\Framework</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Framework\JobSystem.cpp">
       <Filter>src\Framework</Filter>
     </ClCompile>
@@ -267,6 +264,9 @@
       <Filter>src\Native</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Native\HeapLayers.cpp">
+      <Filter>src\Native</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Native\Input.cpp">
       <Filter>src\Native</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Native\Memory.cpp">

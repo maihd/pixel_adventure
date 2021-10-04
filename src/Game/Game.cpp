@@ -3,19 +3,20 @@
 #include <memory.h>
 #include <stdlib.h>
 
+#include <LDtkLoader/World.hpp>
+
 #include "Game/Game.h"
 #include "Game/Components.h"
-#include "Math/VectorMathSimd.h"
+#include "Math/VectorMath.h"
 
+#include "Native/Input.h"
 #include "Native/Window.h"
 #include "Native/FileSystem.h"
+
 #include "Graphics/Graphics.h"
 #include "Graphics/SpriteBatch.h"
 
 #include "Framework/JobSystem.h"
-#include "Framework/InputSystem.h"
-
-#include <LDtkLoader/World.hpp>
 
 struct Grid
 {
@@ -314,7 +315,7 @@ void Game_Unload()
 
 void Game_Update(float totalTime, float deltaTime)
 {
-    if (InputSystem_GetKey(KeyCode::LeftArrow))
+    if (Input::GetKey(KeyCode::LeftArrow))
     {
         frog.ratioVelocity.x = -4.0f;
 
@@ -322,7 +323,7 @@ void Game_Update(float totalTime, float deltaTime)
         frogPosition.x -= 100.0f * deltaTime;
     }
 
-    if (InputSystem_GetKey(KeyCode::RightArrow))
+    if (Input::GetKey(KeyCode::RightArrow))
     {
         frog.ratioVelocity.x = 4.0f;
 
@@ -330,7 +331,7 @@ void Game_Update(float totalTime, float deltaTime)
         frogPosition.x += 100.0f * deltaTime;
     }
 
-    if (InputSystem_GetKeyDown(KeyCode::Space))
+    if (Input::GetKeyDown(KeyCode::Space))
     {
         if (EntityOnGround(frog, grid))
         {

@@ -209,7 +209,6 @@
     <ClInclude Include="..\..\src\Application.h" />
     <ClInclude Include="..\..\src\Container\Array.h" />
     <ClInclude Include="..\..\src\Container\HashTable.h" />
-    <ClInclude Include="..\..\src\Framework\InputSystem.h" />
     <ClInclude Include="..\..\src\Framework\JobSystem.h" />
     <ClInclude Include="..\..\src\Framework\Timer.h" />
     <ClInclude Include="..\..\src\Game\Components.h" />
@@ -228,6 +227,7 @@
     <ClInclude Include="..\..\src\Misc\Random.h" />
     <ClInclude Include="..\..\src\Native\FileSystem.h" />
     <ClInclude Include="..\..\src\Native\HeapLayers.h" />
+    <ClInclude Include="..\..\src\Native\Input.h" />
     <ClInclude Include="..\..\src\Native\Memory.h" />
     <ClInclude Include="..\..\src\Native\Thread.h" />
     <ClInclude Include="..\..\src\Native\Window.h" />
@@ -257,7 +257,6 @@
     <ClCompile Include="..\..\3rd_party\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\..\3rd_party\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\..\src\Application.cpp" />
-    <ClCompile Include="..\..\src\Framework\InputSystem.cpp" />
     <ClCompile Include="..\..\src\Framework\JobSystem.cpp" />
     <ClCompile Include="..\..\src\Framework\Timer.cpp" />
     <ClCompile Include="..\..\src\Game\Components.cpp" />
@@ -270,6 +269,7 @@
     <ClCompile Include="..\..\src\Misc\Random.cpp" />
     <ClCompile Include="..\..\src\Native\FileSystem.cpp" />
     <ClCompile Include="..\..\src\Native\HeapLayers.cpp" />
+    <ClCompile Include="..\..\src\Native\Input.cpp" />
     <ClCompile Include="..\..\src\Native\Memory.cpp" />
     <ClCompile Include="..\..\src\Native\Win32\Thread_Win32.cpp" />
     <ClCompile Include="..\..\src\Native\Window.cpp" />
