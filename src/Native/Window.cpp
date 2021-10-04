@@ -145,27 +145,27 @@ static void HandleEvent(const SDL_Event* event)
     case SDL_MOUSEBUTTONDOWN: {
         if (event->button.button & SDL_BUTTON_LEFT)
         {
-            InputSystem_UpdateMouse(MouseButton_Left, false);
+            InputSystem_UpdateMouse(MouseButton::Left, false);
         }
 
         if (event->button.button & SDL_BUTTON_RIGHT)
         {
-            InputSystem_UpdateMouse(MouseButton_Right, false);
+            InputSystem_UpdateMouse(MouseButton::Right, false);
         }
 
         if (event->button.button & SDL_BUTTON_MIDDLE)
         {
-            InputSystem_UpdateMouse(MouseButton_Middle, false);
+            InputSystem_UpdateMouse(MouseButton::Middle, false);
         }
 
         if (event->button.button & SDL_BUTTON_X1)
         {
-            InputSystem_UpdateMouse(MouseButton_XButton1, false);
+            InputSystem_UpdateMouse(MouseButton::XButton1, false);
         }
 
         if (event->button.button & SDL_BUTTON_X2)
         {
-            InputSystem_UpdateMouse(MouseButton_XButton2, false);
+            InputSystem_UpdateMouse(MouseButton::XButton2, false);
         }
         break;
     }
@@ -173,27 +173,27 @@ static void HandleEvent(const SDL_Event* event)
     case SDL_MOUSEBUTTONUP: {
         if (event->button.button & SDL_BUTTON_LEFT)
         {
-            InputSystem_UpdateMouse(MouseButton_Left, true);
+            InputSystem_UpdateMouse(MouseButton::Left, true);
         }
 
         if (event->button.button & SDL_BUTTON_RIGHT)
         {
-            InputSystem_UpdateMouse(MouseButton_Right, true);
+            InputSystem_UpdateMouse(MouseButton::Right, true);
         }
 
         if (event->button.button & SDL_BUTTON_MIDDLE)
         {
-            InputSystem_UpdateMouse(MouseButton_Middle, true);
+            InputSystem_UpdateMouse(MouseButton::Middle, true);
         }
 
         if (event->button.button & SDL_BUTTON_X1)
         {
-            InputSystem_UpdateMouse(MouseButton_XButton1, true);
+            InputSystem_UpdateMouse(MouseButton::XButton1, true);
         }
 
         if (event->button.button & SDL_BUTTON_X2)
         {
-            InputSystem_UpdateMouse(MouseButton_XButton2, true);
+            InputSystem_UpdateMouse(MouseButton::XButton2, true);
         }
         break;
     }

@@ -3,15 +3,19 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef enum MouseButton
+namespace MouseButtons
 {
-    MouseButton_None        = 0,
-    MouseButton_Left        = 1 << 0,
-    MouseButton_Middle      = 1 << 1,
-    MouseButton_Right       = 1 << 2,
-    MouseButton_XButton1    = 1 << 3,
-    MouseButton_XButton2    = 1 << 4,
-} MouseButton;
+    enum Type : uint32_t
+    {
+        None        = 0,
+        Left        = 1 << 0,
+        Middle      = 1 << 1,
+        Right       = 1 << 2,
+        XButton1    = 1 << 3,
+        XButton2    = 1 << 4,
+    };
+}
+using MouseButton = MouseButtons::Type;
 
 typedef enum GamepadAxis
 {
