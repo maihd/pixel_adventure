@@ -3,7 +3,8 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <malloc.h>
+
+#include "Native/Memory.h"
 
 template <typename T>
 struct Array
@@ -66,7 +67,7 @@ struct Array
     // Clean memory usage
     inline void CleanUp(void)
     {
-        _aligned_free(elements);
+        MemoryFree(elements);
 
         this->count    = 0;
         this->capacity = 0;
@@ -86,7 +87,7 @@ struct Array
             newCapacity |= newCapacity >> 16;
             newCapacity += 1;
 
-            T* newElements = (T*)_aligned_realloc(elements, (size_t)(sizeof(T) * newCapacity), alignof(T));
+            T* newElements = (T*)MemoryRealloc(elements, (size_t)(sizeof(T) * newCapacity), alignof(T));
             if (newElements)
             {
                 this->capacity = newCapacity;

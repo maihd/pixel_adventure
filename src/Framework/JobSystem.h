@@ -2,24 +2,15 @@
 
 #include <stdint.h>
 
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
-
 typedef void (JobFunc)(void* items);
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace JobSystem
+{
+    void    Setup(void);
+    void    Shutdown(void);
 
-void                JobSystem_Setup(void);
-void                JobSystem_Shutdown(void);
+    bool    IsIdle(void);
+    void    WaitIdle(void);
 
-bool                JobSystem_IsIdle(void);
-void                JobSystem_WaitIdle(void);
-
-void                JobSystem_QueueJob(JobFunc* func, void* items);
-
-#ifdef __cplusplus
+    void    Queue(JobFunc* func, void* items);
 }
-#endif

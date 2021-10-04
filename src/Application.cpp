@@ -63,48 +63,48 @@ int ApplicationMain(int argc, char* argv[])
     }
 
     // Shutdown subsystems
-    JobSystem_Setup();
+    JobSystem::Setup();
     Input::Setup();
 
-    Game_Setup();
+    Game::Setup();
 
     while (Window::PollEvents())
     {
         // Handle window state
-        //if (window.resetScenario != WindowResetScenario_None)
-        //{
-        //    if (window.resetScenario & WindowResetScenario_DeviceLost)
-        //    {
-        //        window.resetScenario &= ~WindowResetScenario_DeviceLost;
-        //        continue;
-        //    }
-        //
-        //    if (window.resetScenario & WindowResetScenario_Reload)
-        //    {
-        //        Game_Unload();
-        //
-        //        Game_Load();
-        //
-        //        window.resetScenario &= ~WindowResetScenario_Reload;
-        //        continue;
-        //    }
-        //
-        //    window.resetScenario = WindowResetScenario_None;
-        //    continue;
-        //}
+        if (window.resetScenario != WindowResetScenario::None)
+        {
+            if (window.resetScenario & WindowResetScenario::DeviceLost)
+            {
+                window.resetScenario &= ~WindowResetScenario::DeviceLost;
+                continue;
+            }
+        
+            if (window.resetScenario & WindowResetScenario::Reload)
+            {
+                Game::Unload();
+        
+                Game::Load();
+        
+                window.resetScenario &= ~WindowResetScenario::Reload;
+                continue;
+            }
+        
+            window.resetScenario = WindowResetScenario::None;
+            continue;
+        }
 
         // Start new frame
-        Timer_NewFrame();
+        Timer::NewFrame();
         Input::NewFrame();
         
-        float totalTime = Timer_GetTotalTime();
-        float deltaTime = Timer_GetDeltaTime();
+        float totalTime = Timer::GetTotalTime();
+        float deltaTime = Timer::GetDeltaTime();
 
-        Game_Update(totalTime, deltaTime);
+        Game::Update(totalTime, deltaTime);
 
         Graphics::Clear();
         
-        Game_Render();
+        Game::Render();
 
         //Application_RenderProfiler(deltaTime);
 
@@ -112,14 +112,14 @@ int ApplicationMain(int argc, char* argv[])
 
         // Frame end
         Input::EndFrame();
-        Timer_EndFrame();
+        Timer::EndFrame();
     }
 
-    Game_Shutdown();
+    Game::Shutdown();
 
     // Shutdown subsystems
     Input::Shutdown();
-    JobSystem_Shutdown();
+    JobSystem::Shutdown();
     
     Graphics::Shutdown(&window);
 

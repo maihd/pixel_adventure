@@ -231,11 +231,6 @@
     <ClInclude Include="..\..\src\Native\Memory.h" />
     <ClInclude Include="..\..\src\Native\Thread.h" />
     <ClInclude Include="..\..\src\Native\Window.h" />
-    <ClInclude Include="..\..\src\Text\Json.h" />
-    <ClInclude Include="..\..\src\Text\JsonSchema.h" />
-    <ClInclude Include="..\..\src\Text\String.h" />
-    <ClInclude Include="..\..\src\ThirdPartyImpl\Win32\imgui_impl_win32.h" />
-    <ClInclude Include="..\..\src\ThirdPartyImpl\imgui_impl_opengl3.h" />
     <ClInclude Include="..\..\unit_tests\test_framework.h" />
   </ItemGroup>
   <ItemGroup>
@@ -271,14 +266,9 @@
     <ClCompile Include="..\..\src\Native\HeapLayers.cpp" />
     <ClCompile Include="..\..\src\Native\Input.cpp" />
     <ClCompile Include="..\..\src\Native\Memory.cpp" />
-    <ClCompile Include="..\..\src\Native\Win32\Thread_Win32.cpp" />
+    <ClCompile Include="..\..\src\Native\Thread.cpp" />
     <ClCompile Include="..\..\src\Native\Window.cpp" />
-    <ClCompile Include="..\..\src\Text\Json.c" />
-    <ClCompile Include="..\..\src\Text\JsonSchema.c" />
-    <ClCompile Include="..\..\src\Text\String.c" />
     <ClCompile Include="..\..\src\ThirdPartyImpl\StbImpl.cpp" />
-    <ClCompile Include="..\..\src\ThirdPartyImpl\Win32\imgui_impl_win32.cpp" />
-    <ClCompile Include="..\..\src\ThirdPartyImpl\imgui_impl_opengl3.cpp" />
     <ClCompile Include="..\..\unit_tests\cases\test_float.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

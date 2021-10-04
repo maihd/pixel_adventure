@@ -1,219 +1,219 @@
 #include "JobSystem.h"
 
 #include "Native/Thread.h"
-#include "Math/VectorMathSimd.h"
+#include "Math/VectorMath.h"
 
-enum
-{
-    JOB_SYSTEM_MAX_WORKERS = 16,
-    JOB_SYSTEM_MAX_JOBS = 32,
-};
+constexpr int32_t JOB_SYSTEM_MAX_WORKERS    = 16;
+constexpr int32_t JOB_SYSTEM_MAX_JOBS       = 32;
 
 /// This data structure only use for JobSystem
-typedef struct Job
+struct Job
 {
     JobFunc*        func;
     void*           data;
-} Job;
+};
 
 /// The job system for parallel computing. The workers donot steal job.
 /// The JobSystem must be alive long enough before worker threads done,
 /// should allocate JobSystem's memory in global/static scope, main() function, or heap.
-typedef struct JobSystem
+struct JobSystemState
 {
-    ThreadDesc      workerThreads[JOB_SYSTEM_MAX_WORKERS];                  // Workers' thread description
+    Thread          workerThreads[JOB_SYSTEM_MAX_WORKERS]               = {};   // Workers' thread description
 
-    Job             jobs[JOB_SYSTEM_MAX_WORKERS][JOB_SYSTEM_MAX_JOBS];      // Jobs ring buffer
-    int32_t         queueIndex[JOB_SYSTEM_MAX_WORKERS];                     // Safe index to queue a new job
-    int32_t         runningIndex[JOB_SYSTEM_MAX_WORKERS];                   // The current running job
-    int32_t         currentWorkerIndex;                                     // Find out which worker receive the job
+    Job             jobs[JOB_SYSTEM_MAX_WORKERS][JOB_SYSTEM_MAX_JOBS]   = {};   // Jobs ring buffer
+    int32_t         queueIndex[JOB_SYSTEM_MAX_WORKERS]                  = {};   // Safe index to queue a new job
+    int32_t         runningIndex[JOB_SYSTEM_MAX_WORKERS]                = {};   // The current running job
+    int32_t         currentWorkerIndex                                  = 0;    // Find out which worker receive the job
 
-    ThreadMutex     mutex;
-    ThreadSignal    idleSignal;
-    ThreadSignal    queueSignal;
+    ThreadMutex     mutex                                               = {};
+    ThreadSignal    idleSignal                                          = {};
+    ThreadSignal    queueSignal                                         = {};
 
-    int32_t         workerCount;
-    int32_t         idleWorkerCount;
+    int32_t         workerCount                                         = 0;
+    int32_t         idleWorkerCount                                     = 0;
 
-    volatile bool   running;
-} JobSystem;
+    volatile bool   running                                             = false;
 
-static int JobSystem_ThreadFunc(void* data);
-
-void JobSystem_Create(JobSystem* jobSystem, int32_t requestWorkers)
-{
-    const int threadCount = max(1, Thread_GetCpuCores());
-    const int workerCount = requestWorkers <= 0 ? threadCount : min(threadCount, min(requestWorkers, JOB_SYSTEM_MAX_WORKERS));
-
-    ThreadMutex_Create(&jobSystem->mutex);
-    ThreadSignal_Create(&jobSystem->idleSignal);
-    ThreadSignal_Create(&jobSystem->queueSignal);
-
-    jobSystem->running = true;
-
-    jobSystem->idleWorkerCount = 0;
-    
-    jobSystem->workerCount = workerCount;
-    for (int i = 0; i < workerCount; i++)
+    static int ThreadFunc(void* data)
     {
-        jobSystem->queueIndex[i] = 0;
-        jobSystem->runningIndex[i] = 0;
-        Thread_Run(JobSystem_ThreadFunc, jobSystem, &jobSystem->workerThreads[i]);
+        JobSystemState* jobSystem = (JobSystemState*)data;
+
+        jobSystem->MainLoop();
+
+        return 0;
     }
 
-    JobSystem_WaitIdle();
-}
-
-void JobSystem_Destroy(JobSystem* jobSystem)
-{
-    ThreadMutex_Lock(&jobSystem->mutex);
-    jobSystem->running = false;
-    ThreadMutex_Unlock(&jobSystem->mutex);
-
-    ThreadSignal_Broadcast(&jobSystem->queueSignal);
-
-    for (int i = 0, n = jobSystem->workerCount; i < n; i++)
+    void Create(int32_t requestWorkers)
     {
-        jobSystem->queueIndex[i] = 0;
-        jobSystem->runningIndex[i] = 0;
-        Thread_Join(&jobSystem->workerThreads[i]);
-    }
+        const int threadCount = max(1, ThreadSystem::GetCpuCores());
+        const int workerCount = requestWorkers <= 0 ? threadCount : min(threadCount, min(requestWorkers, JOB_SYSTEM_MAX_WORKERS));
 
-    ThreadSignal_Destroy(&jobSystem->queueSignal);
-    ThreadSignal_Destroy(&jobSystem->idleSignal);
-    ThreadMutex_Destroy(&jobSystem->mutex);
-}
+        this->mutex.Create();
+        this->idleSignal.Create();
+        this->queueSignal.Create();
 
-static bool JobSystem_IsIdle_NonLocking(JobSystem* jobSystem)
-{
-    bool allWorkersIdle = true;
-    for (int i = 0, n = jobSystem->workerCount; i < n; i++)
-    {
-        if (jobSystem->queueIndex[i] != jobSystem->runningIndex[i])
+        this->running = true;
+
+        this->idleWorkerCount = 0;
+
+        this->workerCount = workerCount;
+        for (int i = 0; i < workerCount; i++)
         {
-            allWorkersIdle = false;
-            break;
+            this->queueIndex[i] = 0;
+            this->runningIndex[i] = 0;
+            this->workerThreads[i].Start(ThreadFunc, this);
         }
+
+        this->WaitIdle();
     }
 
-    return (allWorkersIdle && (jobSystem->idleWorkerCount == jobSystem->workerCount)) || !jobSystem->running;
-}
-
-bool JobSystem_IsIdlePtr(JobSystem* jobSystem)
-{
-    ThreadMutex_Lock(&jobSystem->mutex);
-    
-    const bool isIdle = JobSystem_IsIdle_NonLocking(jobSystem);
-
-    ThreadMutex_Unlock(&jobSystem->mutex);
-    return isIdle;
-}
-
-void JobSystem_WaitIdlePtr(JobSystem* jobSystem)
-{
-    ThreadMutex_Lock(&jobSystem->mutex);
-
-    while (!JobSystem_IsIdle_NonLocking(jobSystem))
+    void Destroy()
     {
-        ThreadSignal_Wait(&jobSystem->idleSignal, &jobSystem->mutex);
+        this->mutex.Lock();
+        this->running = false;
+        this->mutex.Unlock();
+
+        this->queueSignal.Broadcast();
+
+        for (int i = 0, n = this->workerCount; i < n; i++)
+        {
+            this->queueIndex[i] = 0;
+            this->runningIndex[i] = 0;
+            this->workerThreads[i].Wait();
+        }
+
+        this->queueSignal.Destroy();
+        this->idleSignal.Destroy();
+        this->mutex.Destroy();
     }
 
-    ThreadMutex_Unlock(&jobSystem->mutex);
-}
-
-void JobSystem_QueueJobPtr(JobSystem* jobSystem, JobFunc* func, void* items)
-{
-    ThreadMutex_Lock(&jobSystem->mutex);
-
-    const int workerIndex = jobSystem->currentWorkerIndex;
-
-    Job* jobs = jobSystem->jobs[workerIndex];
-    int* queueIndex = &jobSystem->queueIndex[workerIndex];
-
-    jobs[*queueIndex] = Job{ func, items };
-    *queueIndex = (*queueIndex + 1) % JOB_SYSTEM_MAX_JOBS;
-
-    jobSystem->currentWorkerIndex = (workerIndex + 1) % jobSystem->workerCount;
-
-    ThreadMutex_Unlock(&jobSystem->mutex);
-
-    ThreadSignal_Broadcast(&jobSystem->queueSignal);
-}
-
-static JobSystem gJobSystem;
-
-void JobSystem_Setup(void)
-{
-    JobSystem_Create(&gJobSystem, -1);
-}
-
-void JobSystem_Shutdown(void)
-{
-    JobSystem_Destroy(&gJobSystem);
-}
-
-bool JobSystem_IsIdle(void)
-{
-    return JobSystem_IsIdlePtr(&gJobSystem);
-}
-
-void JobSystem_WaitIdle()
-{
-    JobSystem_WaitIdlePtr(&gJobSystem);
-}
-
-void JobSystem_QueueJob(JobFunc* func, void* items)
-{
-    JobSystem_QueueJobPtr(&gJobSystem, func, items);
-}
-
-int JobSystem_ThreadFunc(void* data)
-{
-    JobSystem* jobSystem = (JobSystem*)data;
-
-    ThreadMutex_Lock(&jobSystem->mutex);
-    
-    const int workerIndex = jobSystem->currentWorkerIndex;
-
-    Job* jobs = jobSystem->jobs[workerIndex];
-    int* queueIndex = &jobSystem->queueIndex[workerIndex];
-    int* runningIndex = &jobSystem->runningIndex[workerIndex];
-
-    jobSystem->currentWorkerIndex = (jobSystem->currentWorkerIndex + 1) % jobSystem->workerCount;
-    ThreadMutex_Unlock(&jobSystem->mutex);
-
-    while (jobSystem->running)
+    bool IsIdle_NonLocking()
     {
-        ThreadMutex_Lock(&jobSystem->mutex);
-
-        jobSystem->idleWorkerCount++;
-        while (jobSystem->running && *queueIndex == *runningIndex)
+        bool allWorkersIdle = true;
+        for (int i = 0, n = this->workerCount; i < n; i++)
         {
-            ThreadSignal_Broadcast(&jobSystem->idleSignal);
-            ThreadSignal_Wait(&jobSystem->queueSignal, &jobSystem->mutex);
+            if (this->queueIndex[i] != this->runningIndex[i])
+            {
+                allWorkersIdle = false;
+                break;
+            }
         }
-        jobSystem->idleWorkerCount--;
-        ThreadMutex_Unlock(&jobSystem->mutex);
 
-        while (*queueIndex != *runningIndex)
-        {
-            ThreadMutex_Lock(&jobSystem->mutex);
-            Job job = jobs[*runningIndex];
-
-            *runningIndex = (*runningIndex + 1) % JOB_SYSTEM_MAX_JOBS;
-
-            ThreadMutex_Unlock(&jobSystem->mutex);
-
-            job.func(job.data);
-        }
+        return (allWorkersIdle && (this->idleWorkerCount == this->workerCount)) || !this->running;
     }
 
-    ThreadMutex_Lock(&jobSystem->mutex);
-    
-    jobSystem->idleWorkerCount++;
-    ThreadSignal_Broadcast(&jobSystem->idleSignal);
+    bool IsIdle()
+    {
+        this->mutex.Lock();
 
-    ThreadMutex_Unlock(&jobSystem->mutex);
+        const bool isIdle = IsIdle_NonLocking();
 
-    return 0;
+        this->mutex.Unlock();
+        return isIdle;
+    }
+
+    void WaitIdle()
+    {
+        this->mutex.Lock();
+
+        while (!IsIdle_NonLocking())
+        {
+            this->idleSignal.Wait(this->mutex);
+        }
+
+        this->mutex.Unlock();
+    }
+
+    void QueueJob(JobFunc* func, void* items)
+    {
+        this->mutex.Lock();
+
+        const int workerIndex = this->currentWorkerIndex;
+
+        Job* jobs = this->jobs[workerIndex];
+        int* queueIndex = &this->queueIndex[workerIndex];
+
+        jobs[*queueIndex] = Job{ func, items };
+        *queueIndex = (*queueIndex + 1) % JOB_SYSTEM_MAX_JOBS;
+
+        this->currentWorkerIndex = (workerIndex + 1) % this->workerCount;
+
+        this->mutex.Unlock();
+
+        this->queueSignal.Broadcast();
+    }
+
+    void MainLoop()
+    {
+        this->mutex.Lock();
+
+        const int workerIndex = this->currentWorkerIndex;
+
+        Job* jobs = this->jobs[workerIndex];
+        int* queueIndex = &this->queueIndex[workerIndex];
+        int* runningIndex = &this->runningIndex[workerIndex];
+
+        this->currentWorkerIndex = (this->currentWorkerIndex + 1) % this->workerCount;
+        this->mutex.Unlock();
+
+        while (this->running)
+        {
+            this->mutex.Lock();
+
+            this->idleWorkerCount++;
+            while (this->running && *queueIndex == *runningIndex)
+            {
+                this->idleSignal.Broadcast();
+                this->queueSignal.Wait(this->mutex);
+            }
+            this->idleWorkerCount--;
+            this->mutex.Unlock();
+
+            while (*queueIndex != *runningIndex)
+            {
+                this->mutex.Lock();
+                Job job = jobs[*runningIndex];
+
+                *runningIndex = (*runningIndex + 1) % JOB_SYSTEM_MAX_JOBS;
+
+                this->mutex.Unlock();
+
+                job.func(job.data);
+            }
+        }
+
+        this->mutex.Lock();
+
+        this->idleWorkerCount++;
+        this->idleSignal.Broadcast();
+
+        this->mutex.Unlock();
+    }
+};
+
+static JobSystemState gJobSystem;
+
+void JobSystem::Setup(void)
+{
+    gJobSystem.Create(-1);
+}
+
+void JobSystem::Shutdown(void)
+{
+    gJobSystem.Destroy();
+}
+
+bool JobSystem::IsIdle(void)
+{
+    return gJobSystem.IsIdle();
+}
+
+void JobSystem::WaitIdle()
+{
+    gJobSystem.WaitIdle();
+}
+
+void JobSystem::Queue(JobFunc* func, void* items)
+{
+    gJobSystem.QueueJob(func, items);
 }

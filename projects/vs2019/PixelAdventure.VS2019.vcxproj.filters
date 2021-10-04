@@ -43,17 +43,8 @@
     <Filter Include="src\Native">
       <UniqueIdentifier>{23F24C22-0FAA-8E6F-78B1-67CB64882960}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Native\Win32">
-      <UniqueIdentifier>{45F8F432-31F1-1385-5A23-F909467BF390}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Text">
-      <UniqueIdentifier>{61FC25CF-4DC9-80DA-76E2-6E82620EB668}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ThirdPartyImpl">
       <UniqueIdentifier>{797FC56F-6563-86C5-CEC3-8018BAC67047}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ThirdPartyImpl\Win32">
-      <UniqueIdentifier>{1BAEF369-07D3-42EA-301E-287A1CA24108}</UniqueIdentifier>
     </Filter>
     <Filter Include="unit_tests">
       <UniqueIdentifier>{972265CA-83DA-A617-ECE1-7F73D8B84108}</UniqueIdentifier>
@@ -156,21 +147,6 @@
     <ClInclude Include="..\..\src\Native\Window.h">
       <Filter>src\Native</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Text\Json.h">
-      <Filter>src\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Text\JsonSchema.h">
-      <Filter>src\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Text\String.h">
-      <Filter>src\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ThirdPartyImpl\Win32\imgui_impl_win32.h">
-      <Filter>src\ThirdPartyImpl\Win32</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ThirdPartyImpl\imgui_impl_opengl3.h">
-      <Filter>src\ThirdPartyImpl</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\unit_tests\test_framework.h">
       <Filter>unit_tests</Filter>
     </ClInclude>
@@ -272,28 +248,13 @@
     <ClCompile Include="..\..\src\Native\Memory.cpp">
       <Filter>src\Native</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Native\Win32\Thread_Win32.cpp">
-      <Filter>src\Native\Win32</Filter>
+    <ClCompile Include="..\..\src\Native\Thread.cpp">
+      <Filter>src\Native</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Native\Window.cpp">
       <Filter>src\Native</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Text\Json.c">
-      <Filter>src\Text</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Text\JsonSchema.c">
-      <Filter>src\Text</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Text\String.c">
-      <Filter>src\Text</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\ThirdPartyImpl\StbImpl.cpp">
-      <Filter>src\ThirdPartyImpl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ThirdPartyImpl\Win32\imgui_impl_win32.cpp">
-      <Filter>src\ThirdPartyImpl\Win32</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ThirdPartyImpl\imgui_impl_opengl3.cpp">
       <Filter>src\ThirdPartyImpl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\unit_tests\cases\test_float.cpp">

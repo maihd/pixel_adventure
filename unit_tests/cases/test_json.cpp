@@ -1,5 +1,6 @@
 #include "../test_framework.h"
 
+#if 0
 #include "Text/Json.h"
 #include "Text/JsonSchema.h"
 
@@ -46,3 +47,4 @@ DEFINE_UNIT_TEST("JsonSchema unit tests")
     Json_Destroy(json);
 #endif
 }
+#endif

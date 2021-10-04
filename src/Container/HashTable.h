@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include "Native/Memory.h"
+
 template <typename T>
 struct HashTable
 {
@@ -59,8 +61,8 @@ struct HashTable
     // Clean memory usage
     inline void CleanUp(void)
     {
-        free(nexts);
-        free(hashs);
+        MemoryFree(nexts);
+        MemoryFree(hashs);
 
         this->count     = 0;
         this->capacity  = 0;
@@ -147,7 +149,7 @@ struct HashTable
         {
             if (!this->hashs)
             {
-                this->hashs = (int*)malloc(sizeof(int) * hashCount);
+                this->hashs = (int*)MemoryAlloc(sizeof(int) * hashCount, sizeof(*this->hashs));
                 assert(this->hashs && "Out of memory");
                 
                 for (int i = 0; i < hashCount; i++)
@@ -165,7 +167,7 @@ struct HashTable
                 const int oldCapacity = this->capacity;
                 const int newCapactiy = oldCapacity > 0 ? oldCapacity * 2 : 32;
 
-                void* newNexts  = malloc(newCapactiy * (sizeof(int) + sizeof(uint32_t) + sizeof(T)));
+                void* newNexts  = MemoryAlloc(newCapactiy * (sizeof(int) + sizeof(uint32_t) + sizeof(T)), alignof(int));
                 void* newKeys   = (char*)newNexts + newCapactiy * sizeof(int);
                 void* newValues = (char*)newKeys + newCapactiy * sizeof(uint32_t);
 

@@ -22,7 +22,7 @@ namespace WindowFlags
     };
 }
 
-namespace WindowResetScenarios
+namespace WindowResetScenario
 {
     enum Type : uint32_t
     {
@@ -31,7 +31,6 @@ namespace WindowResetScenarios
         DeviceLost  = 0x2,
     };
 }
-using WindowResetScenario = WindowResetScenarios::Type;
 
 struct WindowDesc
 {
@@ -45,7 +44,7 @@ struct WindowDesc
     int32_t             width;
     int32_t             height;
 
-    WindowResetScenario resetScenario;
+    uint32_t            resetScenario;
 
     #ifdef __cplusplus
     inline WindowDesc()

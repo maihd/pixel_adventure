@@ -2,19 +2,14 @@
 
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace Game
+{
+    void Setup();
+    void Shutdown();
 
-void Game_Setup();
-void Game_Shutdown();
+    void Load();
+    void Unload();
 
-void Game_Load();
-void Game_Unload();
-
-void Game_Update(float time, float deltaTime);
-void Game_Render();
-
-#ifdef __cplusplus
+    void Update(float time, float deltaTime);
+    void Render();
 }
-#endif

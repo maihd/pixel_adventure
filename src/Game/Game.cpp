@@ -195,7 +195,7 @@ void CreateSpriteBatch(const ldtk::Layer* layer)
     spriteBatch.Create(&spritesheets[tileset->uid], (int32_t)layer->allTiles().size() * 6);
     
     spriteBatch.Begin();
-    for (ldtk::Tile tile : layer->allTiles())
+    for (const ldtk::Tile& tile : layer->allTiles())
     {
         const int32_t cols = tile.texture_position.x / tileset->tile_size;
         const int32_t rows = tile.texture_position.y / tileset->tile_size;
@@ -209,7 +209,7 @@ void CreateSpriteBatch(const ldtk::Layer* layer)
     spriteBatchs[layer->getName()] = spriteBatch;
 }
 
-void Game_Setup()
+void Game::Setup()
 {
     FileSystem::AddSearchPath("assets");
     FileSystem::AddSearchPath("../../assets");
@@ -301,19 +301,19 @@ void Game_Setup()
     }
 }
 
-void Game_Shutdown()
+void Game::Shutdown()
 {
 }
 
-void Game_Load()
+void Game::Load()
 {
 }
 
-void Game_Unload()
+void Game::Unload()
 {
 }
 
-void Game_Update(float totalTime, float deltaTime)
+void Game::Update(float totalTime, float deltaTime)
 {
     if (Input::GetKey(KeyCode::LeftArrow))
     {
@@ -497,7 +497,7 @@ void DrawLayer(const char* layerName)
     Graphics::DrawSpriteBatch(spriteBatch);
 }
 
-void Game_Render()
+void Game::Render()
 {
     for (auto pair : spriteBatchs)
     {
