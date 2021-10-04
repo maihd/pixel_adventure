@@ -102,6 +102,31 @@ static inline KeyCode ConvertKeyCode(int nativeKey)
         s_keyCodeMap[SDL_SCANCODE_X]            = KeyCode::X;
         s_keyCodeMap[SDL_SCANCODE_Y]            = KeyCode::Y;
         s_keyCodeMap[SDL_SCANCODE_Z]            = KeyCode::Z;
+
+        s_keyCodeMap[SDL_SCANCODE_F1]           = KeyCode::F1;
+        s_keyCodeMap[SDL_SCANCODE_F2]           = KeyCode::F2;
+        s_keyCodeMap[SDL_SCANCODE_F3]           = KeyCode::F3;
+        s_keyCodeMap[SDL_SCANCODE_F4]           = KeyCode::F4;
+        s_keyCodeMap[SDL_SCANCODE_F5]           = KeyCode::F5;
+        s_keyCodeMap[SDL_SCANCODE_F6]           = KeyCode::F6;
+        s_keyCodeMap[SDL_SCANCODE_F7]           = KeyCode::F7;
+        s_keyCodeMap[SDL_SCANCODE_F8]           = KeyCode::F8;
+        s_keyCodeMap[SDL_SCANCODE_F9]           = KeyCode::F9;
+        s_keyCodeMap[SDL_SCANCODE_F10]          = KeyCode::F10;
+        s_keyCodeMap[SDL_SCANCODE_F11]          = KeyCode::F11;
+        s_keyCodeMap[SDL_SCANCODE_F12]          = KeyCode::F12;
+        s_keyCodeMap[SDL_SCANCODE_F13]          = KeyCode::F13;
+        s_keyCodeMap[SDL_SCANCODE_F14]          = KeyCode::F14;
+        s_keyCodeMap[SDL_SCANCODE_F15]          = KeyCode::F15;
+        s_keyCodeMap[SDL_SCANCODE_F16]          = KeyCode::F16;
+        s_keyCodeMap[SDL_SCANCODE_F17]          = KeyCode::F17;
+        s_keyCodeMap[SDL_SCANCODE_F18]          = KeyCode::F18;
+        s_keyCodeMap[SDL_SCANCODE_F19]          = KeyCode::F19;
+        s_keyCodeMap[SDL_SCANCODE_F20]          = KeyCode::F20;
+        s_keyCodeMap[SDL_SCANCODE_F21]          = KeyCode::F21;
+        s_keyCodeMap[SDL_SCANCODE_F22]          = KeyCode::F22;
+        s_keyCodeMap[SDL_SCANCODE_F23]          = KeyCode::F23;
+        s_keyCodeMap[SDL_SCANCODE_F24]          = KeyCode::F24;
     }
 
     return s_keyCodeMap[nativeKey];
