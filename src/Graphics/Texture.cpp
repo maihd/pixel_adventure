@@ -1,4 +1,4 @@
-// #include "Texture.h"
+#include "Texture.h"
 // #include "OpenGL.h"
 
 // static const uint32_t ConvertTextureWrap[] = { 
@@ -81,3 +81,6 @@
 //     glTextureImage2DEXT(handle, GL_TEXTURE_2D, 0, ConvertPixelFormat(targetFormat), w, h, 0, ConvertPixelFormat(format), GL_UNSIGNED_BYTE, pixels);
 //     HandleError();
 // }
+
+// Data structure attributes verifying
+static_assert(__is_trivially_copyable(Texture), "Texture must memcpy-able, aka pass-by-value to function");

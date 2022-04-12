@@ -41,3 +41,12 @@
 #ifndef __cplusplus && !defined(constexpr)
 #   define constexpr static const
 #endif
+
+// assert_type_is_memcopyable();
+// assert_type_is_trivial();
+// assert_type_is_pod();
+// assert_type_size();
+// assert_type_alignment();
+// assert_not_null();
+// assert_in_range();
+// assert_enough_memory();

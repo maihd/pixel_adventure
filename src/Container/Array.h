@@ -249,7 +249,7 @@ struct Array
     inline bool Unshift(const T& value)
     {
         return this->Insert(0, value);
-    }
+    }           
 
     inline T Shift(void)
     {

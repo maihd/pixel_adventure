@@ -224,17 +224,17 @@ MemoryTracker::~MemoryTracker()
 }
 // END OF #if !defined(NDEBUG)
 #else
-void* MemoryAlloc(int32_t size, int32_t align)
+void* MemoryAllocNDebug(int32_t size, int32_t align)
 {
     return _aligned_malloc((size_t)size, (size_t)align);
 }
 
-void* MemoryRealloc(void* ptr, int32_t size, int32_t align)
+void* MemoryReallocNDebug(void* ptr, int32_t size, int32_t align)
 {
     return _aligned_realloc(ptr, (size_t)size, (size_t)align);
 }
 
-void MemoryFree(void* ptr)
+void MemoryFreeNDebug(void* ptr)
 {
     _aligned_free(ptr);
 }
