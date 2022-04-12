@@ -7,12 +7,14 @@
 // -------------------------------------------------------------
 
 #ifndef ALIGNAS
-#   if defined(_MSC_VER)
-#       define ALIGNAS(TYPE_NAME, ALIGNMENT) __declspec(align(ALIGNMENT)) TYPE_NAME
+#   if defined(__cplusplus)
+#       define ALIGNAS(TYPE_NAME, ALIGNMENT) alignas(ALIGNMENT) TYPE_NAME
 #   elif defined(__GNUC__)
 #       define ALIGNAS(TYPE_NAME, ALIGNMENT) TYPE_NAME __attribute__((aligned(ALIGNMENT)))
+#   elif defined(_MSC_VER)
+#       define ALIGNAS(TYPE_NAME, ALIGNMENT) __declspec(align(ALIGNMENT)) TYPE_NAME
 #   else
-#       define ALIGNAS(TYPE_NAME, ALIGNMENT) alignas(ALIGNMENT) TYPE_NAME
+#       error The compiler is not support alignas operator.
 #   endif
 #endif
 

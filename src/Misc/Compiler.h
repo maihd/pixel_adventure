@@ -14,22 +14,26 @@
 // -------------------------------------------------------------
 
 #ifndef ALIGNAS
-#   if defined(_MSC_VER)
-#       define ALIGNAS(TYPE_NAME, ALIGNMENT) __declspec(align(ALIGNMENT)) TYPE_NAME
+#   if defined(__cplusplus)
+#       define ALIGNAS(TYPE_NAME, ALIGNMENT) alignas(ALIGNMENT) TYPE_NAME
 #   elif defined(__GNUC__)
 #       define ALIGNAS(TYPE_NAME, ALIGNMENT) TYPE_NAME __attribute__((aligned(ALIGNMENT)))
+#   elif defined(_MSC_VER)
+#       define ALIGNAS(TYPE_NAME, ALIGNMENT) __declspec(align(ALIGNMENT)) TYPE_NAME
 #   else
-#       define ALIGNAS(TYPE_NAME, ALIGNMENT) alignas(ALIGNMENT) TYPE_NAME
+#       error The compiler is not support alignas operator.
 #   endif
 #endif
 
 #ifndef ALIGNOF
-#   if defined(_MSC_VER)
-#       define ALIGNOF(X) __alignof(X)
+#   if defined(__cplusplus)
+#       define ALIGNOF(X) alignof(decltype(X))
 #   elif defined(__GNUC__)
 #       define ALIGNOF(X) __alignof__(typeof(X))
+#   elif defined(_MSC_VER)
+#       define ALIGNOF(X) __alignof(X)
 #   else
-#       define ALIGNOF(X) alignof(decltype(X))
+#       error The compiler is not support alignof operator.
 #   endif
 #endif
 
