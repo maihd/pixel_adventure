@@ -24,7 +24,7 @@ do
     language "C++"
     location (path.join(BUILD_DIR, _ACTION))
 
-    configurations { "Debug", "Release" }
+    configurations { "Debug", "Release", "DebugProfiling", "ReleaseProfiling" }
     platforms { "x32", "x64" }
 
     flags {
@@ -45,26 +45,48 @@ do
     rtti "On"
     exceptionhandling "Off"
 
-    filter { "configurations:*Debug" }
+    filter { "configurations:*Debug*" }
     do
         optimize "Off"
         defines {
-            --"_DEBUG",
+            "BUILD_DEBUG",
             "SUBSYSTEM_CONSOLE"
         }
 
         filter {}
     end
 
-    filter { "configurations:*Release" }
+    filter { "configurations:*Release*" }
     do
         optimize "Full"
         defines {
             "NDEBUG",
+            "BUILD_RELEASE",
             "SUBSYSTEM_WINDOWS"
         }
 
         filter {}
+    end
+
+    filter { "configurations:*Profiling" }
+    do
+        defines {
+            "BUILD_PROFILING"
+        }
+    end
+
+    filter { "configurations:DebugProfiling" }
+    do
+        defines {
+            "BUILD_DEBUG_PROFILING"
+        }
+    end
+
+    filter { "configurations:DebugProfiling" }
+    do
+        defines {
+            "BUILD_RELEASE_PROFILING"
+        }
     end
 
     filter {}

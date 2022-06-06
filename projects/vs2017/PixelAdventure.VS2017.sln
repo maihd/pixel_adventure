@@ -5,16 +5,28 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PixelAdventure.VS2017", "Pi
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		DebugProfiling|Win32 = DebugProfiling|Win32
+		DebugProfiling|x64 = DebugProfiling|x64
 		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
+		ReleaseProfiling|Win32 = ReleaseProfiling|Win32
+		ReleaseProfiling|x64 = ReleaseProfiling|x64
 		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{76287BC2-E294-36BD-AB88-CE1A17B45825}.DebugProfiling|Win32.ActiveCfg = DebugProfiling|Win32
+		{76287BC2-E294-36BD-AB88-CE1A17B45825}.DebugProfiling|Win32.Build.0 = DebugProfiling|Win32
+		{76287BC2-E294-36BD-AB88-CE1A17B45825}.DebugProfiling|x64.ActiveCfg = DebugProfiling|x64
+		{76287BC2-E294-36BD-AB88-CE1A17B45825}.DebugProfiling|x64.Build.0 = DebugProfiling|x64
 		{76287BC2-E294-36BD-AB88-CE1A17B45825}.Debug|Win32.ActiveCfg = Debug|Win32
 		{76287BC2-E294-36BD-AB88-CE1A17B45825}.Debug|Win32.Build.0 = Debug|Win32
 		{76287BC2-E294-36BD-AB88-CE1A17B45825}.Debug|x64.ActiveCfg = Debug|x64
 		{76287BC2-E294-36BD-AB88-CE1A17B45825}.Debug|x64.Build.0 = Debug|x64
+		{76287BC2-E294-36BD-AB88-CE1A17B45825}.ReleaseProfiling|Win32.ActiveCfg = ReleaseProfiling|Win32
+		{76287BC2-E294-36BD-AB88-CE1A17B45825}.ReleaseProfiling|Win32.Build.0 = ReleaseProfiling|Win32
+		{76287BC2-E294-36BD-AB88-CE1A17B45825}.ReleaseProfiling|x64.ActiveCfg = ReleaseProfiling|x64
+		{76287BC2-E294-36BD-AB88-CE1A17B45825}.ReleaseProfiling|x64.Build.0 = ReleaseProfiling|x64
 		{76287BC2-E294-36BD-AB88-CE1A17B45825}.Release|Win32.ActiveCfg = Release|Win32
 		{76287BC2-E294-36BD-AB88-CE1A17B45825}.Release|Win32.Build.0 = Release|Win32
 		{76287BC2-E294-36BD-AB88-CE1A17B45825}.Release|x64.ActiveCfg = Release|x64
