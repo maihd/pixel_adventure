@@ -99,7 +99,6 @@ do
         "src/Graphics",
         "src/Framework",
         "src/Game",
-        "src/Math",
         "src/Misc",
         "src/Text",
 
@@ -111,6 +110,10 @@ do
 
         "src/ThirdPartyImpl",
     }
+
+    -- Import vectormath
+    local vectormath = dofile(path.join(ROOT_DIR, "3rd_party/vectormath/premake5.vectormath.lua"))
+    vectormath.includedirs(path.join(ROOT_DIR, "3rd_party/vectormath"))
 
     filter "configurations:*Debug"
     do

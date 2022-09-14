@@ -1,4 +1,4 @@
 #include "../test_framework.h"
 
-#include "Math/MathEx.h"
+#include <vectormath/stdmath_extensions.h>
 

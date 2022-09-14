@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdlib.h>
+#include <vectormath.h>
 
 #include <stb/stb_image.h>
 #include <stb/stb_easy_font.h>
@@ -11,7 +12,6 @@
 #include "SpriteBatch.h"
 #include "Native/Window.h"
 #include "Native/FileSystem.h"
-#include "Math/VectorMathSimd.h"
 
 static WindowDesc*      gMainWindow;
 static SDL_GLContext    gGLContext;

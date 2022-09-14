@@ -1,13 +1,13 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <vectormath.h>
 
 #include <glad/glad.h>
 
 #include "Graphics.h"
 #include "SpriteBatch.h"
 #include "Native/Memory.h"
-#include "Math/VectorMath.h"
 
 void SpriteBatch::Create(const SpriteSheet* sheet, int32_t capacity)
 {

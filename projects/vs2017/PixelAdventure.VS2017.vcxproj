@@ -104,7 +104,7 @@
       <WarningLevel>Level3</WarningLevel>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <PreprocessorDefinitions>SUBSYSTEM_CONSOLE;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;..\..\3rd_party;..\..\3rd_party\glad\include;..\..\3rd_party\LDtkLoader\include;..\..\3rd_party\SDL2-devel-2.0.16-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\3rd_party;..\..\3rd_party\glad\include;..\..\3rd_party\LDtkLoader\include;..\..\3rd_party\vectormath\include;..\..\3rd_party\SDL2-devel-2.0.16-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <OmitFramePointers>true</OmitFramePointers>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -126,7 +126,7 @@
       <WarningLevel>Level3</WarningLevel>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <PreprocessorDefinitions>SUBSYSTEM_CONSOLE;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;..\..\3rd_party;..\..\3rd_party\glad\include;..\..\3rd_party\LDtkLoader\include;..\..\3rd_party\SDL2-devel-2.0.16-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\3rd_party;..\..\3rd_party\glad\include;..\..\3rd_party\LDtkLoader\include;..\..\3rd_party\vectormath\include;..\..\3rd_party\SDL2-devel-2.0.16-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <OmitFramePointers>true</OmitFramePointers>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -148,7 +148,7 @@
       <WarningLevel>Level3</WarningLevel>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <PreprocessorDefinitions>NDEBUG;SUBSYSTEM_WINDOWS;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;..\..\3rd_party;..\..\3rd_party\glad\include;..\..\3rd_party\LDtkLoader\include;..\..\3rd_party\SDL2-devel-2.0.16-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\3rd_party;..\..\3rd_party\glad\include;..\..\3rd_party\LDtkLoader\include;..\..\3rd_party\vectormath\include;..\..\3rd_party\SDL2-devel-2.0.16-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -177,7 +177,7 @@
       <WarningLevel>Level3</WarningLevel>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <PreprocessorDefinitions>NDEBUG;SUBSYSTEM_WINDOWS;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;..\..\3rd_party;..\..\3rd_party\glad\include;..\..\3rd_party\LDtkLoader\include;..\..\3rd_party\SDL2-devel-2.0.16-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\3rd_party;..\..\3rd_party\glad\include;..\..\3rd_party\LDtkLoader\include;..\..\3rd_party\vectormath\include;..\..\3rd_party\SDL2-devel-2.0.16-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -218,12 +218,6 @@
     <ClInclude Include="..\..\src\Graphics\Graphics.h" />
     <ClInclude Include="..\..\src\Graphics\SpriteBatch.h" />
     <ClInclude Include="..\..\src\Graphics\Texture.h" />
-    <ClInclude Include="..\..\src\Math\MathEx.h" />
-    <ClInclude Include="..\..\src\Math\SSE2Neon.h" />
-    <ClInclude Include="..\..\src\Math\VectorMath.h" />
-    <ClInclude Include="..\..\src\Math\VectorMathScalars.h" />
-    <ClInclude Include="..\..\src\Math\VectorMathSimd.h" />
-    <ClInclude Include="..\..\src\Math\VectorTypes.h" />
     <ClInclude Include="..\..\src\Misc\Compiler.h" />
     <ClInclude Include="..\..\src\Misc\Random.h" />
     <ClInclude Include="..\..\src\Native\FileSystem.h" />
@@ -292,7 +286,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="..\..\src\Math\VectorTypes.natvis" />
+    <Natvis Include="..\..\3rd_party\vectormath\vectormath_types.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

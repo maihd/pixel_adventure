@@ -2,12 +2,12 @@
 #include <float.h>
 #include <memory.h>
 #include <stdlib.h>
+#include <vectormath.h>
 
 #include <LDtkLoader/World.hpp>
 
 #include "Game/Game.h"
 #include "Game/Components.h"
-#include "Math/VectorMath.h"
 
 #include "Native/Input.h"
 #include "Native/Window.h"

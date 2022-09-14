@@ -13,7 +13,7 @@
 #include "Framework/JobSystem.h"
 
 #include "Game/Game.h"
-#include "Math/VectorMathSimd.h"
+#include <vectormath.h>
 
 static void Application_RenderProfiler(float deltaTime)
 {

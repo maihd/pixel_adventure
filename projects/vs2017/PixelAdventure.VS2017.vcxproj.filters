@@ -19,6 +19,9 @@
     <Filter Include="3rd_party\imgui">
       <UniqueIdentifier>{E7EDCA53-5379-3818-5C8A-BB0CC8949418}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3rd_party\vectormath">
+      <UniqueIdentifier>{294B6EDC-15DA-F7A5-BEF8-0BA1AA66084C}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
@@ -33,9 +36,6 @@
     </Filter>
     <Filter Include="src\Graphics">
       <UniqueIdentifier>{0D564864-F9B8-D708-A23E-10BF8E80A38B}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Math">
-      <UniqueIdentifier>{261422CF-12E1-7CDA-3BFA-6A822726B268}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Misc">
       <UniqueIdentifier>{083622CF-F402-7DDA-1D1C-6B820948B268}</UniqueIdentifier>
@@ -104,24 +104,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Graphics\Texture.h">
       <Filter>src\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Math\MathEx.h">
-      <Filter>src\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Math\SSE2Neon.h">
-      <Filter>src\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Math\VectorMath.h">
-      <Filter>src\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Math\VectorMathScalars.h">
-      <Filter>src\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Math\VectorMathSimd.h">
-      <Filter>src\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Math\VectorTypes.h">
-      <Filter>src\Math</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Misc\Compiler.h">
       <Filter>src\Misc</Filter>
@@ -274,8 +256,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="..\..\src\Math\VectorTypes.natvis">
-      <Filter>src\Math</Filter>
+    <Natvis Include="..\..\3rd_party\vectormath\vectormath_types.natvis">
+      <Filter>3rd_party\vectormath</Filter>
     </Natvis>
   </ItemGroup>
 </Project>

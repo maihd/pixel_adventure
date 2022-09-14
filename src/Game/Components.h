@@ -1,3 +1,3 @@
 #pragma once
 
-#include "Math/VectorTypes.h"
+#include <vectormath/vectormath_types.h>
