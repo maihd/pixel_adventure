@@ -106,7 +106,9 @@ int ApplicationMain(int argc, char* argv[])
         
         Game::Render();
 
-        //Application_RenderProfiler(deltaTime);
+#ifdef BUILD_PROFILING
+        Application_RenderProfiler(deltaTime);
+#endif
 
         Graphics::Present();
 
