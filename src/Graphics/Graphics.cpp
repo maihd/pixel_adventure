@@ -227,6 +227,7 @@ GraphicsError Graphics::Setup(struct WindowDesc* window)
     }
 
     // Load OpenGL Driver
+    // @note: we can support Zink (GL on Vulkan), MGL (GL on metal) later
     if (!gladLoadGL())
     {
         return GraphicsError::LoadDriverFailed;
@@ -311,8 +312,8 @@ bool Graphics::LoadSpriteSheet(SpriteSheet* spriteSheet, const char* file, int32
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // Nearest are more better for pixel game
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // Nearest are more better for pixel game
 
     char existsPath[1024];
     if (!FileSystem::GetExistsPath(existsPath, sizeof(existsPath), file))

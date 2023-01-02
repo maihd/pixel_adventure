@@ -8,6 +8,8 @@ struct SpriteSheet;
 struct SpriteBatch;
 struct WindowDesc;
 
+/// Sprite
+/// Can be known as sub Texture
 struct Sprite
 {
     float           width       = 0.0f;
@@ -19,16 +21,25 @@ struct Sprite
     uint32_t        textureId   = 0;
 };
 
+/// SpriteSheet
+/// Simple sprite list store in columns and rows
 struct SpriteSheet
 {
     uint32_t        textureId   = 0;
 
     int32_t         cols        = 0;
     int32_t         rows        = 0;
+    
     int32_t         spriteCount = 0;
-
     Sprite*         sprites     = nullptr;
 };
+
+/// SrpiteAtlas
+/// 
+//struct SpriteAtlas
+//{
+//
+//};
 
 enum struct GraphicsError : uint32_t
 {

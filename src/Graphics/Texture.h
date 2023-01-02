@@ -36,6 +36,9 @@ struct Texture
     TextureWrap     wrap    = TextureWrap::None;
     TextureFilter   filter  = TextureFilter::None;
 
+    // NO mipmap support now
+    //int32_t         mipmaps = 0;
+
     Texture         Create(void);
     void            Destroy(void);
 

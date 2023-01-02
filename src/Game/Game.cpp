@@ -1,5 +1,4 @@
 #include <time.h>
-#include <float.h>
 #include <memory.h>
 #include <stdlib.h>
 #include <vectormath.h>
@@ -421,25 +420,25 @@ void Game::Update(float totalTime, float deltaTime)
                     // If the player is approaching from positive X
                     if (dist.x < 0)
                     {
-                        frogPosition.x = lower.x - 0.35f * frogWidth - FLT_EPSILON;
+                        frogPosition.x = lower.x - 0.35f * frogWidth - FLOAT_EPSILON;
                     }
                     else
                     {
                         // If the player is approaching from negative X
-                        frogPosition.x = upper.x + 0.35f * frogWidth + FLT_EPSILON;
+                        frogPosition.x = upper.x + 0.35f * frogWidth + FLOAT_EPSILON;
                     }
 
                     if (dist.y < 0)
                     {
-                        frogPosition.y = lower.y - 0.5f * frogHeight - FLT_EPSILON;
+                        frogPosition.y = lower.y - 0.5f * frogHeight - FLOAT_EPSILON;
                     }
                     else
                     {
-                        frogPosition.y = upper.y + 0.5f * frogHeight + FLT_EPSILON;
+                        frogPosition.y = upper.y + 0.5f * frogHeight + FLOAT_EPSILON;
                     }
 
                     fallSpeed -= fallSpeed * 0.2f;
-                    if (fallSpeed < FLT_EPSILON)
+                    if (fallSpeed < FLOAT_EPSILON)
                     {
                         fallSpeed = 0.0f;
                     }
@@ -449,27 +448,27 @@ void Game::Update(float totalTime, float deltaTime)
                     // If the player is approaching from positive X
                     if (dist.x < 0)
                     {
-                        frogPosition.x = lower.x - 0.35f * frogWidth - FLT_EPSILON;
+                        frogPosition.x = lower.x - 0.35f * frogWidth - FLOAT_EPSILON;
                     }
                     else
                     {
                         // If the player is approaching from negative X
-                        frogPosition.x = upper.x + 0.35f * frogWidth + FLT_EPSILON;
+                        frogPosition.x = upper.x + 0.35f * frogWidth + FLOAT_EPSILON;
                     }
                 }
                 else
                 {
                     if (dist.y < 0)
                     {
-                        frogPosition.y = lower.y - 0.5f * frogHeight - FLT_EPSILON;
+                        frogPosition.y = lower.y - 0.5f * frogHeight - FLOAT_EPSILON;
                     }
                     else
                     {
-                        frogPosition.y = upper.y + 0.5f * frogHeight + FLT_EPSILON;
+                        frogPosition.y = upper.y + 0.5f * frogHeight + FLOAT_EPSILON;
                     }
 
                     fallSpeed -= fallSpeed * 0.2f;
-                    if (fallSpeed < FLT_EPSILON)
+                    if (fallSpeed < FLOAT_EPSILON)
                     {
                         fallSpeed = 0.0f;
                     }
