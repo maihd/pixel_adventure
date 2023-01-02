@@ -32,7 +32,7 @@
 9. Less resources to learn gamedev
 10. Less use in gamedev, C is widely use in engine, system
 11. No Dear Imgui (C binding is awful to use)
-12. Some features are compiler-dependent: alignas, alignof, __forceline
+12. Some features are compiler-dependent: __declspec(align(#)), __alignof, __forceline
 13. Some features are still missing: __vectorcall, __fastcall (deprecated)
 14. No constructor and static evaluation make unit tests harder
 
