@@ -18,6 +18,8 @@ namespace WindowFlags
         Minimizable   = 1 << 7,
         Maximizable   = 1 << 8,
 
+        Quiting       = 1 << 9,
+
         Default       = Visible | Minimizable,
     };
 }
@@ -35,6 +37,7 @@ namespace WindowResetScenario
 struct WindowDesc
 {
     void*               handle;
+    void*               graphicsContext;
 
     uint32_t            flags;
     const char*         title;
@@ -49,6 +52,8 @@ struct WindowDesc
     #ifdef __cplusplus
     inline WindowDesc()
         : handle(nullptr)
+        , graphicsContext(nullptr)
+
         , flags(WindowFlags::None)
         , title("")
         , width(0)
@@ -77,7 +82,7 @@ namespace Window
 
     /// Process all coming events
     /// Return true if the window is alive, false otherwise, and the loop should shutdown
-    bool                PollEvents(void); 
+    bool                PollEvents(void);
 
     /// Wait a events and then process all coming events
     /// Return true if the window is alive, false otherwise, and the loop should shutdown
@@ -110,3 +115,5 @@ namespace Window
 
     const WindowDesc*   GetMainWindow(void);
 }
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include <SDL2/SDL.h>
+#include <ThirdPartyImpl/imgui_impl_sdl.h>
 
 #include "Native/Input.h"
 #include "Native/Window.h"
@@ -269,6 +270,7 @@ bool Window::Open(WindowDesc* window)
         return false;
     }
 
+    window->flags &= ~WindowFlags::Quiting; // Prevent game loop suddenly stop 
     window->handle = handle;
     gMainWindow = window;
     
@@ -306,13 +308,24 @@ void Window::Close(WindowDesc* window)
 
 bool Window::PollEvents(void)
 {
-    bool quit = false;
+    bool quit = gMainWindow->flags & WindowFlags::Quiting;
 
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
+        if (ImGui::GetCurrentContext() != nullptr)
+        {
+            ImGui_ImplSDL2_ProcessEvent(&event);
+        }
+
         if (event.type == SDL_QUIT)
         {
+            gMainWindow->flags |= WindowFlags::Quiting;
+            quit = true;
+        }
+        else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID((SDL_Window*)gMainWindow->handle))
+        {
+            gMainWindow->flags |= WindowFlags::Quiting;
             quit = true;
         }
         else
@@ -474,3 +487,5 @@ const WindowDesc* Window::GetMainWindow(void)
 {
     return gMainWindow;
 }
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

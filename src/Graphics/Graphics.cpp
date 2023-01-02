@@ -235,6 +235,7 @@ GraphicsError Graphics::Setup(struct WindowDesc* window)
 
     // Store main window for use later
     gMainWindow = window;
+    gMainWindow->graphicsContext = gGLContext;
 
     // Bind debugger
 #ifndef NDEBUG
@@ -550,3 +551,5 @@ void Graphics::DrawSpriteBatch(const SpriteBatch* spriteBatch)
 
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 }
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

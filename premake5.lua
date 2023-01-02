@@ -97,6 +97,8 @@ do
     kind "ConsoleApp"
 
     defines {
+        "IMGUI_IMPL_OPENGL_LOADER_CUSTOM",
+        "IMGUI_USER_CONFIG=<ThirdPartyImpl/imconfig.h>"
     }
 
     links {
