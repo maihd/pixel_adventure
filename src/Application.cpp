@@ -24,14 +24,25 @@
 #include "ThirdPartyImpl/imgui_impl_sdl.h"
 #include "ThirdPartyImpl/imgui_impl_opengl3.h"
 
-static void Application_RenderProfiler(float deltaTime)
+[[maybe_unused]]
+static void* ImGui_Alloc(size_t size, void* _)
 {
+    return MemoryAllocTag("ImGui", size, 16);
+}
+
+[[maybe_unused]]
+void ImGui_Free(void* ptr, void* _)
+{
+    MemoryFreeTag("ImGui", ptr);
+}
+
+static void Application_RenderDevTools(float deltaTime)
+{
+#ifdef BUILD_PROFILING
     char fpsText[1024];
     snprintf(fpsText, sizeof(fpsText), "FPS: %.3f", deltaTime > FLOAT_EPSILON ? 1.0f / deltaTime : 0.0f);
 
     ImGui::Text(fpsText);
-
-    ImGui::DumpMemoryAllocs();
 
     //vec2 fpsTextSize = vec2_mul1(Graphics::TextSize(fpsText), 2.0f);
     //
@@ -40,6 +51,9 @@ static void Application_RenderProfiler(float deltaTime)
     //    vec2_new(fpsTextSize.x + 10.0f, (float)Window::GetHeight() - 1.5f * fpsTextSize.y - 10.0f),
     //    vec3_new1(0.0f));
     //Graphics::DrawText(fpsText, vec2_new(5.0f, (float)Window::GetHeight() - 5.0f), vec3_new(0.25f, 0.5f, 1.0f));
+#endif
+
+    ImGui::DumpMemoryAllocs();
 }
 
 static void Application_HandleWindowError()
@@ -77,7 +91,7 @@ int ApplicationMain(int argc, char* argv[])
         {
             Application_HandleRendererError(graphicsError);
             Window::Close(&window);
-            return -1;
+            return -(int)graphicsError;
         }
 
         // Setup subsystems
@@ -85,15 +99,14 @@ int ApplicationMain(int argc, char* argv[])
         Input::Setup();
 
         Game::Setup();
+    }
 
-        // Debugging and profiling
+    DevTools:
+    {
         IMGUI_CHECKVERSION();
 
-        ImGui::SetAllocatorFunctions([](size_t size, void* _) {
-            return MemoryAllocTag("ImGui", size, alignof(void*));
-        }, [](void* ptr, void* _) {
-            MemoryFreeTag("ImGui", ptr);
-        });
+        // Tracking ImGui allocation
+        //ImGui::SetAllocatorFunctions(ImGui_Alloc, ImGui_Free);
 
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO();
@@ -160,29 +173,30 @@ int ApplicationMain(int argc, char* argv[])
         
         Game::Render();
 
-        // Start the Dear ImGui frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplSDL2_NewFrame();
-        ImGui::NewFrame();
-
-#ifdef BUILD_PROFILING
-        Application_RenderProfiler(deltaTime);
-#endif
-
-        // Rendering Imgui
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        // Update and Render additional Platform Windows
-        // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
-        //  For this specific demo app we could also call SDL_GL_MakeCurrent(window, gl_context) directly)
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        RenderDevTools:
         {
-            SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-            SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
-            ImGui::UpdatePlatformWindows();
-            ImGui::RenderPlatformWindowsDefault();
-            SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+            // Start the Dear ImGui frame
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplSDL2_NewFrame();
+            ImGui::NewFrame();
+
+            Application_RenderDevTools(deltaTime);
+
+            // Rendering Imgui
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+            // Update and Render additional Platform Windows
+            // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+            //  For this specific demo app we could also call SDL_GL_MakeCurrent(window, gl_context) directly)
+            if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+            {
+                SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+                SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+                ImGui::UpdatePlatformWindows();
+                ImGui::RenderPlatformWindowsDefault();
+                SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+            }
         }
 
         Graphics::Present();
@@ -192,14 +206,17 @@ int ApplicationMain(int argc, char* argv[])
         Timer::EndFrame();
     }
 
-    Shutdown:
+    ShutdownDevTools:
     {
-        Game::Shutdown();
-
         // Cleanup ImGui
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplSDL2_Shutdown();
         ImGui::DestroyContext();
+    }
+
+    Shutdown:
+    {
+        Game::Shutdown();
 
         // Shutdown subsystems
         Input::Shutdown();

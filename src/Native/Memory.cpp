@@ -305,6 +305,7 @@ int32_t MemoryPageSize(void)
 }
 #endif
 
+#include <SDL2/SDL.h>
 #include <imgui/imgui.h>
 
 // Open an debug window to view your memory allocations
@@ -326,13 +327,14 @@ void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
         ImGui::Text("ReallocCalled: %d", gAllocStore.reallocCalled);
         ImGui::Text("FreeCalled: %d", gAllocStore.freeCalled);
 
-        ImGui::Columns(7);
-        ImGui::SetColumnWidth(0, 96);
+        ImGui::Columns(8);
+        ImGui::SetColumnWidth(0, 120);
         ImGui::SetColumnWidth(1, 88);
         ImGui::SetColumnWidth(2, 88);
         ImGui::SetColumnWidth(3, 88);
         ImGui::SetColumnWidth(4, 120);
         ImGui::SetColumnWidth(5, 146);
+        ImGui::SetColumnWidth(6, 180);
 
         ImGui::Text("Tag");
         ImGui::NextColumn();
@@ -346,19 +348,22 @@ void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
         ImGui::NextColumn();
         ImGui::Text("AddressChangedCount");
         ImGui::NextColumn();
+        ImGui::Text("Function");
+        ImGui::NextColumn();
         ImGui::Text("Source");
         ImGui::NextColumn();
 
         ImGui::Columns(1);
         if (ImGui::BeginChild("Allocations List"))
         {
-            ImGui::Columns(7);
-            ImGui::SetColumnWidth(0, 88);
+            ImGui::Columns(8);
+            ImGui::SetColumnWidth(0, 112);
             ImGui::SetColumnWidth(1, 88);
             ImGui::SetColumnWidth(2, 88);
             ImGui::SetColumnWidth(3, 88);
             ImGui::SetColumnWidth(4, 120);
             ImGui::SetColumnWidth(5, 146);
+            ImGui::SetColumnWidth(6, 180);
 
             for (int i = 0; i < ALLOC_DESC_COUNT; i++)
             {
@@ -370,7 +375,7 @@ void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
 
                     ImGui::Text("0x%p", allocDesc->ptr);
                     ImGui::NextColumn();
-                    ImGui::Text("%d", allocDesc->size);
+                    ImGui::Text("%dB", allocDesc->size);
                     ImGui::NextColumn();
                     ImGui::Text("%d", allocDesc->align);
                     ImGui::NextColumn();
@@ -380,8 +385,25 @@ void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
                     ImGui::Text("%d", allocDesc->addressChangedCount);
                     ImGui::NextColumn();
 
-                    ImGui::Text("%s:%d:%s", allocDesc->file, allocDesc->line, allocDesc->func);
+                    ImGui::Text("%s", allocDesc->func);
                     ImGui::NextColumn();
+
+                    ImGui::BulletText("%s:%d", allocDesc->file, allocDesc->line, allocDesc->func);
+                    ImGui::NextColumn();
+
+                    // Implement goto file
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+                    }
+                    if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+                    {
+                        char command[1024];
+                        sprintf(command, "code --goto %s:%d", allocDesc->file, allocDesc->line);
+                        system(command);
+
+                        ImGui::SetNextFrameWantCaptureMouse(false);
+                    }
 
                     allocDesc = allocDesc->next;
                 }

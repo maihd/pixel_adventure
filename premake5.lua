@@ -38,7 +38,7 @@ do
         --"FatalCompileWarnings",
     }
 
-    cppdialect "C++11"
+    cppdialect "C++17"
     staticruntime "On"
     omitframepointer "On"
 

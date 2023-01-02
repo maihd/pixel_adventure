@@ -38,9 +38,9 @@ void SpriteBatch::Create(const SpriteSheet* sheet, int32_t capacity)
 
     int vertexCapacity = capacity * 6;
 
-    this->vertices  = (vec2*)MemoryAlloc(vertexCapacity * sizeof(vec2), alignof(vec2));
-    this->uvs       = (vec2*)MemoryAlloc(vertexCapacity * sizeof(vec2), alignof(vec2));
-    this->colors    = (vec3*)MemoryAlloc(vertexCapacity * sizeof(vec3), alignof(vec3));
+    this->vertices  = (vec2*)MemoryAllocTag(TAG, vertexCapacity * sizeof(vec2), alignof(vec2));
+    this->uvs       = (vec2*)MemoryAllocTag(TAG, vertexCapacity * sizeof(vec2), alignof(vec2));
+    this->colors    = (vec3*)MemoryAllocTag(TAG, vertexCapacity * sizeof(vec3), alignof(vec3));
 }
 
 void SpriteBatch::Destroy(void)
@@ -52,9 +52,9 @@ void SpriteBatch::Destroy(void)
     glDeleteBuffers(3, &this->verticesBufferId);
     glDeleteVertexArrays(1, &this->vertexArrayId);
 
-    MemoryFree(this->vertices);
-    MemoryFree(this->uvs);
-    MemoryFree(this->colors);
+    MemoryFreeTag(TAG, this->vertices);
+    MemoryFreeTag(TAG, this->uvs);
+    MemoryFreeTag(TAG, this->colors);
 
     this->count             = 0;
     this->capacity          = 0;

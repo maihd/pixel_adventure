@@ -12,6 +12,10 @@ enum struct SpriteBatchState : uint32_t
 
 struct SpriteBatch
 {
+public: // Constants
+    static constexpr const char* TAG = "SpriteBatch";
+
+public: // Fields
     SpriteBatchState    state               = SpriteBatchState::Idle;
     
     uint32_t            textureId           = 0;
@@ -27,6 +31,7 @@ struct SpriteBatch
     vec2*               uvs                 = nullptr;
     vec3*               colors              = nullptr;
 
+public: // Methods
     void                Create(const SpriteSheet* sheet, int32_t vertexCapacity);
     void                Destroy(void);
 
