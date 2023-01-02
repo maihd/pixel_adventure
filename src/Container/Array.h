@@ -262,7 +262,8 @@ struct Array
         return res;
     }
 
-    inline bool Erase(int32_t index)
+    /// Remove am item with given index
+    inline bool RemoveAt(int32_t index)
     {
         if (index < 0 || index >= count)
         {
@@ -280,7 +281,9 @@ struct Array
         }
     }
 
-    inline bool UnorderedErase(int32_t index)
+    /// Remove am item with given index from array without care of ordering
+    /// Note: fast but may cause bug in rendering without order sorting
+    inline bool RemoveAtUnordered(int32_t index)
     {
         if (index < 0 || index >= count)
         {
@@ -298,23 +301,29 @@ struct Array
         }
     }
 
+    /// Remove an item
     inline bool Remove(const T& value)
     {
-        return this->Erase(this->IndexOf(value));
+        return this->RemoveAt(this->IndexOf(value));
     }
 
+    /// Remove an item with reversed order
     inline bool RemoveLast(const T& value)
     {
-        return this->Erase(this->LastIndexOf(value));
+        return this->RemoveAt(this->LastIndexOf(value));
     }
 
-    inline bool UnorderedRemove(const T& value)
+    /// Remove an item, after removed the order maybe changed
+    /// Note: fast but may cause bug in rendering without order sorting
+    inline bool RemoveUnordered(const T& value)
     {
-        return this->UnorderedErase(this->IndexOf(value));
+        return this->RemoveAtUnordered(this->IndexOf(value));
     }
 
-    inline bool UnorderedRemoveLast(const T& value)
+    /// Remove an item with reversed order, after removed the order maybe changed
+    /// Note: fast but may cause bug in rendering without order sorting
+    inline bool RemoveLastUnordered(const T& value)
     {
-        return this->UnorderedErase(this->LastIndexOf(value));
+        return this->RemoveAtUnordered(this->LastIndexOf(value));
     }
 };

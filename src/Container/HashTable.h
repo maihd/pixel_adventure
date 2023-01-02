@@ -140,7 +140,7 @@ struct HashTable
 
     // Get value entry, if not exists create new. 
     // Return true if success, false otherwise.
-    bool GetValueOrNewSlot(uint32_t key, T** value)
+    bool GetValueOrNewEntry(uint32_t key, T** value)
     {
         int hash, prev;
         int curr = this->IndexOf(key, &hash, &prev);
@@ -210,10 +210,10 @@ struct HashTable
 
     // Get value entry, if not exists create new.
     // Return a reference to value entry if success, otherwise abort the process.
-    inline T& GetValueOrNewSlot(uint32_t key)
+    inline T& GetValueOrNewEntry(uint32_t key)
     {
         T* innerValue;
-        if (!this->GetValueOrNewSlot(key, &innerValue))
+        if (!this->GetValueOrNewEntry(key, &innerValue))
         {
             assert(false && "Out of memory.");
         }
@@ -224,7 +224,7 @@ struct HashTable
     inline bool SetValue(uint32_t key, const T& value)
     {
         T* innerValue;
-        if (this->GetValueOrNewSlot(key, &innerValue))
+        if (this->GetValueOrNewEntry(key, &innerValue))
         {
             *innerValue = value;
             return true;

@@ -1,5 +1,6 @@
 .vs
 
+/projects
 /projects/**/vs
 /projects/**/bin
 /projects/**/obj

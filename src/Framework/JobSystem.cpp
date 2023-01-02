@@ -45,8 +45,8 @@ struct JobSystemState
 
     void Create(int32_t requestWorkers)
     {
-        const int threadCount = max(1, ThreadSystem::GetCpuCores());
-        const int workerCount = requestWorkers <= 0 ? threadCount : min(threadCount, min(requestWorkers, JOB_SYSTEM_MAX_WORKERS));
+        const int32_t threadCount = int32_min(1, ThreadSystem::GetCpuCores());
+        const int32_t workerCount = requestWorkers <= 0 ? threadCount : int32_min(threadCount, int32_min(requestWorkers, JOB_SYSTEM_MAX_WORKERS));
 
         this->mutex.Create();
         this->idleSignal.Create();

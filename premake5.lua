@@ -134,7 +134,7 @@ do
     }
 
     -- Import vectormath
-    local vectormath = dofile(path.join(ROOT_DIR, "3rd_party/vectormath/premake5.vectormath.lua"))
+    local vectormath = dofile(path.join(ROOT_DIR, "3rd_party/vectormath/vectormath.premake5.lua"))
     vectormath.includedirs(path.join(ROOT_DIR, "3rd_party/vectormath"))
 
     filter "configurations:*Debug"
