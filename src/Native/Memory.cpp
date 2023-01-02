@@ -18,7 +18,9 @@ struct AllocDesc
 {
     void*               ptr;
     int32_t             size;
+    int32_t             align;
 
+    const char*         tag;
     const char*         func;
     const char*         file;
     int32_t             line;
@@ -49,15 +51,18 @@ static struct
     int32_t         freeCalled = 0;
 } gAllocStore;
 
-static void AddAlloc(void* ptr, int32_t size, const char* func, const char* file, int32_t line)
+static void AddAlloc(void* ptr, int32_t size, int32_t align, const char* tag, const char* func, const char* file, int32_t line)
 {
     AllocDesc* allocDesc = (AllocDesc*)gAllocStore.freeAllocDescs.Alloc(sizeof(AllocDesc));
 
-    allocDesc->ptr  = ptr;
-    allocDesc->size = size;
-    allocDesc->func = func;
-    allocDesc->file = file;
-    allocDesc->line = line;
+    allocDesc->ptr      = ptr;
+    allocDesc->size     = size;
+    allocDesc->align    = align;
+
+    allocDesc->tag      = tag;
+    allocDesc->func     = func;
+    allocDesc->file     = file;
+    allocDesc->line     = line;
 
     allocDesc->createTime = time(nullptr);
     allocDesc->modifiedTime = allocDesc->createTime;
@@ -73,7 +78,7 @@ static void AddAlloc(void* ptr, int32_t size, const char* func, const char* file
     gAllocStore.allocations++;
 }
 
-static void UpdateAlloc(void* ptr, void* newPtr, int32_t size, const char* func, const char* file, int32_t line)
+static void UpdateAlloc(void* ptr, void* newPtr, int32_t size, int32_t align, const char* tag, const char* func, const char* file, int32_t line)
 {
     uint64_t ptrHash = ((uint64_t)ptr) & (ALLOC_DESC_COUNT - 1);
 
@@ -85,7 +90,9 @@ static void UpdateAlloc(void* ptr, void* newPtr, int32_t size, const char* func,
         allocDesc = allocDesc->next;
     }
 
-    assert(allocDesc != nullptr, "This block is not allocated by our system, please check your memory source!");
+    assert(allocDesc != nullptr && "This block is not allocated by our system, please check your memory source!");
+    assert(strcmp(allocDesc->tag, tag) != 0 && "You attempt free memory with difference tag when allocated!");
+
     allocDesc->ptr = newPtr;
     allocDesc->size = size;
     allocDesc->func = func;
@@ -116,7 +123,7 @@ static void UpdateAlloc(void* ptr, void* newPtr, int32_t size, const char* func,
     }
 }
 
-static void RemoveAlloc(void* ptr, const char* func, const char* file, int32_t line)
+static void RemoveAlloc(void* ptr, const char* tag, const char* func, const char* file, int32_t line)
 {
     uint64_t ptrHash = ((uint64_t)ptr) & (ALLOC_DESC_COUNT - 1);
 
@@ -129,6 +136,8 @@ static void RemoveAlloc(void* ptr, const char* func, const char* file, int32_t l
     }
 
     assert(allocDesc != nullptr && "This block is not allocated by our system! Are you attempt to double-free?");
+    assert(strcmp(allocDesc->tag, tag) != 0 && "You attempt free memory with difference tag when allocated!");
+
     gAllocStore.freeAllocDescs.Free(allocDesc);
 
     if (prevAllocDesc)
@@ -144,18 +153,18 @@ static void RemoveAlloc(void* ptr, const char* func, const char* file, int32_t l
     gAllocStore.allocations--;
 }
 
-void* MemoryAllocDebug(int32_t size, int32_t align, const char* func, const char* file, int32_t line)
+void* MemoryAllocDebug(const char* tag, int32_t size, int32_t align, const char* func, const char* file, int32_t line)
 {
     assert(size > 0 && "Request size must be greater than 0.");
 
     gAllocStore.allocCalled++;
 
     void* ptr = _aligned_malloc((size_t)size, (size_t)align);
-    AddAlloc(ptr, size, func, file, line);
+    AddAlloc(ptr, size, align, tag, func, file, line);
     return ptr;
 }
 
-void* MemoryReallocDebug(void* ptr, int32_t size, int32_t align, const char* func, const char* file, int32_t line)
+void* MemoryReallocDebug(const char* tag, void* ptr, int32_t size, int32_t align, const char* func, const char* file, int32_t line)
 {
     assert(size > 0 && "Request size must be greater than 0.");
 
@@ -164,23 +173,23 @@ void* MemoryReallocDebug(void* ptr, int32_t size, int32_t align, const char* fun
     void* newPtr = _aligned_realloc(ptr, (size_t)size, (size_t)align);
     if (ptr == nullptr)
     {
-        AddAlloc(newPtr, size, func, file, line);
+        AddAlloc(newPtr, size, align, tag, func, file, line);
     }
     else
     {
-        UpdateAlloc(ptr, newPtr, size, func, file, line);
+        UpdateAlloc(ptr, newPtr, size, align, tag, func, file, line);
     }
     return newPtr;
 }
 
-void MemoryFreeDebug(void* ptr, const char* func, const char* file, int32_t line)
+void MemoryFreeDebug(const char* tag, void* ptr, const char* func, const char* file, int32_t line)
 {
     //DebugAssert(ptr != nullptr, "Attempt free nullptr at %s:%d:%s", func, file, line);
     gAllocStore.freeCalled++;
 
     if (ptr)
     {
-        RemoveAlloc(ptr, func, file, line);
+        RemoveAlloc(ptr, func, tag, file, line);
         _aligned_free(ptr);
     }
 }

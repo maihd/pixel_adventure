@@ -42,12 +42,12 @@ static void Application_HandleRendererError(GraphicsError error)
 int ApplicationMain(int argc, char* argv[])
 {
     WindowDesc window;
-    window.title = "Pixel Adventure";
-    window.x = -1;
-    window.y = -1;
-    window.width = 448;
-    window.height = 256;
-    window.flags = WindowFlags::Default;
+    window.title    = "Pixel Adventure";
+    window.x        = -1;
+    window.y        = -1;
+    window.width    = 448;
+    window.height   = 256;
+    window.flags    = WindowFlags::Default;
     if (!Window::Open(&window))
     {
         Application_HandleWindowError();

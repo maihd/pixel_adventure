@@ -9,6 +9,11 @@
 template <typename T>
 struct HashTable
 {
+struct: // Constants
+    constexpr const char*   TAG                 = "HashTable";
+    constexpr int32_t       DEFAULT_HASH_COUNT  = 64;
+
+struct: // Fields
     int32_t     count;
     int32_t     capacity;
                 
@@ -19,7 +24,8 @@ struct HashTable
     uint32_t*   keys;
     T*          values;
 
-    inline HashTable(int32_t hashCount = 64)
+struct: // Constructor
+    inline HashTable(int32_t hashCount = DEFAULT_HASH_COUNT)
         : count(0)
         , capacity(0)
         , hashs(nullptr)
@@ -38,6 +44,7 @@ struct HashTable
         assert(values   == nullptr);
     }
 
+struct: // Methods
     // Clear the this
     inline void Clear(void)
     {
@@ -51,7 +58,7 @@ struct HashTable
         this->capacity  = 0;
 
         this->hashs     = nullptr;
-        this->hashCount = 64;
+        this->hashCount = DEFAULT_HASH_COUNT;
 
         this->nexts     = nullptr;
         this->keys      = nullptr;
@@ -61,14 +68,14 @@ struct HashTable
     // Clean memory usage
     inline void CleanUp(void)
     {
-        MemoryFree(nexts);
-        MemoryFree(hashs);
+        MemoryFreeTag(nexts);
+        MemoryFreeTag(hashs);
 
         this->count     = 0;
         this->capacity  = 0;
 
         this->hashs     = nullptr;
-        this->hashCount = 0;
+        this->hashCount = DEFAULT_HASH_COUNT;
 
         this->nexts     = nullptr;
         this->keys      = nullptr;
@@ -149,7 +156,8 @@ struct HashTable
         {
             if (!this->hashs)
             {
-                this->hashs = (int*)MemoryAlloc(sizeof(int) * hashCount, sizeof(*this->hashs));
+                assert(this->hashCount > 0, "Your hashCount is invalid, maybe it has been detach or cleanup?");
+                this->hashs = (int*)MemoryAllocTag(TAG, sizeof(int) * hashCount, sizeof(*this->hashs));
                 assert(this->hashs && "Out of memory");
                 
                 for (int i = 0; i < hashCount; i++)
@@ -167,7 +175,7 @@ struct HashTable
                 const int oldCapacity = this->capacity;
                 const int newCapactiy = oldCapacity > 0 ? oldCapacity * 2 : 32;
 
-                void* newNexts  = MemoryAlloc(newCapactiy * (sizeof(int) + sizeof(uint32_t) + sizeof(T)), alignof(int));
+                void* newNexts  = MemoryAllocTag(TAG, newCapactiy * (sizeof(int) + sizeof(uint32_t) + sizeof(T)), alignof(int));
                 void* newKeys   = (char*)newNexts + newCapactiy * sizeof(int);
                 void* newValues = (char*)newKeys + newCapactiy * sizeof(uint32_t);
 
@@ -177,11 +185,11 @@ struct HashTable
                 }
                 else
                 {
-                    ::memcpy(newNexts, this->nexts, oldCapacity * sizeof(int));
-                    ::memcpy(newKeys, this->keys, oldCapacity * sizeof(uint32_t));
-                    ::memcpy(newValues, this->values, oldCapacity * sizeof(T));
+                    MemoryMove(newNexts, this->nexts, oldCapacity * sizeof(int));
+                    MemoryMove(newKeys, this->keys, oldCapacity * sizeof(uint32_t));
+                    MemoryMove(newValues, this->values, oldCapacity * sizeof(T));
 
-                    ::free(this->nexts);
+                    MemoryFreeTag(TAG, this->nexts);
                 
                     this->capacity = newCapactiy;
                     this->nexts    = (int*)newNexts;

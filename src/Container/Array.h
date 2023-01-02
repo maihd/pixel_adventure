@@ -9,6 +9,8 @@
 template <typename T>
 struct Array
 {
+    constexpr const char* TAG = "Array";
+
     int32_t    count;
     int32_t    capacity;
     T*         elements;
@@ -67,7 +69,7 @@ struct Array
     // Clean memory usage
     inline void CleanUp(void)
     {
-        MemoryFree(elements);
+        MemoryFreeTag(TAG, elements);
 
         this->count    = 0;
         this->capacity = 0;
@@ -87,7 +89,7 @@ struct Array
             newCapacity |= newCapacity >> 16;
             newCapacity += 1;
 
-            T* newElements = (T*)MemoryRealloc(elements, (size_t)(sizeof(T) * newCapacity), alignof(T));
+            T* newElements = (T*)MemoryReallocTag(TAG, elements, (size_t)(sizeof(T) * newCapacity), alignof(T));
             if (newElements)
             {
                 this->capacity = newCapacity;
