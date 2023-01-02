@@ -304,3 +304,97 @@ int32_t MemoryPageSize(void)
     return 4096;
 }
 #endif
+
+#include <imgui/imgui.h>
+
+// Open an debug window to view your memory allocations
+void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
+{
+    bool render = true;
+
+    bool openWindow = (flags & ImGuiDumpMemoryFlags_OpenWindow) != 0;
+    if (openWindow)
+    {
+        render = ImGui::Begin("Memory Allocations");
+    }
+
+    if (render)
+    {
+        ImGui::Text("AllocSize: %.2lfKB", gAllocStore.allocSize / 1024.0);
+        ImGui::Text("Allocations: %d", gAllocStore.allocations);
+        ImGui::Text("AllocCalled: %d", gAllocStore.allocCalled);
+        ImGui::Text("ReallocCalled: %d", gAllocStore.reallocCalled);
+        ImGui::Text("FreeCalled: %d", gAllocStore.freeCalled);
+
+        ImGui::Columns(7);
+        ImGui::SetColumnWidth(0, 96);
+        ImGui::SetColumnWidth(1, 88);
+        ImGui::SetColumnWidth(2, 88);
+        ImGui::SetColumnWidth(3, 88);
+        ImGui::SetColumnWidth(4, 120);
+        ImGui::SetColumnWidth(5, 146);
+
+        ImGui::Text("Tag");
+        ImGui::NextColumn();
+        ImGui::Text("Address");
+        ImGui::NextColumn();
+        ImGui::Text("Size");
+        ImGui::NextColumn();
+        ImGui::Text("Align");
+        ImGui::NextColumn();
+        ImGui::Text("ModifiedCount");
+        ImGui::NextColumn();
+        ImGui::Text("AddressChangedCount");
+        ImGui::NextColumn();
+        ImGui::Text("Source");
+        ImGui::NextColumn();
+
+        ImGui::Columns(1);
+        if (ImGui::BeginChild("Allocations List"))
+        {
+            ImGui::Columns(7);
+            ImGui::SetColumnWidth(0, 88);
+            ImGui::SetColumnWidth(1, 88);
+            ImGui::SetColumnWidth(2, 88);
+            ImGui::SetColumnWidth(3, 88);
+            ImGui::SetColumnWidth(4, 120);
+            ImGui::SetColumnWidth(5, 146);
+
+            for (int i = 0; i < ALLOC_DESC_COUNT; i++)
+            {
+                AllocDesc* allocDesc = gAllocStore.hashAllocDescs[i];
+                while (allocDesc != nullptr)
+                {
+                    ImGui::Text("%s", allocDesc->tag);
+                    ImGui::NextColumn();
+
+                    ImGui::Text("0x%p", allocDesc->ptr);
+                    ImGui::NextColumn();
+                    ImGui::Text("%d", allocDesc->size);
+                    ImGui::NextColumn();
+                    ImGui::Text("%d", allocDesc->align);
+                    ImGui::NextColumn();
+
+                    ImGui::Text("%d", allocDesc->modifiedCount);
+                    ImGui::NextColumn();
+                    ImGui::Text("%d", allocDesc->addressChangedCount);
+                    ImGui::NextColumn();
+
+                    ImGui::Text("%s:%d:%s", allocDesc->file, allocDesc->line, allocDesc->func);
+                    ImGui::NextColumn();
+
+                    allocDesc = allocDesc->next;
+                }
+            }
+        }
+
+        ImGui::EndChild();
+    }
+
+    if (openWindow)
+    {
+        ImGui::End();
+    }
+}
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

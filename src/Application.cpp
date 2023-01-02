@@ -31,6 +31,8 @@ static void Application_RenderProfiler(float deltaTime)
 
     ImGui::Text(fpsText);
 
+    ImGui::DumpMemoryAllocs();
+
     //vec2 fpsTextSize = vec2_mul1(Graphics::TextSize(fpsText), 2.0f);
     //
     //Graphics::DrawQuad(
@@ -52,6 +54,8 @@ static void Application_HandleRendererError(GraphicsError error)
 
 int ApplicationMain(int argc, char* argv[])
 {
+    MEMORY_TRACKING();
+
     WindowDesc window;
     window.title    = "Pixel Adventure";
     window.x        = -1;

@@ -111,3 +111,19 @@ struct MemoryTracker
                 ~MemoryTracker();
 };
 
+enum ImGuiDumpMemoryFlags
+{
+    ImGuiDumpMemoryFlags_None,
+    ImGuiDumpMemoryFlags_OpenWindow = 1 << 0,
+
+    // Default
+    ImGuiDumpMemoryFlags_Default = ImGuiDumpMemoryFlags_OpenWindow,
+};
+
+namespace ImGui
+{
+    // Open an debug window to view your memory allocations
+    void DumpMemoryAllocs(ImGuiDumpMemoryFlags flags = ImGuiDumpMemoryFlags_Default);
+}
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++
