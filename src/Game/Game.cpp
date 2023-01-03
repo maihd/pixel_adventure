@@ -314,75 +314,92 @@ void Game::Unload()
 
 void Game::Update(float totalTime, float deltaTime)
 {
-    if (Input::GetKey(KeyCode::LeftArrow))
+    // Skip impossible deltaTime
+    if (deltaTime >= 1.0f)
     {
-        frog.ratioVelocity.x = -4.0f;
-
-        frogScale.x = -fabsf(frogScale.x);
-        frogPosition.x -= 100.0f * deltaTime;
+        return;
     }
 
-    if (Input::GetKey(KeyCode::RightArrow))
-    {
-        frog.ratioVelocity.x = 4.0f;
+    const float maxStepTime = 1.0f / 60.0f;
 
-        frogScale.x = fabsf(frogScale.x);
-        frogPosition.x += 100.0f * deltaTime;
-    }
+    int32_t stepCount = int32_max((int32_t)(deltaTime / maxStepTime), 1);
 
-    if (Input::GetKeyDown(KeyCode::Space))
+    float remainDeltaTime = deltaTime;
+    while (stepCount--)
     {
-        if (EntityOnGround(frog, grid))
+        const float stepTime = float_min(maxStepTime, remainDeltaTime);
+        remainDeltaTime -= maxStepTime;
+
+        if (Input::GetKey(KeyCode::LeftArrow))
         {
-            fallSpeed += 90.0f;
-            frog.ratioVelocity.y = 20.0f;
+            frog.ratioVelocity.x = -4.0f;
+
+            frogScale.x = -fabsf(frogScale.x);
+            frogPosition.x -= 100.0f * stepTime; // This is wrong
         }
-        else if (EntityOnWall(frog, grid))
+
+        if (Input::GetKey(KeyCode::RightArrow))
         {
-            frog.ratioVelocity.x = -frog.ratioVelocity.x;
-            frog.ratioVelocity.y = 15.0f;
+            frog.ratioVelocity.x = 4.0f;
+
+            frogScale.x = fabsf(frogScale.x);
+            frogPosition.x += 100.0f * stepTime; // This is wrong
         }
-    }
 
-    //frogPosition.y += fallSpeed * deltaTime - 0.5f * gravity * deltaTime * deltaTime;
-    //fallSpeed -= gravity * deltaTime;
+        if (Input::GetKeyDown(KeyCode::Space))
+        {
+            if (EntityOnGround(frog, grid))
+            {
+                fallSpeed += 90.0f;
+                frog.ratioVelocity.y = 20.0f;
+            }
+            else if (EntityOnWall(frog, grid))
+            {
+                frog.ratioVelocity.x = -frog.ratioVelocity.x;
+                frog.ratioVelocity.y = 15.0f;
+            }
+        }
 
-    SpriteSheet* nextSpritesheet;
-    if (EntityOnWall(frog, grid))
-    {
-        nextSpritesheet = &spriteBatch_FrogWallCollide;
-    }
-    else if (frog.ratioVelocity.y > 0.0f)
-    {
-        nextSpritesheet = &spriteBatch_FrogJumpUp;
-    }
-    else if (frog.ratioVelocity.y < 0.0f)
-    {
-        nextSpritesheet = &spriteBatch_FrogFallDown;
-    }
-    else if (fabsf(frog.ratioVelocity.x) > 0.4f)
-    {
-        nextSpritesheet = &spriteBatch_FrogRun;
-    }
-    else
-    {
-        nextSpritesheet = &spriteBatch_FrogIdle;
-    }
+        //frogPosition.y += fallSpeed * deltaTime - 0.5f * gravity * deltaTime * deltaTime;
+        //fallSpeed -= gravity * deltaTime;
 
-    if (nextSpritesheet != frogSpriteSheet)
-    {
-        frogSpriteSheet = nextSpritesheet;
-        spriteIndex = 0;
-    }
+        SpriteSheet* nextSpritesheet;
+        if (EntityOnWall(frog, grid))
+        {
+            nextSpritesheet = &spriteBatch_FrogWallCollide;
+        }
+        else if (frog.ratioVelocity.y > 0.0f)
+        {
+            nextSpritesheet = &spriteBatch_FrogJumpUp;
+        }
+        else if (frog.ratioVelocity.y < 0.0f)
+        {
+            nextSpritesheet = &spriteBatch_FrogFallDown;
+        }
+        else if (fabsf(frog.ratioVelocity.x) > 0.4f)
+        {
+            nextSpritesheet = &spriteBatch_FrogRun;
+        }
+        else
+        {
+            nextSpritesheet = &spriteBatch_FrogIdle;
+        }
 
-    spriteTimer += deltaTime;
-    if (spriteTimer >= spriteInterval)
-    {
-        spriteTimer -= spriteInterval;
-        spriteIndex = (spriteIndex + 1) % frogSpriteSheet->spriteCount;
-    }
+        if (nextSpritesheet != frogSpriteSheet)
+        {
+            frogSpriteSheet = nextSpritesheet;
+            spriteIndex = 0;
+        }
 
-    UpdateEntity(&frog, grid, deltaTime);
+        spriteTimer += stepTime;
+        if (spriteTimer >= spriteInterval)
+        {
+            spriteTimer -= spriteInterval;
+            spriteIndex = (spriteIndex + 1) % frogSpriteSheet->spriteCount;
+        }
+
+        UpdateEntity(&frog, grid, stepTime);
+    }
 
     #if 0
     const float frogWidth = frogSpriteSheet->sprites[spriteIndex].width;
