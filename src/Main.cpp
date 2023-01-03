@@ -10,9 +10,13 @@
 #endif
 
 #include <SDL2/SDL_main.h>
+#include "Runtime.h"
 
 int main(int argc, char* argv[])
 {
+    // Setup core runtime: memory, containers, functionals
+    Runtime::Setup();
+
 #ifndef NDEBUG
     int runTestsStatus = RunAllUnitTests(argc, argv);
     if (runTestsStatus != 0)
@@ -21,5 +25,13 @@ int main(int argc, char* argv[])
     }
 #endif
     
-    return ApplicationMain(argc, argv);
+    int appResult = ApplicationMain(argc, argv);
+
+    // Shutdown core runtime
+    // Make sure no memory allocations occur, memory must not leaked
+    Runtime::Shutdown();
+    
+    return appResult;
 }
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

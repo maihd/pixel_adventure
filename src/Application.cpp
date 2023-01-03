@@ -68,6 +68,7 @@ static void Application_HandleRendererError(GraphicsError error)
 
 int ApplicationMain(int argc, char* argv[])
 {
+    // Simple memory tracking
     MEMORY_TRACKING();
 
     WindowDesc window;
@@ -119,12 +120,12 @@ int ApplicationMain(int argc, char* argv[])
         ImGui::StyleColorsDark();
 
         // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-        ImGuiStyle& style = ImGui::GetStyle();
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-        {
-            style.WindowRounding = 0.0f;
-            style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-        }
+        //ImGuiStyle& style = ImGui::GetStyle();
+        //if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        //{
+        //    style.WindowRounding = 0.0f;
+        //    style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+        //}
 
         // Setup Platform/Renderer backends
         ImGui_ImplSDL2_InitForOpenGL((SDL_Window*)window.handle, (SDL_GLContext)window.graphicsContext);
@@ -140,12 +141,14 @@ int ApplicationMain(int argc, char* argv[])
         // Handle window state
         if (window.resetScenario != WindowResetScenario::None)
         {
+            // OpenGL handle device internal, but what about OpenGL ES?
             if (window.resetScenario & WindowResetScenario::DeviceLost)
             {
                 window.resetScenario &= ~WindowResetScenario::DeviceLost;
                 continue;
             }
         
+            // When application awake or after device lost
             if (window.resetScenario & WindowResetScenario::Reload)
             {
                 Game::Unload();
@@ -156,6 +159,7 @@ int ApplicationMain(int argc, char* argv[])
                 continue;
             }
         
+            // Application running smoothly
             window.resetScenario = WindowResetScenario::None;
             continue;
         }
