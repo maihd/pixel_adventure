@@ -1,7 +1,10 @@
 #pragma once
 
 #include <stdint.h>
+#include <assert.h>
 #include <vectormath/vectormath_types.h>
+
+struct SpriteBatch;
 
 struct TileMap
 {
@@ -14,12 +17,12 @@ struct TileMap
     int32_t         tileWidth;      // Tile width
     int32_t         tileHeight;     // Tile height
 
-    int32_t         spriteBatch;    // Batching all tiles into one, only cost 1-draw call when draw tilemap
+    SpriteBatch*    spriteBatch;    // Batching all tiles into one, only cost 1-draw call when draw tilemap
 };
 
 struct TileMapCollision
 {
-    int32_t*        data;           // Data, item value is zero mean no collision
+    int32_t*        data = nullptr; // Data, item value is zero mean no collision
 
     int32_t         cols;           // Number of columns (horizon number of tiles)
     int32_t         rows;           // Number of rows (vertical humber of tiles)
@@ -30,6 +33,8 @@ struct TileMapCollision
     /// Check is the position is collided
     inline bool IsCollided(ivec2 position)
     {
+        assert(data != nullptr);
+
         if (position.x < 0 || position.x >= cols)
         {
             return false;

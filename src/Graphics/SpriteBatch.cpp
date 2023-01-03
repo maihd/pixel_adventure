@@ -41,13 +41,15 @@ void SpriteBatch::Create(const SpriteSheet* sheet, int32_t capacity)
     this->vertices  = (vec2*)MemoryAllocTag(TAG, vertexCapacity * sizeof(vec2), alignof(vec2));
     this->uvs       = (vec2*)MemoryAllocTag(TAG, vertexCapacity * sizeof(vec2), alignof(vec2));
     this->colors    = (vec3*)MemoryAllocTag(TAG, vertexCapacity * sizeof(vec3), alignof(vec3));
+
+    this->state = SpriteBatchState::Idle;
 }
 
 void SpriteBatch::Destroy(void)
 {
     assert(this->state == SpriteBatchState::Idle);
 
-    this->state = SpriteBatchState::Idle;
+    this->state = SpriteBatchState::UnCreated;
 
     glDeleteBuffers(3, &this->verticesBufferId);
     glDeleteVertexArrays(1, &this->vertexArrayId);
@@ -86,10 +88,12 @@ void SpriteBatch::End(void)
     this->state = SpriteBatchState::Idle;
 }
 
-void SpriteBatch::DrawSprite(const Sprite* sprite, vec2 position, float rotation, vec2 scale, vec3 color)
+void SpriteBatch::BatchSprite(const Sprite* sprite, vec2 position, float rotation, vec2 scale, vec3 color)
 {
-    assert(this->count < this->capacity);
-    assert(sprite != nullptr);
+    assert(this->state == SpriteBatchState::Batching && "SpriteBatch is idling!");
+    assert(this->count < this->capacity && "SpriteBatch is full!");
+    assert(sprite != nullptr && "Batching sprite must be not-null");
+    assert(sprite->textureId == textureId && "Attempt to batching sprite with difference texture!");
 
     const mat4 model = mat4_transform2(position, rotation, vec2_mul(scale, vec2_new(sprite->width, sprite->height)));
 
@@ -127,3 +131,5 @@ void SpriteBatch::DrawSprite(const Sprite* sprite, vec2 position, float rotation
 
     this->count++;
 }
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

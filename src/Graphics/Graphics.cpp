@@ -295,7 +295,7 @@ void Graphics::Clear()
     SDL_GL_MakeCurrent((SDL_Window*)gMainWindow->handle, gGLContext);
     glViewport(0, 0, gMainWindow->width, gMainWindow->height);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // use depth buffer to ordering objects
 }
 
 void Graphics::Present()

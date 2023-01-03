@@ -69,3 +69,5 @@ namespace Graphics
     void            DrawQuad(vec2 start, vec2 end, vec3 color);
     void            DrawQuadLine(vec2 start, vec2 end, vec3 color);
 }
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

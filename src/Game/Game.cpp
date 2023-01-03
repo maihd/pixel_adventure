@@ -567,8 +567,10 @@ void Game::Render()
                 }
 
                 Graphics::DrawQuadLine(
-                    vec2_new(x * cellSize, y * cellSize),
-                    vec2_new(x * cellSize + cellSize, y * cellSize + cellSize), vec3_new1(1.0f));
+                    vec2_new((float)(x * cellSize), (float)(y * cellSize)),
+                    vec2_new((float)(x * cellSize + cellSize), (float)(y * cellSize + cellSize)), 
+                    vec3_new1(1.0f)
+                );
             }
         }
     }
