@@ -109,6 +109,7 @@ do
     includedirs {
         path.join(ROOT_DIR, "src"),
         path.join(ROOT_DIR, "3rd_party"),
+        path.join(ROOT_DIR, "3rd_party/rmem/inc"),
         path.join(ROOT_DIR, "3rd_party/glad/include"),
         path.join(ROOT_DIR, "3rd_party/LDtkLoader/include"),
     }
@@ -130,6 +131,7 @@ do
         
         "3rd_party/imgui",
         "3rd_party/glad/src",
+        "3rd_party/rmem/src",
         "3rd_party/LDtkLoader/src",
 
         "src/ThirdPartyImpl",
