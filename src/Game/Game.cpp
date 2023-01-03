@@ -162,6 +162,20 @@ inline bool EntityOnGround(const Entity& entity, const Grid& grid)
     return (HasGridCollision(grid, ivec2{ entity.gridPosition.x, entity.gridPosition.y - 1 }) && entity.ratioPosition.y <= 0.5f);
 }
 
+inline bool EntityOnReallyCloseToWallLeft(const Entity& entity, const Grid& grid)
+{
+    return !EntityOnGround(entity, grid)
+        && entity.ratioPosition.x <= 0.05f
+        && HasGridCollision(grid, ivec2{ entity.gridPosition.x - 1, entity.gridPosition.y });
+}
+
+inline bool EntityOnReallyCloseToWallRight(const Entity& entity, const Grid& grid)
+{
+    return !EntityOnGround(entity, grid)
+        && entity.ratioPosition.x >= 0.95f
+        && HasGridCollision(grid, ivec2{ entity.gridPosition.x + 1, entity.gridPosition.y });
+}
+
 inline bool EntityOnWall(const Entity& entity, const Grid& grid)
 {
     return !EntityOnGround(entity, grid)
@@ -335,7 +349,6 @@ void Game::Update(float totalTime, float deltaTime)
             frog.ratioVelocity.x = -4.0f;
 
             frogScale.x = -fabsf(frogScale.x);
-            frogPosition.x -= 100.0f * stepTime; // This is wrong
         }
 
         if (Input::GetKey(KeyCode::RightArrow))
@@ -343,7 +356,6 @@ void Game::Update(float totalTime, float deltaTime)
             frog.ratioVelocity.x = 4.0f;
 
             frogScale.x = fabsf(frogScale.x);
-            frogPosition.x += 100.0f * stepTime; // This is wrong
         }
 
         if (Input::GetKeyDown(KeyCode::Space))
@@ -367,6 +379,15 @@ void Game::Update(float totalTime, float deltaTime)
         if (EntityOnWall(frog, grid))
         {
             nextSpritesheet = &spriteBatch_FrogWallCollide;
+            if (EntityOnReallyCloseToWallLeft(frog, grid))
+            {
+                frogScale.x = -fabsf(frogScale.x);
+            }
+            else if (EntityOnReallyCloseToWallRight(frog, grid))
+            {
+
+                frogScale.x = fabsf(frogScale.x);
+            }
         }
         else if (frog.ratioVelocity.y > 0.0f)
         {
