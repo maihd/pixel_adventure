@@ -133,7 +133,6 @@ do
         "3rd_party/glad/src",
         "3rd_party/rmem/inc",
         "3rd_party/rmem/src",
-        "3rd_party/LDtkLoader/src",
 
         "src/ThirdPartyImpl",
     }

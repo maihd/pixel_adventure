@@ -323,6 +323,7 @@ void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
         render = ImGui::Begin("Memory Allocations");
     }
 
+    #if BUILD_PROFILING
     if (render)
     {
         ImGui::Text("AllocSize: %.2lfKB", gAllocStore.allocSize / 1024.0);
@@ -416,6 +417,9 @@ void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
 
         ImGui::EndChild();
     }
+    #else
+    ImGui::Text("Profiling is not enabled!");
+    #endif
 
     if (openWindow)
     {

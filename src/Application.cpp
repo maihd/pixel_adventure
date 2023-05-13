@@ -99,7 +99,11 @@ int ApplicationMain(int argc, char* argv[])
         JobSystem::Setup();
         Input::Setup();
 
-        Game::Setup();
+        if (!Game::Setup())
+        {
+            Window::Close(&window);
+            return -10;
+        }
     }
 
     DevTools:

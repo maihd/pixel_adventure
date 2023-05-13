@@ -4,7 +4,7 @@
 
 namespace Game
 {
-    void Setup();
+    bool Setup();
     void Shutdown();
 
     void Load();

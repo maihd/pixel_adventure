@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <vectormath.h>
 
-#include <LDtkLoader/World.hpp>
-
 #include "Game/Game.h"
 #include "Game/Components.h"
 
@@ -15,7 +13,11 @@
 #include "Graphics/Graphics.h"
 #include "Graphics/SpriteBatch.h"
 
+#include "Misc/LDtkParser.h"
+
 #include "Framework/JobSystem.h"
+
+#include <map>
 
 struct Grid
 {
@@ -39,7 +41,9 @@ struct Entity
 static SpriteSheet spriteSheetBackground;
 static SpriteSheet spriteSheetTerrain;
 
-static std::map<int, SpriteSheet> spritesheets;
+static int32_t      spritesheetCount;
+static SpriteSheet* spritesheets;
+
 static std::map<std::string, SpriteBatch> spriteBatchs;
 
 int   spriteIndex = 0;
@@ -169,71 +173,107 @@ inline bool EntityOnWall(const Entity& entity, const Grid& grid)
         ||  (HasGridCollision(grid, ivec2{ entity.gridPosition.x + 1, entity.gridPosition.y })));
 }
 
-void CreateSpriteSheet(SpriteSheet* spriteSheet, const ldtk::Tileset& tileset)
+bool CreateSpriteSheet(SpriteSheet* spriteSheet, const LDtkTileset tileset)
 {
-    int32_t cols = tileset.texture_size.x / tileset.tile_size;
-    int32_t rows = tileset.texture_size.y / tileset.tile_size;
+    int32_t cols = tileset.width / tileset.tileSize;
+    int32_t rows = tileset.height / tileset.tileSize;
     
     char absPath[1024];
-    FileSystem::GetExistsPath(absPath, sizeof(absPath), tileset.path.c_str());
+    if (!FileSystem::GetExistsPath(absPath, sizeof(absPath), tileset.path))
+    {
+        return false;
+    }
 
     Graphics::LoadSpriteSheet(spriteSheet, absPath, cols, rows);
+    return true;
 }
 
-void CreateSpriteBatch(const ldtk::Layer* layer)
+void CreateSpriteBatch(const int32_t levelHeight, const LDtkLayer* layer)
 {
-    const ldtk::Tileset* tileset = layer->getTileset();
-    if (!tileset || spritesheets.find(tileset->uid) == spritesheets.cend())
+    const LDtkTileset* tileset = &layer->tileset;
+    if (tileset->index < 0 || tileset->index > spritesheetCount || layer->tileCount == 0)
     {
         return;
     }
 
-    const SpriteSheet spritesheet = spritesheets[tileset->uid];
+    const SpriteSheet spritesheet = spritesheets[tileset->index];
 
     SpriteBatch spriteBatch = {};
-    spriteBatch.Create(&spritesheets[tileset->uid], (int32_t)layer->allTiles().size() * 6);
+    spriteBatch.Create(&spritesheets[tileset->index], (int32_t)layer->tileCount * 6);
     
     spriteBatch.Begin();
-    for (const ldtk::Tile& tile : layer->allTiles())
+    for (int i = 0; i < layer->tileCount; i++)
     {
-        const int32_t cols = tile.texture_position.x / tileset->tile_size;
-        const int32_t rows = tile.texture_position.y / tileset->tile_size;
+        const LDtkTile& tile = layer->tiles[i];
+        const int32_t cols = tile.textureX / tileset->tileSize;
+        const int32_t rows = tile.textureY / tileset->tileSize;
         const Sprite* sprite = &spritesheet.sprites[rows * spritesheet.cols + cols];
-        const vec2 position = vec2_new(tile.position.x + tileset->tile_size * 0.5f, layer->level->size.y - tile.position.y - tileset->tile_size * 0.5f);
+        const vec2 position = vec2_new(tile.x + tileset->tileSize * 0.5f, levelHeight - tile.y - tileset->tileSize * 0.5f);
         const vec2 scale = vec2_new(tile.flipX ? -1.0f : 1.0f, tile.flipY ? -1.0f : 1.0f);
         spriteBatch.DrawSprite(sprite, position, 0.0f, scale, vec3_new1(1.0f));
     }
     spriteBatch.End();
 
-    spriteBatchs[layer->getName()] = spriteBatch;
+    spriteBatchs[layer->name] = spriteBatch;
 }
 
-void Game::Setup()
+bool Game::Setup()
 {
     FileSystem::AddSearchPath("assets");
     FileSystem::AddSearchPath("../../assets");
+    FileSystem::AddSearchPath("../../../assets");
+    FileSystem::AddSearchPath("../../../../assets");
 
     char worldPath[1024];
     if (!FileSystem::GetExistsPath(worldPath, sizeof(worldPath), "pixel_adventure.ldtk"))
     {
-        return;
+        return false;
     }
 
-    ldtk::World world;
-    world.loadFromFile(worldPath);
+    int32_t tempBufferSize = 20 * 1024 * 1024;
+    void* tempBuffer = malloc((size_t)tempBufferSize);
 
-    const auto& tilesets = world.allTilesets();
-    for (const auto& tileset : tilesets)
+    LDtkContext ldtkContext = LDtkContextDefault(tempBuffer, tempBufferSize);
+
+    LDtkWorld world;
+    LDtkError error = LDtkParse(worldPath, ldtkContext, LDtkParseFlags_LayerReverseOrder, &world);
+    if (error.code != LDtkErrorCode_None)
     {
+        fprintf(stderr, "Parse ldtk sample content failed!: %s\n", error.message);
+        free(tempBuffer);
+        return false;
+    }
+
+    spritesheetCount = world.tilesetCount;
+    spritesheets = (SpriteSheet*)malloc(spritesheetCount * sizeof(SpriteSheet));
+    for (int32_t i = 0; i < world.tilesetCount; i++)
+    {
+        LDtkTileset tileset = world.tilesets[i];
+
         SpriteSheet sheet;
-        CreateSpriteSheet(&sheet, tileset);
+        if (!CreateSpriteSheet(&sheet, tileset))
+        {
+            free(tempBuffer);
+            return false;
+        }
 
-        spritesheets[tileset.uid] = sheet;
+        spritesheets[tileset.index] = sheet;
     }
 
-    for (const auto& layer : world.getLevel("Level0")->allLayers())
+    int32_t levelIndex = 0;
+    for (int32_t i = 0; i < world.levelCount; i++)
     {
-        CreateSpriteBatch(&layer);
+        if (strcmp(world.levels[i].name, "Level0") == 0)
+        {
+            levelIndex = i;
+            break;
+        }
+    }
+
+    LDtkLevel level = world.levels[levelIndex];
+    for (int32_t i = 0; i < level.layerCount; i++)
+    {
+        CreateSpriteBatch(level.height, &level.layers[i]);
     }
 
     int spriteCols_FrogIdle = 11;
@@ -259,27 +299,30 @@ void Game::Setup()
     frogScale = vec2_new(1.0f, 1.0f);
     frogPosition = vec2_new((float)Window::GetWidth() * 0.5f, (float)Window::GetHeight() * 0.5f);
 
-    const ldtk::Layer* layer = world.getLevel("Level0")->getLayer("Collisions");
+    int32_t collisionLayerIndex = 0;
+    for (int32_t i = 0; i < level.layerCount; i++)
+    {
+        if (strcmp(level.layers[i].name, "Collisions") == 0)
+        {
+            collisionLayerIndex = i;
+            break;
+        }
+    }
+    const LDtkLayer* collisionLayer = &level.layers[collisionLayerIndex];
     
-    grid.size = layer->getCellSize();
-    grid.cols = layer->getGridSize().x;
-    grid.rows = layer->getGridSize().y;
+    grid.size = collisionLayer->tileSize;
+    grid.cols = collisionLayer->cols;
+    grid.rows = collisionLayer->rows;
     grid.data = (int32_t*)malloc(grid.cols * grid.rows * sizeof(int32_t));
 
-    const int cellSize = layer->getCellSize();
-    for (int x = 0, w = layer->getGridSize().x; x < w; x++)
+    for (int32_t y = 0, h = collisionLayer->rows; y < h; y++)
     {
-        for (int y = 0, h = layer->getGridSize().y; y < h; y++)
+        int32_t y0 = (h - y - 1) * collisionLayer->cols;
+        int32_t y1 = y * grid.cols;
+        for (int32_t x = 0, w = collisionLayer->cols; x < w; x++)
         {
-            const auto& cell = layer->getIntGridVal(x, h - y - 1);
-
-            if (cell.value == ldtk::IntGridValue::None.value)
-            {
-                grid.data[x + y * grid.cols] = 0;
-                continue;
-            }
-
-            grid.data[x + y * grid.cols] = 1;
+            const LDtkIntGridValue cell = collisionLayer->values[x + y0];
+            grid.data[x + y1] = cell.value != 0;
         }
     }
 
@@ -289,15 +332,29 @@ void Game::Setup()
     frog.ratioVelocity = vec2_new1(0.0f);
     frog.ratioPosition = vec2_new1(0.0f);
 
-    const ldtk::Layer* entitiesLayer = world.getLevel("Level0")->getLayer("Entities");
-    for (const auto& entity : entitiesLayer->allEntities())
+    int32_t entitiesLayerIndex = 0;
+    for (int32_t i = 0; i < level.layerCount; i++)
     {
+        if (strcmp(level.layers[i].name, "Entities") == 0)
+        {
+            entitiesLayerIndex = i;
+            break;
+        }
+    }
+    const LDtkLayer* entitiesLayer = &level.layers[entitiesLayerIndex];
+
+    for (int32_t i = 0; i < entitiesLayer->entityCount; i++)
+    {
+        const LDtkEntity entity = entitiesLayer->entities[i];
         frog.radius = 0.0f;
         frog.gridSize = ivec2{ 2, 2 };
-        frog.gridPosition = ivec2{ entity.getGridPosition().x, entitiesLayer->getGridSize().y - entity.getGridPosition().y - 1 };
+        frog.gridPosition = ivec2{ entity.gridX, entity.gridY + 2 };
         frog.ratioVelocity = vec2_new1(0.0f);
         frog.ratioPosition = vec2_new1(0.0f);
     }
+
+    free(tempBuffer);
+    return true;
 }
 
 void Game::Shutdown()
@@ -526,19 +583,19 @@ void Game::Render()
     //const vec2 frogPosition = vec2_new(frogBody->GetPosition().x, frogBody->GetPosition().y);
     const vec2 frogPosition = vec2_add(GetWorldPosition(grid, frog), vec2_new(0.0f, frogHeight * 0.25f));
     //const vec2 frogPosition = vec2_mul1(vec2_add(frogLower, frogUpper), 0.5f);
-    Graphics::DrawSprite(&frogSpriteSheet->sprites[spriteIndex], frogPosition, 0.0f, frogScale, vec3_new1(1.0f));
+    Graphics::DrawSprite(&frogSpriteSheet->sprites[spriteIndex], vec2_new(frogPosition.x, frogPosition.y), 0.0f, frogScale, vec3_new1(1.0f));
 
-    const bool drawCollisionGrid = false;
+    const bool drawCollisionGrid = true;
     if (drawCollisionGrid)
     {
         const vec2 frogLower = vec2_new(frogPosition.x - 0.35f * frogWidth, frogPosition.y - 0.5f * frogHeight);
         const vec2 frogUpper = vec2_new(frogPosition.x + 0.35f * frogWidth, frogPosition.y + 0.5f * frogHeight);
         Graphics::DrawQuadLine(frogLower, frogUpper, vec3_new1(1.0f));
 
-        const int cellSize = grid.size;
-        for (int x = 0, w = grid.cols; x < w; x++)
+        const float cellSize = (float)grid.size;
+        for (int32_t y = 0, h = grid.rows; y < h; y++)
         {
-            for (int y = 0, h = grid.rows; y < h; y++)
+            for (int32_t x = 0, w = grid.cols; x < w; x++)
             {
                 if (!HasGridCollision(grid, ivec2{x, y}))
                 {
@@ -546,8 +603,8 @@ void Game::Render()
                 }
 
                 Graphics::DrawQuadLine(
-                    vec2_new(x * cellSize, y * cellSize),
-                    vec2_new(x * cellSize + cellSize, y * cellSize + cellSize), vec3_new1(1.0f));
+                    vec2_new((float)x * cellSize, (float)y * cellSize),
+                    vec2_new((float)x * cellSize + cellSize, (float)y * cellSize + cellSize), vec3_new1(1.0f));
             }
         }
     }

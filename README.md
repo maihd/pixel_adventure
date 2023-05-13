@@ -9,7 +9,6 @@ Free open source game remake from [Pixel Frog's Pixel Adventure](https://pixelfr
 - SDL2 2.0.16
 - Dear ImGui
 - MaiHD's VectorMath
-- Modar Nasser's LDtkLoader
 - GLAD
 - Windows 8 SDK (Windows 10/11 SDK is untested)
 
@@ -22,7 +21,7 @@ Free open source game remake from [Pixel Frog's Pixel Adventure](https://pixelfr
 ## Acknowledge
 - Pixel Frog
 - Deepnight and his LDtk, gameBase
-- Modar Nasser's LDtkLoader
+- Modar Nasser's LDtkLoader (no more using)
 - Sean Barrett's stb
 - Dear ImGui
 - Premake
