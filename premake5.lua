@@ -42,7 +42,7 @@ do
     staticruntime "On"
     omitframepointer "On"
 
-    rtti "On"
+    rtti "Off"
     exceptionhandling "Off"
 
     filter { "configurations:*Debug*" }
