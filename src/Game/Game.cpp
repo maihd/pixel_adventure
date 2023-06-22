@@ -18,6 +18,7 @@
 #include "Framework/JobSystem.h"
 
 #include <map>
+#include <string>
 
 struct Grid
 {
