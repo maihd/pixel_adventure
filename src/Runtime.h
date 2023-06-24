@@ -1,5 +1,6 @@
 #pragma once
 
+// @todo: convert to C ABI
 namespace Runtime
 {
     bool Setup(void);

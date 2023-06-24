@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// @todo: convert to C ABI
 namespace MouseButtons
 {
     enum Type : uint32_t
@@ -17,6 +18,7 @@ namespace MouseButtons
 }
 using MouseButton = MouseButtons::Type;
 
+// @todo: convert to C ABI
 enum struct GamepadAxis : uint32_t
 {
     LeftVertical,
@@ -29,6 +31,7 @@ enum struct GamepadAxis : uint32_t
     RightTrigger,
 };
 
+// @todo: convert to C ABI
 enum struct GamepadButton : uint32_t
 {
     Cross,
@@ -71,6 +74,7 @@ enum struct GamepadButton : uint32_t
     SwitchCapture   = SwitchHome + 1,
 };
 
+// @todo: convert to C ABI
 enum struct KeyCode : uint32_t
 {
     None,
@@ -234,6 +238,7 @@ enum struct KeyCode : uint32_t
     F24,
 };
 
+// @todo: convert to C ABI
 namespace Input
 {
     void            Setup(void);

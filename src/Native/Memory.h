@@ -3,6 +3,9 @@
 #include <stdint.h>
 #include "Misc/Compiler.h"
 
+// @todo: Add Arena
+// @todo: Refactor to MaiCStyle
+
 // --------------------------------------
 // Memory constructor & destructor
 // --------------------------------------
@@ -103,6 +106,7 @@ int MemoryPageSize(void);
 #define MEMORY_TRACKING() do {} while(0)
 #endif
 
+// @todo: Convert to C version
 struct MemoryTracker
 {
     int32_t     markAllocations;

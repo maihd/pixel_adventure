@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 #include <vectormath/vectormath_types.h>
+
+#include "Misc/LDtkParser.h"
 #include "Graphics/SpriteBatch.h"
 
 struct TileMapLayer
@@ -18,27 +20,33 @@ struct TileMapLayer
     SpriteBatch     spriteBatch;    // Batching all tiles into one, only cost 1-draw call when draw tilemap
 };
 
-struct TileMapCollision
+/// TileMapGrid
+/// Use for detect collision
+/// @note: Store this data structure stack not is not a good-practice (more details later)
+struct TileMapGrid
 {
-    int32_t*        data;           // Data, item value is zero mean no collision
-
+    int32_t         size;
     int32_t         cols;           // Number of columns (horizon number of tiles)
     int32_t         rows;           // Number of rows (vertical humber of tiles)
+    int32_t         data[];         // Data, item value is zero mean no collision
 
-    int32_t         tileWidth;      // Tile width
-    int32_t         tileHeight;     // Tile height
+    /// Create TileMapGrid from LDtkLayer
+    static TileMapGrid* FromLDtkLayer(const LDtkLayer* layer);
+
+    /// Destroy TileMapGrid
+    void Destroy(); 
 
     /// Check is the position is collided
-    inline bool IsCollided(ivec2 position)
+    inline int32_t SafeGet(ivec2 position, int32_t defValue) const
     {
         if (position.x < 0 || position.x >= cols)
         {
-            return false;
+            return defValue;
         }
 
         if (position.y < 0 || position.y >= rows)
         {
-            return false;
+            return defValue;
         }
 
         return data[position.y * cols + position.x];

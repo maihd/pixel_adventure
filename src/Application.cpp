@@ -75,7 +75,7 @@ int ApplicationMain(int argc, char* argv[])
     window.title    = "Pixel Adventure";
     window.x        = -1;
     window.y        = -1;
-    window.width    = 1024;
+    window.width    = 448;//1024;
     window.height   = 256;
     window.flags    = WindowFlags::Default;
 
@@ -106,6 +106,7 @@ int ApplicationMain(int argc, char* argv[])
         }
     }
 
+    // @todo: make DevTools module
     DevTools:
     {
         IMGUI_CHECKVERSION();
@@ -135,6 +136,8 @@ int ApplicationMain(int argc, char* argv[])
         ImGui_ImplSDL2_InitForOpenGL((SDL_Window*)window.handle, (SDL_GLContext)window.graphicsContext);
         ImGui_ImplOpenGL3_Init();
     }
+
+    Window::RequestFocus();
 
     ImGuiIO& io = ImGui::GetIO();
     MainLoop: while ((window.flags & WindowFlags::Quiting) == 0)
@@ -196,15 +199,10 @@ int ApplicationMain(int argc, char* argv[])
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
             // Update and Render additional Platform Windows
-            // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
-            //  For this specific demo app we could also call SDL_GL_MakeCurrent(window, gl_context) directly)
             if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
             {
-                SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-                SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
                 ImGui::UpdatePlatformWindows();
                 ImGui::RenderPlatformWindowsDefault();
-                SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
             }
         }
 

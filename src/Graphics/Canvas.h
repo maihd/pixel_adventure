@@ -4,6 +4,8 @@
 #include <assert.h>
 #include "Texture.h"
 
+// @todo: convert to C ABI
+// @note: about default values, is all zero, so { 0 } fit the purpose
 struct Canvas
 {
     Texture     texture             = {};

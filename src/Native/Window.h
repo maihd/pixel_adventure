@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <assert.h> // For auto unclosed window attempt to be destroyed
 
+// @todo: convert to C ABI
 namespace WindowFlags
 {
     enum Type : uint32_t
@@ -24,6 +25,7 @@ namespace WindowFlags
     };
 }
 
+// @todo: convert to C ABI
 namespace WindowResetScenario
 {
     enum Type : uint32_t
@@ -34,6 +36,7 @@ namespace WindowResetScenario
     };
 }
 
+// @todo: convert to C ABI
 struct WindowDesc
 {
     void*               handle;
@@ -49,6 +52,7 @@ struct WindowDesc
 
     uint32_t            resetScenario;
 
+    // @todo: do we need this?
     #ifdef __cplusplus
     inline WindowDesc()
         : handle(nullptr)
@@ -75,6 +79,7 @@ struct WindowDesc
 // Main functions
 // -------------------------------------------------------------
 
+// @todo: convert to C ABI
 namespace Window
 {
     bool                Open(WindowDesc* window);
@@ -109,6 +114,9 @@ namespace Window
     void                DisableVSync(void);
     bool                IsVSyncEnabled(void);
     void                SetVSyncEnabled(bool value);
+
+    void                RequestFocus(void);
+    void                MakeGLCurrent(void);
 
     bool                HasInputFocus(void);
     bool                HasMouseFocus(void);

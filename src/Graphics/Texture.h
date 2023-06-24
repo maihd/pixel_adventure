@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+// @todo: convert to C ABI
+// @note: sizeof enum is commonly int32_t/uint32_t (maybe at macros __enum_type(uint32_t))
 enum TextureFilter : uint32_t
 {
     TextureFilter_None,
@@ -9,6 +11,8 @@ enum TextureFilter : uint32_t
     TextureFilter_Nearest,
 };
 
+// @todo: convert to C ABI
+// @note: sizeof enum is commonly int32_t/uint32_t (maybe at macros __enum_type(uint32_t))
 enum TextureWrap : uint32_t
 {
     TextureWrap_None,
@@ -18,6 +22,8 @@ enum TextureWrap : uint32_t
     TextureWrap_MirrorRepeat,
 };
 
+// @todo: convert to C ABI
+// @note: sizeof enum is commonly int32_t/uint32_t (maybe at macros __enum_type(uint32_t))
 enum PixelFormat : uint32_t
 {
     PixelFormat_None,
@@ -26,6 +32,8 @@ enum PixelFormat : uint32_t
     PixelFormat_RGBA,
 };
 
+// @todo: convert to C ABI
+// @note: about default values, is all zero, so { 0 } fit the purpose
 struct Texture
 {
     uint32_t        id      = 0;

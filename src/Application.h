@@ -4,3 +4,5 @@
 extern "C"
 #endif
 int ApplicationMain(int argc, char* argv[]);
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

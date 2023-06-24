@@ -513,6 +513,7 @@ void Graphics::DrawQuadLine(vec2 start, vec2 end, vec3 color)
         pos1.x, pos0.y,     uv1.x, uv0.y,
         pos0.x, pos0.y,     uv0.x, uv0.y,
     };
+    const int32_t verticesCount = (int32_t)(sizeof(vertices) / (sizeof(float) * 4));
 
     glBindVertexArray(gVao);
     glBindBuffer(GL_ARRAY_BUFFER, gVbo);
@@ -525,7 +526,7 @@ void Graphics::DrawQuadLine(vec2 start, vec2 end, vec3 color)
     glUniformMatrix4fv(glGetUniformLocation(gProgramDrawText, "Projection"), 1, false, (const float*)&gProjection);
     glUniform3f(glGetUniformLocation(gProgramDrawText, "Color"), color.x, color.y, color.z);
 
-    glDrawArrays(GL_LINE_STRIP, 0, 4);
+    glDrawArrays(GL_LINE_STRIP, 0, verticesCount);
 }
 
 void Graphics::DrawSpriteBatch(const SpriteBatch* spriteBatch)

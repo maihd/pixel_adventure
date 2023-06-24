@@ -4,6 +4,7 @@
 
 struct FileInterface;
 
+// @todo: convert to C ABI
 namespace FileModes
 {
     enum Type : uint32_t
@@ -23,6 +24,7 @@ namespace FileModes
 }
 using FileMode = FileModes::Type;
 
+// @todo: convert to C ABI
 enum struct SeekOffset : uint32_t
 {
     StartOfFile,
@@ -30,6 +32,7 @@ enum struct SeekOffset : uint32_t
     EndOfFile,
 };
 
+// @todo: convert to C ABI
 struct MemoryStream
 {
     enum Flags : uint32_t
@@ -43,6 +46,7 @@ struct MemoryStream
     Flags               flags;
 };
 
+// @todo: convert to C ABI
 struct FileStream
 {
     FileInterface*      inteface;
@@ -87,6 +91,7 @@ struct FileInterface
 // FileSystem functions
 // -------------------------------------------------------------
 
+// @todo: convert to C ABI
 namespace FileSystem
 {
     bool            AddSearchPath(const char* path);

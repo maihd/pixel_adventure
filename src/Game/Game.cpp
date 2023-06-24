@@ -4,6 +4,7 @@
 #include <vectormath.h>
 
 #include "Game/Game.h"
+#include "Game/TileMap.h"
 #include "Game/Components.h"
 
 #include "Native/Input.h"
@@ -19,14 +20,6 @@
 
 #include <map>
 #include <string>
-
-struct Grid
-{
-    int32_t     cols;
-    int32_t     rows;
-    int32_t     size;
-    int32_t*    data;
-};
 
 struct Entity
 {
@@ -67,32 +60,22 @@ SpriteSheet* frogSpriteSheet = &spriteBatch_FrogIdle;
 float gravity = 90.0f;
 float fallSpeed = 0.0f;
 
-Entity  frog;
-Grid    grid;
+Entity          frog;
+TileMapGrid*    grid;
 
 inline vec2 GetWorldPosition(int32_t gridCellSize, ivec2 gridPosition, vec2 ratioPosition)
 {
     return vec2_new((float)gridCellSize * ((float)gridPosition.x + ratioPosition.x), (float)gridCellSize * ((float)gridPosition.y + ratioPosition.y));
 }
 
-inline vec2 GetWorldPosition(const Grid& grid, const Entity& entity)
+inline vec2 GetWorldPosition(const TileMapGrid* grid, const Entity& entity)
 {
-    return GetWorldPosition(grid.size, entity.gridPosition, entity.ratioPosition);
+    return GetWorldPosition(grid->size, entity.gridPosition, entity.ratioPosition);
 }
 
-inline bool HasGridCollision(const Grid& grid, ivec2 position)
+inline bool HasGridCollision(const TileMapGrid* grid, ivec2 position)
 {
-    if (position.x < 0 || position.x >= grid.cols)
-    {
-        return false;
-    }
-
-    if (position.y < 0 || position.y >= grid.rows)
-    {
-        return false;
-    }
-
-    return grid.data[position.y * grid.cols + position.x];
+    return grid->SafeGet(position, 0) != 0;
 }
 
 inline bool HasEntityCollision(const Entity& a, const Entity& b)
@@ -103,7 +86,7 @@ inline bool HasEntityCollision(const Entity& a, const Entity& b)
     return vec2_distsqr(posA, posB) <= zone * zone;
 }
 
-inline void UpdateEntity(Entity* entity, const Grid& grid, float deltaTime)
+inline void UpdateEntity(Entity* entity, const TileMapGrid* grid, float deltaTime)
 {
     entity->ratioPosition += entity->ratioVelocity * deltaTime + vec2_new(0.0f, -30.0f) * 0.5f * deltaTime * deltaTime;
     entity->ratioVelocity += vec2_new(0.0f, -30.0f) * deltaTime;
@@ -162,12 +145,12 @@ inline void UpdateEntity(Entity* entity, const Grid& grid, float deltaTime)
     }
 }
 
-inline bool EntityOnGround(const Entity& entity, const Grid& grid)
+inline bool EntityOnGround(const Entity& entity, const TileMapGrid* grid)
 {
     return (HasGridCollision(grid, ivec2{ entity.gridPosition.x, entity.gridPosition.y - 1 }) && entity.ratioPosition.y <= 0.5f);
 }
 
-inline bool EntityOnWall(const Entity& entity, const Grid& grid)
+inline bool EntityOnWall(const Entity& entity, const TileMapGrid* grid)
 {
     return !EntityOnGround(entity, grid)
         && ((HasGridCollision(grid, ivec2{ entity.gridPosition.x - 1, entity.gridPosition.y }))
@@ -310,26 +293,11 @@ bool Game::Setup()
         }
     }
     const LDtkLayer* collisionLayer = &level.layers[collisionLayerIndex];
-    
-    grid.size = collisionLayer->tileSize;
-    grid.cols = collisionLayer->cols;
-    grid.rows = collisionLayer->rows;
-    grid.data = (int32_t*)malloc(grid.cols * grid.rows * sizeof(int32_t));
-
-    for (int32_t y = 0, h = collisionLayer->rows; y < h; y++)
-    {
-        int32_t y0 = (h - y - 1) * collisionLayer->cols;
-        int32_t y1 = y * grid.cols;
-        for (int32_t x = 0, w = collisionLayer->cols; x < w; x++)
-        {
-            const LDtkIntGridValue cell = collisionLayer->values[x + y0];
-            grid.data[x + y1] = cell.value != 0;
-        }
-    }
+    grid = TileMapGrid::FromLDtkLayer(collisionLayer);
 
     frog.radius = 0.0f;
     frog.gridSize = ivec2{ 2, 2 };
-    frog.gridPosition = ivec2{ grid.cols >> 1, grid.rows >> 1 };
+    frog.gridPosition = ivec2{ grid->cols >> 1, grid->rows >> 1 };
     frog.ratioVelocity = vec2_new1(0.0f);
     frog.ratioPosition = vec2_new1(0.0f);
 
@@ -594,10 +562,10 @@ void Game::Render()
         const vec2 frogUpper = vec2_new(frogPosition.x + 0.35f * frogWidth, frogPosition.y + 0.5f * frogHeight);
         Graphics::DrawQuadLine(frogLower, frogUpper, vec3_new1(1.0f));
 
-        const float cellSize = (float)grid.size;
-        for (int32_t y = 0, h = grid.rows; y < h; y++)
+        const float cellSize = (float)grid->size;
+        for (int32_t y = 0, h = grid->rows; y < h; y++)
         {
-            for (int32_t x = 0, w = grid.cols; x < w; x++)
+            for (int32_t x = 0, w = grid->cols; x < w; x++)
             {
                 if (!HasGridCollision(grid, ivec2{x, y}))
                 {

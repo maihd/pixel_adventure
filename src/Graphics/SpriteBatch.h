@@ -2,6 +2,7 @@
 
 #include <vectormath/vectormath_types.h>
 
+struct Sprite;
 struct SpriteSheet;
 
 enum struct SpriteBatchState : uint32_t
@@ -10,6 +11,8 @@ enum struct SpriteBatchState : uint32_t
     Batching,
 };
 
+// @todo: convert to C ABI
+// @note: about default values, is all zero, so { 0 } fit the purpose
 struct SpriteBatch
 {
 public: // Constants

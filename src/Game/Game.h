@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 
+// @todo: convert to C ABI
 namespace Game
 {
     bool Setup();

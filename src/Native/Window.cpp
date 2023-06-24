@@ -473,6 +473,22 @@ void Window::SetVSyncEnabled(bool vsync)
     SDL_GL_SetSwapInterval(vsync);
 }
 
+void Window::RequestFocus(void)
+{
+    if (gMainWindow)
+    {
+        SDL_SetWindowInputFocus((SDL_Window*)gMainWindow->handle);
+    }
+}
+
+void Window::MakeGLCurrent(void)
+{
+    if (gMainWindow)
+    {
+        SDL_GL_MakeCurrent((SDL_Window*)gMainWindow->handle, gMainWindow->graphicsContext);
+    }
+}
+
 bool Window::HasInputFocus(void)
 {
     return gMainWindow && SDL_GetKeyboardFocus() == gMainWindow->handle;

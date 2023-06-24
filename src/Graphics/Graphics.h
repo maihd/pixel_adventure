@@ -10,6 +10,7 @@ struct WindowDesc;
 
 /// Sprite
 /// Can be known as sub Texture
+// @note: about default values, is all zero, so { 0 } fit the purpose
 struct Sprite
 {
     float           width       = 0.0f;
@@ -23,6 +24,7 @@ struct Sprite
 
 /// SpriteSheet
 /// Simple sprite list store in columns and rows
+// @note: about default values, is all zero, so { 0 } fit the purpose
 struct SpriteSheet
 {
     uint32_t        textureId   = 0;
@@ -35,12 +37,16 @@ struct SpriteSheet
 };
 
 /// SrpiteAtlas
-/// 
+/// Batch multiple textures into one big texture
+/// Can batch up to 8 textures
 //struct SpriteAtlas
 //{
-//
+// uint32_t             textureId   = 0;
+// uint32_t             textures[8] = 0; // limits to 8 textures
 //};
 
+// @todo: convert to C ABI
+// @note: sizeof enum is commonly int32_t/uint32_t (maybe at macros __enum_type(uint32_t))
 enum struct GraphicsError : uint32_t
 {
     None,
@@ -49,6 +55,7 @@ enum struct GraphicsError : uint32_t
     CreateContextFailed,
 };
 
+// @todo: convert to C ABI
 namespace Graphics
 {
     GraphicsError   Setup(WindowDesc* window);
