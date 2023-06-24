@@ -12,4 +12,6 @@ namespace Game
 
     void Update(float time, float deltaTime);
     void Render();
+
+    void RenderDevTools();
 }

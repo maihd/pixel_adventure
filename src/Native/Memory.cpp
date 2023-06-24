@@ -4,10 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include <rmem.h>
 
 #include "Memory.h"
 #include "HeapLayers.h"
+#include "Misc/Logging.h"
 
 #if !defined(NDEBUG)
 
@@ -162,7 +162,6 @@ void* MemoryAllocDebug(const char* tag, int32_t size, int32_t align, const char*
 
     void* ptr = _aligned_malloc((size_t)size, (size_t)align);
     AddAlloc(ptr, size, align, tag, func, file, line);
-    rmemAlloc(0, ptr, (uint32_t)size, (uint32_t)(size + align));
     return ptr;
 }
 
@@ -181,7 +180,6 @@ void* MemoryReallocDebug(const char* tag, void* ptr, int32_t size, int32_t align
     {
         UpdateAlloc(ptr, newPtr, size, align, tag, func, file, line);
     }
-    rmemRealloc(0, newPtr, (uint32_t)size, (uint32_t)(size + align), ptr);
     return newPtr;
 }
 
@@ -193,7 +191,6 @@ void MemoryFreeDebug(const char* tag, void* ptr, const char* func, const char* f
     if (ptr)
     {
         RemoveAlloc(ptr, func, tag, file, line);
-        rmemFree(0, ptr);
         _aligned_free(ptr);
     }
 }
@@ -204,17 +201,17 @@ void MemoryDumpAllocs(void)
 
     if (gAllocStore.allocations == 0)
     {
-        printf("No memory allocations\n");
+        Log_Info("Memory", "No memory allocations\n");
         return;
     }
 
-    printf("Address\t\tSize\t\tModified\tSource\n");
+    Log_Info("Memory", "Address\t\tSize\t\tModified\tSource\n");
     for (int32_t i = 0; i < ALLOC_DESC_COUNT; i++)
     {
         AllocDesc* allocDesc = gAllocStore.hashAllocDescs[i];
         while (allocDesc != nullptr)
         {
-            printf("0x%p\t%d\t\t%d\t\t%s:%d:%s\n", 
+            Log_Info("Memory", "0x%p\t%d\t\t%d\t\t%s:%d:%s\n",
                 allocDesc->ptr, 
                 allocDesc->size, 
                 allocDesc->modifiedCount, 

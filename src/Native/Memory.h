@@ -46,7 +46,7 @@ __forceinline void MemoryDeleteImpl(T* ptr)
 /// Allocate new if required
 #define MemoryRealloc(ptr, size, align)                 MemoryReallocImpl("Common", ptr, size, align)
 
-/// Free memory block
+/// Free memory block   
 #define MemoryFree(ptr)                                 MemoryFreeImpl("Common", ptr)
 
 #if !defined(NDEBUG)

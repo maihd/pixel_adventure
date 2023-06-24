@@ -571,6 +571,8 @@ void DrawLayer(const char* layerName)
     Graphics::DrawSpriteBatch(spriteBatch);
 }
 
+static bool s_drawCollisionGrid = true;
+
 void Game::Render()
 {
     for (auto pair : spriteBatchs)
@@ -586,8 +588,7 @@ void Game::Render()
     //const vec2 frogPosition = vec2_mul1(vec2_add(frogLower, frogUpper), 0.5f);
     Graphics::DrawSprite(&frogSpriteSheet->sprites[spriteIndex], vec2_new(frogPosition.x, frogPosition.y), 0.0f, frogScale, vec3_new1(1.0f));
 
-    const bool drawCollisionGrid = true;
-    if (drawCollisionGrid)
+    if (s_drawCollisionGrid)
     {
         const vec2 frogLower = vec2_new(frogPosition.x - 0.35f * frogWidth, frogPosition.y - 0.5f * frogHeight);
         const vec2 frogUpper = vec2_new(frogPosition.x + 0.35f * frogWidth, frogPosition.y + 0.5f * frogHeight);
@@ -609,4 +610,14 @@ void Game::Render()
             }
         }
     }
+}
+
+#include <imgui/imgui.h>
+void Game::RenderDevTools()
+{
+    ImGui::Begin("Game Debug");
+
+    ImGui::Checkbox("Draw Collision Grid", &s_drawCollisionGrid);
+
+    ImGui::End();
 }

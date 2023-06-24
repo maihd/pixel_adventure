@@ -2,8 +2,9 @@
 
 #include <stdint.h>
 #include <vectormath/vectormath_types.h>
+#include "Graphics/SpriteBatch.h"
 
-struct TileMap
+struct TileMapLayer
 {
     int32_t         width;          // Width of tilemap (aka number of columns * tile width)
     int32_t         height;         // Height of tilemap (aka number of rows * tile height)
@@ -14,7 +15,7 @@ struct TileMap
     int32_t         tileWidth;      // Tile width
     int32_t         tileHeight;     // Tile height
 
-    int32_t         spriteBatch;    // Batching all tiles into one, only cost 1-draw call when draw tilemap
+    SpriteBatch     spriteBatch;    // Batching all tiles into one, only cost 1-draw call when draw tilemap
 };
 
 struct TileMapCollision

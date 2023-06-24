@@ -75,7 +75,7 @@ int ApplicationMain(int argc, char* argv[])
     window.title    = "Pixel Adventure";
     window.x        = -1;
     window.y        = -1;
-    window.width    = 448;
+    window.width    = 1024;
     window.height   = 256;
     window.flags    = WindowFlags::Default;
 
@@ -189,6 +189,7 @@ int ApplicationMain(int argc, char* argv[])
             ImGui::NewFrame();
 
             Application_RenderDevTools(deltaTime);
+            Game::RenderDevTools();
 
             // Rendering Imgui
             ImGui::Render();
