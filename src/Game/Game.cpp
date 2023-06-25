@@ -164,7 +164,7 @@ bool CreateSpriteSheet(SpriteSheet* spriteSheet, const LDtkTileset tileset)
     int32_t rows = tileset.height / tileset.tileSize;
     
     char absPath[1024];
-    if (!FileSystem::GetExistsPath(absPath, sizeof(absPath), tileset.path))
+    if (!FileSystem_GetExistsPath(absPath, sizeof(absPath), tileset.path))
     {
         return false;
     }
@@ -204,13 +204,13 @@ void CreateSpriteBatch(const int32_t levelHeight, const LDtkLayer* layer)
 
 bool Game_Setup()
 {
-    FileSystem::AddSearchPath("assets");
-    FileSystem::AddSearchPath("../../assets");
-    FileSystem::AddSearchPath("../../../assets");
-    FileSystem::AddSearchPath("../../../../assets");
+    FileSystem_AddSearchPath("assets");
+    FileSystem_AddSearchPath("../../assets");
+    FileSystem_AddSearchPath("../../../assets");
+    FileSystem_AddSearchPath("../../../../assets");
 
     char worldPath[1024];
-    if (!FileSystem::GetExistsPath(worldPath, sizeof(worldPath), "pixel_adventure.ldtk"))
+    if (!FileSystem_GetExistsPath(worldPath, sizeof(worldPath), "pixel_adventure.ldtk"))
     {
         return false;
     }

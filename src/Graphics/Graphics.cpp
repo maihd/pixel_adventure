@@ -319,7 +319,7 @@ bool Graphics_LoadSpriteSheet(SpriteSheet* spriteSheet, const char* file, int32_
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // Nearest are more better for pixel game
 
     char existsPath[1024];
-    if (!FileSystem::GetExistsPath(existsPath, sizeof(existsPath), file))
+    if (!FileSystem_GetExistsPath(existsPath, sizeof(existsPath), file))
     {
         return false;
     }
