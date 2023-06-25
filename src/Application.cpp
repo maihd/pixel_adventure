@@ -128,8 +128,8 @@ int ApplicationMain(int argc, char* argv[])
             return -1;
         }
 
-        const GraphicsError graphicsError = Graphics::Setup(&window);
-        if (graphicsError != GraphicsError::None)
+        const GraphicsError graphicsError = Graphics_Setup(&window);
+        if (graphicsError != GraphicsError_None)
         {
             Application_HandleRendererError(graphicsError);
             Window::Close(&window);
@@ -225,7 +225,7 @@ int ApplicationMain(int argc, char* argv[])
 
         Game::Update(totalTime, deltaTime);
 
-        Graphics::Clear();
+        Graphics_Clear();
         
         Game::Render();
 
@@ -251,7 +251,7 @@ int ApplicationMain(int argc, char* argv[])
             }
         }
 
-        Graphics::Present();
+        Graphics_Present();
 
         // Frame end
         Input::EndFrame();
@@ -277,7 +277,7 @@ int ApplicationMain(int argc, char* argv[])
         Input::Shutdown();
         JobSystem::Shutdown();
 
-        Graphics::Shutdown(&window);
+        Graphics_Shutdown(&window);
 
         Window::Close(&window);
     }

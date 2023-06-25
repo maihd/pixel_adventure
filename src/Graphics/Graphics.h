@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <vectormath/vectormath_types.h>
 
+#include "Misc/Compiler.h"
+
 struct Sprite;
 struct SpriteSheet;
 struct SpriteBatch;
@@ -10,31 +12,29 @@ struct WindowDesc;
 
 /// Sprite
 /// Can be known as sub Texture
-/// @note: about default values, is all zero, so { 0 } fit the purpose
-struct Sprite
+typedef struct Sprite
 {
-    float           width       = 0.0f;
-    float           height      = 0.0f;
+    float           width       __default_init(0.0f);
+    float           height      __default_init(0.0f);
     
-    vec2            uv0         = vec2{0, 0};
-    vec2            uv1         = vec2{0, 0};
+    vec2            uv0         __default_init(vec2{0, 0});
+    vec2            uv1         __default_init(vec2{0, 0});
 
-    uint32_t        textureId   = 0;
-};
+    uint32_t        textureId   __default_init(0);
+} Sprite;
 
 /// SpriteSheet
 /// Simple sprite list store in columns and rows
-/// @note: about default values, is all zero, so { 0 } fit the purpose
-struct SpriteSheet
+typedef struct SpriteSheet
 {
-    uint32_t        textureId   = 0;
+    uint32_t        textureId   __default_init(0u);
 
-    int32_t         cols        = 0;
-    int32_t         rows        = 0;
+    int32_t         cols        __default_init(0);
+    int32_t         rows        __default_init(0);
     
-    int32_t         spriteCount = 0;
-    Sprite*         sprites     = nullptr;
-};
+    int32_t         spriteCount __default_init(0);
+    Sprite*         sprites     __default_init(nullptr);
+} SpriteSheet;
 
 /// SrpiteAtlas
 /// Batch multiple textures into one big texture
@@ -47,32 +47,38 @@ struct SpriteSheet
 
 // @todo: convert to C ABI
 // @note: sizeof enum is commonly int32_t/uint32_t (maybe at macros __enum_type(uint32_t))
-enum struct GraphicsError : uint32_t
+typedef enum GraphicsError __enum_type(uint32_t)
 {
-    None,
-    InternalFatal,
-    LoadDriverFailed,
-    CreateContextFailed,
-};
+    GraphicsError_None,
+    GraphicsError_InternalFatal,
+    GraphicsError_LoadDriverFailed,
+    GraphicsError_CreateContextFailed,
+} GraphicsError;
 
-// @todo: convert to C ABI
-namespace Graphics
-{
-    GraphicsError   Setup(WindowDesc* window);
-    void            Shutdown(WindowDesc* window);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    void            Clear(void);
-    void            Present(void);
+GraphicsError   Graphics_Setup(WindowDesc* window);
+void            Graphics_Shutdown(WindowDesc* window);
 
-    bool            LoadSpriteSheet(SpriteSheet* spriteSheet, const char* file, int32_t cols, int32_t rows);
-    void            UnloadSpriteSheet(SpriteSheet* spriteSheet);
+void            Graphics_Clear(void);
+void            Graphics_Present(void);
 
-    void            DrawSprite(const Sprite* sprite, vec2 position, float rotation, vec2 scale, vec3 color);
-    void            DrawSpriteBatch(const SpriteBatch* spriteBatch);
+bool            Graphics_LoadSpriteSheet(SpriteSheet* spriteSheet, const char* file, int32_t cols, int32_t rows);
+void            Graphics_UnloadSpriteSheet(SpriteSheet* spriteSheet);
 
-    vec2            TextSize(const char* text);
-    void            DrawText(const char* text, vec2 position, vec3 color);
+void            Graphics_DrawSprite(const Sprite* sprite, vec2 position, float rotation, vec2 scale, vec3 color);
+void            Graphics_DrawSpriteBatch(const SpriteBatch* spriteBatch);
 
-    void            DrawQuad(vec2 start, vec2 end, vec3 color);
-    void            DrawQuadLine(vec2 start, vec2 end, vec3 color);
+vec2            Graphics_TextSize(const char* text);
+void            Graphics_DrawText(const char* text, vec2 position, vec3 color);
+
+void            Graphics_DrawQuad(vec2 start, vec2 end, vec3 color);
+void            Graphics_DrawQuadLine(vec2 start, vec2 end, vec3 color);
+
+#ifdef __cplusplus
 }
+#endif
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

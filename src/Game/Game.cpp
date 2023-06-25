@@ -169,7 +169,7 @@ bool CreateSpriteSheet(SpriteSheet* spriteSheet, const LDtkTileset tileset)
         return false;
     }
 
-    Graphics::LoadSpriteSheet(spriteSheet, absPath, cols, rows);
+    Graphics_LoadSpriteSheet(spriteSheet, absPath, cols, rows);
     return true;
 }
 
@@ -263,23 +263,23 @@ bool Game::Setup()
 
     int spriteCols_FrogIdle = 11;
     int spriteRows_FrogIdle = 1;
-    Graphics::LoadSpriteSheet(&spriteBatch_FrogIdle, "main_characters/frog_idle.png", spriteCols_FrogIdle, spriteRows_FrogIdle);
+    Graphics_LoadSpriteSheet(&spriteBatch_FrogIdle, "main_characters/frog_idle.png", spriteCols_FrogIdle, spriteRows_FrogIdle);
 
     int spriteCols_FrogRun = 12;
     int spriteRows_FrogRun = 1;
-    Graphics::LoadSpriteSheet(&spriteBatch_FrogRun, "main_characters/frog_run.png", spriteCols_FrogRun, spriteRows_FrogRun);
+    Graphics_LoadSpriteSheet(&spriteBatch_FrogRun, "main_characters/frog_run.png", spriteCols_FrogRun, spriteRows_FrogRun);
 
     int spriteCols_FrogJumpUp = 1;
     int spriteRows_FrogJumpUp = 1;
-    Graphics::LoadSpriteSheet(&spriteBatch_FrogJumpUp, "main_characters/frog_jump_up.png", spriteCols_FrogJumpUp, spriteRows_FrogJumpUp);
+    Graphics_LoadSpriteSheet(&spriteBatch_FrogJumpUp, "main_characters/frog_jump_up.png", spriteCols_FrogJumpUp, spriteRows_FrogJumpUp);
 
     int spriteCols_FrogFallDown = 1;
     int spriteRows_FrogFallDown = 1;
-    Graphics::LoadSpriteSheet(&spriteBatch_FrogFallDown, "main_characters/frog_fall_down.png", spriteCols_FrogFallDown, spriteRows_FrogFallDown);
+    Graphics_LoadSpriteSheet(&spriteBatch_FrogFallDown, "main_characters/frog_fall_down.png", spriteCols_FrogFallDown, spriteRows_FrogFallDown);
 
     int spriteCols_FrogWallCollide = 5;
     int spriteRows_FrogWallCollide = 1;
-    Graphics::LoadSpriteSheet(&spriteBatch_FrogWallCollide, "main_characters/frog_wall_holding.png", spriteCols_FrogWallCollide, spriteRows_FrogWallCollide);
+    Graphics_LoadSpriteSheet(&spriteBatch_FrogWallCollide, "main_characters/frog_wall_holding.png", spriteCols_FrogWallCollide, spriteRows_FrogWallCollide);
 
     frogScale = vec2_new(1.0f, 1.0f);
     frogPosition = vec2_new((float)Window::GetWidth() * 0.5f, (float)Window::GetHeight() * 0.5f);
@@ -539,7 +539,7 @@ void DrawLayer(const char* layerName)
     //    Renderer_DrawSprite(sprite, vec2_new(tile.position.x, layer->level->size.y - tile.position.y), 0.0f, vec2_new1(1.0f), vec3_new1(1.0f));
     //}
     const SpriteBatch* spriteBatch = &spriteBatchs[layerName];
-    Graphics::DrawSpriteBatch(spriteBatch);
+    Graphics_DrawSpriteBatch(spriteBatch);
 }
 
 static bool s_drawCollisionGrid = true;
@@ -548,7 +548,7 @@ void Game::Render()
 {
     for (auto pair : spriteBatchs)
     {
-        Graphics::DrawSpriteBatch(&pair.second);
+        Graphics_DrawSpriteBatch(&pair.second);
     }
 
     const float frogWidth = frogSpriteSheet->sprites[spriteIndex].width;
@@ -557,13 +557,13 @@ void Game::Render()
     //const vec2 frogPosition = vec2_new(frogBody->GetPosition().x, frogBody->GetPosition().y);
     const vec2 frogPosition = vec2_add(GetWorldPosition(grid, frog), vec2_new(0.0f, frogHeight * 0.25f));
     //const vec2 frogPosition = vec2_mul1(vec2_add(frogLower, frogUpper), 0.5f);
-    Graphics::DrawSprite(&frogSpriteSheet->sprites[spriteIndex], vec2_new(frogPosition.x, frogPosition.y), 0.0f, frogScale, vec3_new1(1.0f));
+    Graphics_DrawSprite(&frogSpriteSheet->sprites[spriteIndex], vec2_new(frogPosition.x, frogPosition.y), 0.0f, frogScale, vec3_new1(1.0f));
 
     if (s_drawCollisionGrid)
     {
         const vec2 frogLower = vec2_new(frogPosition.x - 0.35f * frogWidth, frogPosition.y - 0.5f * frogHeight);
         const vec2 frogUpper = vec2_new(frogPosition.x + 0.35f * frogWidth, frogPosition.y + 0.5f * frogHeight);
-        Graphics::DrawQuadLine(frogLower, frogUpper, vec3_new1(1.0f));
+        Graphics_DrawQuadLine(frogLower, frogUpper, vec3_new1(1.0f));
 
         const float cellSize = (float)grid->size;
         for (int32_t y = 0, h = grid->rows; y < h; y++)
@@ -575,7 +575,7 @@ void Game::Render()
                     continue;
                 }
 
-                Graphics::DrawQuadLine(
+                Graphics_DrawQuadLine(
                     vec2_new((float)x * cellSize, (float)y * cellSize),
                     vec2_new((float)x * cellSize + cellSize, (float)y * cellSize + cellSize), vec3_new1(1.0f));
             }
