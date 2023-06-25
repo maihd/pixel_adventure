@@ -54,7 +54,7 @@ const char* String_New(const char* source)
     else
     {
         StringBuffer* buffer = StringBuffer_New(length);
-        strncpy(buffer->data, source, length);
+        memcpy(buffer->data, source, length + 1);
         return buffer->data;
     }
 }

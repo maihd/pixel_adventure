@@ -133,6 +133,11 @@ void LogStorage_Destroy(LogStorage* storage)
     storage = storage->current;
     while (storage != NULL)
     {
+        for (LogRecord* record = storage->head; record != nullptr; record = record->next)
+        {
+            String_Free(record->text);
+        }
+
         LogStorage* prev = storage->prev;
         MemoryFreeTag("LogStorage", storage);
         storage = prev;
@@ -159,13 +164,13 @@ void LogStorage_AddRecord(LogStorage* storage, LogLevel level, const char* tag, 
         current->head = result;
     }
 
-    current->free = current->free->next;
-    current->tail = result;
-    result->next = NULL;
+    current->free   = current->free->next;
+    current->tail   = result;
+    result->next    = NULL;
 
-    result->level = level;
-    result->tag = tag;
-    result->text = text;
+    result->level   = level;
+    result->tag     = String_Ref(tag);
+    result->text    = String_New(text);
 
     //return result;
 }
