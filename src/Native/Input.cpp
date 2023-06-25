@@ -91,7 +91,7 @@ static float GetJoystickAxis(SDL_GameController* gameController, SDL_GameControl
     }
 }
 
-void Input::Setup(void)
+void Input_Setup(void)
 {
     gCurrentFrame = 1;
     
@@ -102,19 +102,19 @@ void Input::Setup(void)
     }
 }
 
-void Input::Shutdown(void)
+void Input_Shutdown(void)
 {
     CloseGameControllers();
     SDL_QuitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER);
 }
 
-void Input::NewFrame(void)
+void Input_NewFrame(void)
 {
     gInputTextLength = 0;
     OpenGameControllers();
 }
 
-void Input::EndFrame(void)
+void Input_EndFrame(void)
 {
     gInputText[gInputTextLength] = 0;
     gCurrentFrame++;
@@ -135,14 +135,14 @@ void Input::EndFrame(void)
             float rightTrigger = GetJoystickAxis(gameController, SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
 
             GamepadState& gamepadState = gGamepadStates[i];
-            gamepadState.axis[(int)GamepadAxis::LeftVertical] = leftVertical;
-            gamepadState.axis[(int)GamepadAxis::LeftHorizontal] = leftHorizontal;
+            gamepadState.axis[(int)GamepadAxis_LeftVertical] = leftVertical;
+            gamepadState.axis[(int)GamepadAxis_LeftHorizontal] = leftHorizontal;
 
-            gamepadState.axis[(int)GamepadAxis::RightVertical] = rightVertical;
-            gamepadState.axis[(int)GamepadAxis::RightHorizontal] = rightHorizontal;
+            gamepadState.axis[(int)GamepadAxis_RightVertical] = rightVertical;
+            gamepadState.axis[(int)GamepadAxis_RightHorizontal] = rightHorizontal;
 
-            gamepadState.axis[(int)GamepadAxis::LeftTrigger] = leftTrigger;
-            gamepadState.axis[(int)GamepadAxis::RightTrigger] = rightTrigger;
+            gamepadState.axis[(int)GamepadAxis_LeftTrigger] = leftTrigger;
+            gamepadState.axis[(int)GamepadAxis_RightTrigger] = rightTrigger;
 
             for (int button = 0; button < GAMEPAD_BUTTON_COUNT; button++)
             {
@@ -166,12 +166,12 @@ void Input::EndFrame(void)
     }
 }
 
-void Input::UpdateCharInput(int character)
+void Input_UpdateCharInput(int character)
 {
     gInputText[gInputTextLength++] = (char)character;
 }
 
-void Input::UpdateTextInput(const char* string)
+void Input_UpdateTextInput(const char* string)
 {
     int32_t length = (int32_t)strlen(string);
     if (gInputTextLength + length >= sizeof(gInputText))
@@ -185,7 +185,7 @@ void Input::UpdateTextInput(const char* string)
     gInputText[gInputTextLength] = '\0';
 }
 
-void Input::UpdateKey(KeyCode key, bool down)
+void Input_UpdateKey(KeyCode key, bool down)
 {
     int index = (int)key;
     if (index > -1 && index < KEY_INPUT_COUNT)
@@ -203,7 +203,7 @@ void Input::UpdateKey(KeyCode key, bool down)
     }
 }
 
-void Input::UpdateMouse(MouseButton button, bool down)
+void Input_UpdateMouse(MouseButton button, bool down)
 {
     int index = (int)button;
     if (index > -1 && index < MOUSE_INPUT_COUNT)
@@ -221,19 +221,19 @@ void Input::UpdateMouse(MouseButton button, bool down)
     }
 }
 
-void Input::UpdateMouseMove(float x, float y)
+void Input_UpdateMouseMove(float x, float y)
 {
     gMouseX = x;
     gMouseY = y;
 }
 
-void Input::UpdateMouseWheel(float h, float v)
+void Input_UpdateMouseWheel(float h, float v)
 {
     gMouseWheelV += v;
     gMouseWheelH += h;
 }
 
-void Input::UpdateGamepadAxis(int gamepadId, GamepadAxis axis, float value)
+void Input_UpdateGamepadAxis(int gamepadId, GamepadAxis axis, float value)
 {
     if (gamepadId > -1 && gamepadId < COUNTOF(gGamepadStates))
     {
@@ -247,7 +247,7 @@ void Input::UpdateGamepadAxis(int gamepadId, GamepadAxis axis, float value)
     }
 }
 
-void Input::UpdateGamepadButton(int gamepadId, GamepadButton button, bool down)
+void Input_UpdateGamepadButton(int gamepadId, GamepadButton button, bool down)
 {
     if (gamepadId > -1 && gamepadId < COUNTOF(gGamepadStates))
     {
@@ -271,27 +271,27 @@ void Input::UpdateGamepadButton(int gamepadId, GamepadButton button, bool down)
     }
 }
 
-void Input::ShowMouseCursor(void)
+void Input_ShowMouseCursor(void)
 {
-    Input::SetMouseCursorVisible(true);
+    Input_SetMouseCursorVisible(true);
 }
 
-void Input::HideMouseCursor(void)
+void Input_HideMouseCursor(void)
 {
-    Input::SetMouseCursorVisible(false);
+    Input_SetMouseCursorVisible(false);
 }
 
-bool Input::IsMouseCursorVisibled(void)
+bool Input_IsMouseCursorVisibled(void)
 {
     return false;
 }
 
-void Input::SetMouseCursorVisible(bool visible)
+void Input_SetMouseCursorVisible(bool visible)
 {
 
 }
 
-int Input::GetMouseState(float* x, float* y)
+int Input_GetMouseState(float* x, float* y)
 {
     if (x) *x = gMouseX;
     if (y) *y = gMouseY;
@@ -299,7 +299,7 @@ int Input::GetMouseState(float* x, float* y)
     return gMouseState;
 }
 
-bool Input::GetMouseButton(MouseButton button)
+bool Input_GetMouseButton(MouseButton button)
 {
     int index = (int)button;
     if (index > -1 && index < COUNTOF(gMouseDownFrame) && index < COUNTOF(gMouseUpFrame))
@@ -310,7 +310,7 @@ bool Input::GetMouseButton(MouseButton button)
     return false;
 }
 
-bool Input::GetMouseButtonUp(MouseButton button)
+bool Input_GetMouseButtonUp(MouseButton button)
 {
     int index = (int)button;
     if (index > -1 && index < COUNTOF(gMouseUpFrame))
@@ -321,7 +321,7 @@ bool Input::GetMouseButtonUp(MouseButton button)
     return false;
 }
 
-bool Input::GetMouseButtonDown(MouseButton button)
+bool Input_GetMouseButtonDown(MouseButton button)
 {
     int index = (int)button;
     if (index > -1 && index < COUNTOF(gMouseDownFrame))
@@ -332,7 +332,7 @@ bool Input::GetMouseButtonDown(MouseButton button)
     return false;
 }
 
-bool Input::GetKey(KeyCode key)
+bool Input_GetKey(KeyCode key)
 {
     int index = (int)key;
     if (index > -1 && index < KEY_INPUT_COUNT)
@@ -343,7 +343,7 @@ bool Input::GetKey(KeyCode key)
     return false;
 }
 
-bool Input::GetKeyUp(KeyCode key)
+bool Input_GetKeyUp(KeyCode key)
 {
     int index = (int)key;
     if (index > -1 && index < KEY_INPUT_COUNT)
@@ -354,7 +354,7 @@ bool Input::GetKeyUp(KeyCode key)
     return false;
 }
 
-bool Input::GetKeyDown(KeyCode key)
+bool Input_GetKeyDown(KeyCode key)
 {
     int index = (int)key;
     if (index > -1 && index < KEY_INPUT_COUNT)
@@ -365,7 +365,7 @@ bool Input::GetKeyDown(KeyCode key)
     return false;
 }
 
-bool Input::IsGamepadAttached(int32_t gamepadId)
+bool Input_IsGamepadAttached(int32_t gamepadId)
 {
     if (gamepadId > -1 && gamepadId < MAX_GAME_CONTROLLERS)
     {
@@ -377,7 +377,7 @@ bool Input::IsGamepadAttached(int32_t gamepadId)
     }
 }
 
-float Input::GetAxis(int32_t gamepadId, GamepadAxis axis)
+float Input_GetAxis(int32_t gamepadId, GamepadAxis axis)
 {
     if (gamepadId > -1 && gamepadId < COUNTOF(gGamepadStates))
     {
@@ -393,7 +393,7 @@ float Input::GetAxis(int32_t gamepadId, GamepadAxis axis)
     return 0.0f;
 }
 
-bool Input::GetButton(int32_t gamepadId, GamepadButton button)
+bool Input_GetButton(int32_t gamepadId, GamepadButton button)
 {
     if (gamepadId > -1 && gamepadId < COUNTOF(gGamepadStates))
     {
@@ -409,7 +409,7 @@ bool Input::GetButton(int32_t gamepadId, GamepadButton button)
     return false;
 }
 
-bool Input::GetButtonUp(int32_t gamepadId, GamepadButton button)
+bool Input_GetButtonUp(int32_t gamepadId, GamepadButton button)
 {
     if (gamepadId > -1 && gamepadId < COUNTOF(gGamepadStates))
     {
@@ -425,7 +425,7 @@ bool Input::GetButtonUp(int32_t gamepadId, GamepadButton button)
     return false;
 }
 
-bool Input::GetButtonDown(int32_t gamepadId, GamepadButton button)
+bool Input_GetButtonDown(int32_t gamepadId, GamepadButton button)
 {
     if (gamepadId > -1 && gamepadId < COUNTOF(gGamepadStates))
     {
@@ -441,7 +441,7 @@ bool Input::GetButtonDown(int32_t gamepadId, GamepadButton button)
     return false;
 }
 
-const char* Input::GetTextInput(void)
+const char* Input_GetTextInput(void)
 {
     return gInputText;
 }

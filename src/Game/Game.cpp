@@ -282,7 +282,7 @@ bool Game_Setup()
     Graphics_LoadSpriteSheet(&spriteBatch_FrogWallCollide, "main_characters/frog_wall_holding.png", spriteCols_FrogWallCollide, spriteRows_FrogWallCollide);
 
     frogScale = vec2_new(1.0f, 1.0f);
-    frogPosition = vec2_new((float)Window::GetWidth() * 0.5f, (float)Window::GetHeight() * 0.5f);
+    frogPosition = vec2_new((float)Window_GetWidth() * 0.5f, (float)Window_GetHeight() * 0.5f); // @todo: use graphics get render size
 
     int32_t collisionLayerIndex = 0;
     for (int32_t i = 0; i < level.layerCount; i++)
@@ -359,7 +359,8 @@ void Game_Update(float totalTime, float deltaTime)
         const float stepTime = float_min(maxStepTime, remainDeltaTime);
         remainDeltaTime -= maxStepTime;
 
-        if (Input::GetKey(KeyCode::LeftArrow))
+        // @todo: create GameInput module
+        if (Input_GetKey(KeyCode_LeftArrow))
         {
             frog.ratioVelocity.x = -4.0f;
 
@@ -367,7 +368,7 @@ void Game_Update(float totalTime, float deltaTime)
             frogPosition.x -= 100.0f * stepTime; // This is wrong
         }
 
-        if (Input::GetKey(KeyCode::RightArrow))
+        if (Input_GetKey(KeyCode_RightArrow))
         {
             frog.ratioVelocity.x = 4.0f;
 
@@ -375,7 +376,7 @@ void Game_Update(float totalTime, float deltaTime)
             frogPosition.x += 100.0f * stepTime; // This is wrong
         }
 
-        if (Input::GetKeyDown(KeyCode::Space))
+        if (Input_GetKeyDown(KeyCode_Space))
         {
             if (EntityOnGround(frog, grid))
             {

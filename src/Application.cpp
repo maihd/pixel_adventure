@@ -106,11 +106,11 @@ int ApplicationMain(int argc, char* argv[])
     window.y        = -1;
     window.width    = 448;//1024;
     window.height   = 256;
-    window.flags    = WindowFlags::Default;
+    window.flags    = WindowFlags_Default;
 
     //Setup:
     {
-        if (!Window::Open(&window))
+        if (!Window_Open(&window))
         {
             Application_HandleWindowError();
             return -1;
@@ -120,17 +120,17 @@ int ApplicationMain(int argc, char* argv[])
         if (graphicsError != GraphicsError_None)
         {
             Application_HandleRendererError(graphicsError);
-            Window::Close(&window);
+            Window_Close(&window);
             return -(int)graphicsError;
         }
 
         // Setup subsystems
         JobSystem::Setup();
-        Input::Setup();
+        Input_Setup();
 
         if (!Game_Setup())
         {
-            Window::Close(&window);
+            Window_Close(&window);
             return -10;
         }
     }
@@ -163,47 +163,47 @@ int ApplicationMain(int argc, char* argv[])
         ImGui_ImplOpenGL3_Init();
     }
 
-    Window::RequestFocus();
+    Window_RequestFocus();
 
     logStorage = LogStorage_Create(1024);
     logStorageLogger = LogStorage_GetLogger(logStorage);
     Log_AddLogger(&logStorageLogger);
 
     //MainLoop: 
-    while ((window.flags & WindowFlags::Quiting) == 0)
+    while ((window.flags & WindowFlags_Quiting) == 0)
     {
         // Poll events
-        Window::PollEvents();
+        Window_PollEvents();
 
         // Handle window state
-        if (window.resetScenario != WindowResetScenario::None)
+        if (window.resetScenario != WindowResetScenario_None)
         {
             // OpenGL handle device internal, but what about OpenGL ES?
-            if (window.resetScenario & WindowResetScenario::DeviceLost)
+            if (window.resetScenario & WindowResetScenario_DeviceLost)
             {
-                window.resetScenario &= ~WindowResetScenario::DeviceLost;
+                window.resetScenario &= ~WindowResetScenario_DeviceLost;
                 continue;
             }
         
             // When application awake or after device lost
-            if (window.resetScenario & WindowResetScenario::Reload)
+            if (window.resetScenario & WindowResetScenario_Reload)
             {
-                // Do reload
+                // Reload actually is unload then load again
                 Game_Unload();
                 Game_Load();
         
-                window.resetScenario &= ~WindowResetScenario::Reload;
+                window.resetScenario &= ~WindowResetScenario_Reload;
                 continue;
             }
         
             // Application running smoothly
-            window.resetScenario = WindowResetScenario::None;
+            window.resetScenario = WindowResetScenario_None;
             continue;
         }
 
         // Start new frame
         Timer::NewFrame();
-        Input::NewFrame();
+        Input_NewFrame();
         
         float totalTime = Timer::GetTotalTime();
         float deltaTime = Timer::GetDeltaTime();
@@ -240,7 +240,7 @@ int ApplicationMain(int argc, char* argv[])
         Graphics_Present();
 
         // Frame end
-        Input::EndFrame();
+        Input_EndFrame();
         Timer::EndFrame();
     }
 
@@ -260,12 +260,12 @@ int ApplicationMain(int argc, char* argv[])
         Game_Shutdown();
 
         // Shutdown subsystems
-        Input::Shutdown();
+        Input_Shutdown();
         JobSystem::Shutdown();
 
         Graphics_Shutdown(&window);
 
-        Window::Close(&window);
+        Window_Close(&window);
     }
     
     return 0;
