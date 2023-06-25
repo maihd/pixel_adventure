@@ -25,18 +25,6 @@
 #include "ThirdPartyImpl/imgui_impl_sdl.h"
 #include "ThirdPartyImpl/imgui_impl_opengl3.h"
 
-[[maybe_unused]]
-static void* ImGui_Alloc(size_t size, void* _)
-{
-    return MemoryAllocTag("ImGui", size, 16);
-}
-
-[[maybe_unused]]
-void ImGui_Free(void* ptr, void* _)
-{
-    MemoryFreeTag("ImGui", ptr);
-}
-
 LogStorage*     logStorage;
 Logger          logStorageLogger;
 
@@ -120,7 +108,7 @@ int ApplicationMain(int argc, char* argv[])
     window.height   = 256;
     window.flags    = WindowFlags::Default;
 
-    Setup:
+    //Setup:
     {
         if (!Window::Open(&window))
         {
@@ -140,7 +128,7 @@ int ApplicationMain(int argc, char* argv[])
         JobSystem::Setup();
         Input::Setup();
 
-        if (!Game::Setup())
+        if (!Game_Setup())
         {
             Window::Close(&window);
             return -10;
@@ -148,18 +136,15 @@ int ApplicationMain(int argc, char* argv[])
     }
 
     // @todo: make DevTools module
-    DevTools:
+    //DevTools:
     {
         IMGUI_CHECKVERSION();
-
-        // Tracking ImGui allocation
-        //ImGui::SetAllocatorFunctions(ImGui_Alloc, ImGui_Free);
 
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
         //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+        //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 
         // Setup Dear ImGui style
@@ -184,8 +169,8 @@ int ApplicationMain(int argc, char* argv[])
     logStorageLogger = LogStorage_GetLogger(logStorage);
     Log_AddLogger(&logStorageLogger);
 
-    ImGuiIO& io = ImGui::GetIO();
-    MainLoop: while ((window.flags & WindowFlags::Quiting) == 0)
+    //MainLoop: 
+    while ((window.flags & WindowFlags::Quiting) == 0)
     {
         // Poll events
         Window::PollEvents();
@@ -203,9 +188,9 @@ int ApplicationMain(int argc, char* argv[])
             // When application awake or after device lost
             if (window.resetScenario & WindowResetScenario::Reload)
             {
-                Game::Unload();
-        
-                Game::Load();
+                // Do reload
+                Game_Unload();
+                Game_Load();
         
                 window.resetScenario &= ~WindowResetScenario::Reload;
                 continue;
@@ -223,13 +208,13 @@ int ApplicationMain(int argc, char* argv[])
         float totalTime = Timer::GetTotalTime();
         float deltaTime = Timer::GetDeltaTime();
 
-        Game::Update(totalTime, deltaTime);
+        Game_Update(totalTime, deltaTime);
 
         Graphics_Clear();
         
-        Game::Render();
+        Game_Render();
 
-        RenderDevTools:
+        //RenderDevTools:
         {
             // Start the Dear ImGui frame
             ImGui_ImplOpenGL3_NewFrame();
@@ -237,13 +222,14 @@ int ApplicationMain(int argc, char* argv[])
             ImGui::NewFrame();
 
             Application_RenderDevTools(deltaTime);
-            Game::RenderDevTools();
+            Game_RenderDevTools();
 
             // Rendering Imgui
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-            // Update and Render additional Platform Windows
+            // Update and Render additional Platform 
+            ImGuiIO& io = ImGui::GetIO();
             if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
             {
                 ImGui::UpdatePlatformWindows();
@@ -261,7 +247,7 @@ int ApplicationMain(int argc, char* argv[])
     LogStorage_Destroy(logStorage);
     Log_SetLogger(Log_GetTTYLogger());
 
-    ShutdownDevTools:
+    //ShutdownDevTools:
     {
         // Cleanup ImGui
         ImGui_ImplOpenGL3_Shutdown();
@@ -269,9 +255,9 @@ int ApplicationMain(int argc, char* argv[])
         ImGui::DestroyContext();
     }
 
-    Shutdown:
+    //Shutdown:
     {
-        Game::Shutdown();
+        Game_Shutdown();
 
         // Shutdown subsystems
         Input::Shutdown();

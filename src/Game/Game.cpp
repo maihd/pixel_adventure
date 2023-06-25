@@ -202,7 +202,7 @@ void CreateSpriteBatch(const int32_t levelHeight, const LDtkLayer* layer)
     spriteBatchs[layer->name] = spriteBatch;
 }
 
-bool Game::Setup()
+bool Game_Setup()
 {
     FileSystem::AddSearchPath("assets");
     FileSystem::AddSearchPath("../../assets");
@@ -327,21 +327,21 @@ bool Game::Setup()
     return true;
 }
 
-void Game::Shutdown()
+void Game_Shutdown(void)
 {
     TileMapGrid_Destroy(grid);
     grid = nullptr;
 }
 
-void Game::Load()
+void Game_Load(void)
 {
 }
 
-void Game::Unload()
+void Game_Unload(void)
 {
 }
 
-void Game::Update(float totalTime, float deltaTime)
+void Game_Update(float totalTime, float deltaTime)
 {
     // Skip impossible deltaTime
     if (deltaTime >= 1.0f)
@@ -544,7 +544,7 @@ void DrawLayer(const char* layerName)
 
 static bool s_drawCollisionGrid = true;
 
-void Game::Render()
+void Game_Render(void)
 {
     for (auto pair : spriteBatchs)
     {
@@ -584,7 +584,7 @@ void Game::Render()
 }
 
 #include <imgui/imgui.h>
-void Game::RenderDevTools()
+void Game_RenderDevTools(void)
 {
     ImGui::Begin("Game Debug", nullptr, ImGuiWindowFlags_NoFocusOnAppearing);
 
