@@ -198,7 +198,7 @@ bool FileSystem::MemoryStream::Close(FileStream* stream)
     {
         if (stream->memory.flags & ::MemoryStream::BufferOwner)
         {
-            MemoryFree(stream->memory.buffer);
+            Memory_Free(stream->memory.buffer);
         }
 
         return true;

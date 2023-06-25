@@ -70,7 +70,7 @@ struct Array
     // Clean memory usage
     inline void CleanUp(void)
     {
-        MemoryFreeTag(TAG, elements);
+        Memory_FreeTag(TAG, elements);
 
         this->count    = 0;
         this->capacity = 0;
@@ -90,7 +90,7 @@ struct Array
             newCapacity |= newCapacity >> 16;
             newCapacity += 1;
 
-            T* newElements = (T*)MemoryReallocTag(TAG, elements, (size_t)(sizeof(T) * newCapacity), alignof(T));
+            T* newElements = (T*)Memory_ReallocTag(TAG, elements, (size_t)(sizeof(T) * newCapacity), alignof(T));
             if (newElements)
             {
                 this->capacity = newCapacity;

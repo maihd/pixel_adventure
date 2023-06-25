@@ -8,7 +8,7 @@
 TileMapGrid* TileMapGrid_FromLDtkLayer(const LDtkLayer* layer)
 {
     int32_t memoryBlockSize = (int32_t)(sizeof(TileMapGrid) + layer->cols * layer->rows * sizeof(int32_t));
-    TileMapGrid* grid = (TileMapGrid*)MemoryAllocTag("TileMapGrid", memoryBlockSize, alignof(int32_t));
+    TileMapGrid* grid = (TileMapGrid*)Memory_AllocTag("TileMapGrid", memoryBlockSize, alignof(int32_t));
     // Out of memory should crash (assertion)
     
     grid->size = layer->tileSize;
@@ -31,7 +31,7 @@ TileMapGrid* TileMapGrid_FromLDtkLayer(const LDtkLayer* layer)
 
 void TileMapGrid_Destroy(TileMapGrid* grid)
 {
-    MemoryFreeTag("TileMapGrid", grid);
+    Memory_FreeTag("TileMapGrid", grid);
 }
 
 //! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

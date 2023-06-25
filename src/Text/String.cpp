@@ -11,7 +11,7 @@ constexpr int32_t STRING_ALIGNMENT = 4;
 
 StringBuffer* StringBuffer_New(int32_t length)
 {
-    StringBuffer* buffer = (StringBuffer*)MemoryAllocTag("String", length + 1 + sizeof(StringBuffer), STRING_ALIGNMENT);
+    StringBuffer* buffer = (StringBuffer*)Memory_AllocTag("String", length + 1 + sizeof(StringBuffer), STRING_ALIGNMENT);
     assert(buffer != NULL && "Cannot create new buffer, maybe the system have been out of memory.");
 
     buffer->memref      = 1;
@@ -70,7 +70,7 @@ void String_Free(const char* target)
         const int32_t memref = Atomic_SubI32(&buffer->memref, 1);
         if (memref <= 0)
         {
-            MemoryFreeTag("String", buffer);
+            Memory_FreeTag("String", buffer);
         }
     }   
 }

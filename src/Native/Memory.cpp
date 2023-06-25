@@ -154,7 +154,7 @@ static void RemoveAlloc(void* ptr, const char* tag, const char* func, const char
     gAllocStore.allocations--;
 }
 
-void* MemoryAllocDebug(const char* tag, int32_t size, int32_t align, const char* func, const char* file, int32_t line)
+void* Memory_AllocDebug(const char* tag, int32_t size, int32_t align, const char* func, const char* file, int32_t line)
 {
     assert(size > 0 && "Request size must be greater than 0.");
 
@@ -165,7 +165,7 @@ void* MemoryAllocDebug(const char* tag, int32_t size, int32_t align, const char*
     return ptr;
 }
 
-void* MemoryReallocDebug(const char* tag, void* ptr, int32_t size, int32_t align, const char* func, const char* file, int32_t line)
+void* Memory_ReallocDebug(const char* tag, void* ptr, int32_t size, int32_t align, const char* func, const char* file, int32_t line)
 {
     assert(size > 0 && "Request size must be greater than 0.");
 
@@ -183,7 +183,7 @@ void* MemoryReallocDebug(const char* tag, void* ptr, int32_t size, int32_t align
     return newPtr;
 }
 
-void MemoryFreeDebug(const char* tag, void* ptr, const char* func, const char* file, int32_t line)
+void Memory_FreeDebug(const char* tag, void* ptr, const char* func, const char* file, int32_t line)
 {
     //DebugAssert(ptr != nullptr, "Attempt free nullptr at %s:%d:%s", func, file, line);
     gAllocStore.freeCalled++;
@@ -195,7 +195,7 @@ void MemoryFreeDebug(const char* tag, void* ptr, const char* func, const char* f
     }
 }
 
-void MemoryDumpAllocs(void)
+void Memory_DumpAllocs(void)
 {
     assert(gAllocStore.allocations >= 0 && "Internal system error!");
 
@@ -234,17 +234,17 @@ MemoryTracker::~MemoryTracker()
 }
 // END OF #if !defined(NDEBUG)
 #else
-void* MemoryAllocNDebug(int32_t size, int32_t align)
+void* Memory_AllocNDebug(int32_t size, int32_t align)
 {
     return _aligned_malloc((size_t)size, (size_t)align);
 }
 
-void* MemoryReallocNDebug(void* ptr, int32_t size, int32_t align)
+void* Memory_ReallocNDebug(void* ptr, int32_t size, int32_t align)
 {
     return _aligned_realloc(ptr, (size_t)size, (size_t)align);
 }
 
-void MemoryFreeNDebug(void* ptr)
+void Memory_FreeNDebug(void* ptr)
 {
     _aligned_free(ptr);
 }
@@ -263,17 +263,17 @@ MemoryTracker::~MemoryTracker()
 }
 #endif
 
-void* MemoryInit(void* ptr, const int32_t value, const int32_t size)
+void* Memory_Init(void* ptr, const int32_t value, const int32_t size)
 {
     return memset(ptr, value, (size_t)size);
 }
 
-void* MemoryCopy(void* dst, const void* src, const int32_t size)
+void* Memory_Copy(void* dst, const void* src, const int32_t size)
 {
     return memcpy(dst, src, (size_t)size);
 }
 
-void* MemoryMove(void* dst, const void* src, const int32_t size)
+void* Memory_Move(void* dst, const void* src, const int32_t size)
 {
     return memmove(dst, src, size);
 }
@@ -286,7 +286,7 @@ void* MemoryMove(void* dst, const void* src, const int32_t size)
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-int32_t MemoryPageSize(void)
+int32_t Memory_PageSize(void)
 {
     SYSTEM_INFO systemInfo;
     GetSystemInfo(&systemInfo);
@@ -331,7 +331,7 @@ void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
 
         ImGui::Columns(8);
         ImGui::SetColumnWidth(0, 120);
-        ImGui::SetColumnWidth(1, 88);
+        ImGui::SetColumnWidth(1, 144);
         ImGui::SetColumnWidth(2, 88);
         ImGui::SetColumnWidth(3, 88);
         ImGui::SetColumnWidth(4, 120);
@@ -360,7 +360,7 @@ void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
         {
             ImGui::Columns(8);
             ImGui::SetColumnWidth(0, 112);
-            ImGui::SetColumnWidth(1, 88);
+            ImGui::SetColumnWidth(1, 144);
             ImGui::SetColumnWidth(2, 88);
             ImGui::SetColumnWidth(3, 88);
             ImGui::SetColumnWidth(4, 120);

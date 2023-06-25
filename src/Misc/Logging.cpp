@@ -105,7 +105,7 @@ LogStorage* LogStorage_Create(int recordCount)
 {
     const int HEADER_REVERSE = sizeof(LogStorage);
     const int allocSize = HEADER_REVERSE + recordCount * sizeof(LogRecord);
-    void* block = MemoryAllocTag("LogStorage", allocSize, alignof(LogRecord));
+    void* block = Memory_AllocTag("LogStorage", allocSize, alignof(LogRecord));
     
     LogStorage* storage = (LogStorage*)block;
 
@@ -139,7 +139,7 @@ void LogStorage_Destroy(LogStorage* storage)
         }
 
         LogStorage* prev = storage->prev;
-        MemoryFreeTag("LogStorage", storage);
+        Memory_FreeTag("LogStorage", storage);
         storage = prev;
     }
 }

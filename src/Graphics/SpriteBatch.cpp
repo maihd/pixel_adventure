@@ -38,9 +38,9 @@ void SpriteBatch_Create(SpriteBatch* spriteBatch, const SpriteSheet* sheet, int3
 
     int vertexCapacity = capacity * 6;
 
-    spriteBatch->vertices  = (vec2*)MemoryAllocTag(__name_of(SpriteBatch), vertexCapacity * sizeof(vec2), alignof(vec2));
-    spriteBatch->uvs       = (vec2*)MemoryAllocTag(__name_of(SpriteBatch), vertexCapacity * sizeof(vec2), alignof(vec2));
-    spriteBatch->colors    = (vec3*)MemoryAllocTag(__name_of(SpriteBatch), vertexCapacity * sizeof(vec3), alignof(vec3));
+    spriteBatch->vertices  = (vec2*)Memory_AllocTag(__name_of(SpriteBatch), vertexCapacity * sizeof(vec2), alignof(vec2));
+    spriteBatch->uvs       = (vec2*)Memory_AllocTag(__name_of(SpriteBatch), vertexCapacity * sizeof(vec2), alignof(vec2));
+    spriteBatch->colors    = (vec3*)Memory_AllocTag(__name_of(SpriteBatch), vertexCapacity * sizeof(vec3), alignof(vec3));
 }
 
 void SpriteBatch_Destroy(SpriteBatch* spriteBatch)
@@ -52,9 +52,9 @@ void SpriteBatch_Destroy(SpriteBatch* spriteBatch)
     glDeleteBuffers(3, &spriteBatch->verticesBufferId);
     glDeleteVertexArrays(1, &spriteBatch->vertexArrayId);
 
-    MemoryFreeTag(__name_of(SpriteBatch), spriteBatch->vertices);
-    MemoryFreeTag(__name_of(SpriteBatch), spriteBatch->uvs);
-    MemoryFreeTag(__name_of(SpriteBatch), spriteBatch->colors);
+    Memory_FreeTag(__name_of(SpriteBatch), spriteBatch->vertices);
+    Memory_FreeTag(__name_of(SpriteBatch), spriteBatch->uvs);
+    Memory_FreeTag(__name_of(SpriteBatch), spriteBatch->colors);
 
     spriteBatch->count             = 0;
     spriteBatch->capacity          = 0;
