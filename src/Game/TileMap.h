@@ -48,6 +48,10 @@ typedef struct TileMapGrid
     int32_t         data[];         // Data, item value is zero mean no collision
 } TileMapGrid;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /// Create TileMapGrid from LDtkLayer
 TileMapGrid* TileMapGrid_FromLDtkLayer(const LDtkLayer* layer);
 
@@ -69,5 +73,9 @@ inline int32_t TileMapGrid_SafeGet(const TileMapGrid* grid, ivec2 position, int3
 
     return grid->data[position.y * grid->cols + position.x];
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 //! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

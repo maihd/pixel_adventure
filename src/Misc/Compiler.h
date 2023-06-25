@@ -30,7 +30,11 @@
 #endif
 
 #if !defined(__default_init)
-#define __default_init(T)
+#ifdef __cplusplus
+#define __default_init(...) = ##__VA_ARGS__
+#else
+#define __default_init(...)
+#endif
 #endif
 
 // assert_type_is_memcopyable();
