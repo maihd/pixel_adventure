@@ -6,6 +6,7 @@
 
 #include "Native/Memory.h"
 
+// @note: unused
 template <typename T>
 struct HashTable
 {
