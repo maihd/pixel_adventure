@@ -14,6 +14,7 @@
 #include "Graphics/Graphics.h"
 #include "Graphics/SpriteBatch.h"
 
+#include "Misc/Logging.h"
 #include "Misc/LDtkParser.h"
 
 #include "Framework/JobSystem.h"
@@ -75,7 +76,7 @@ inline vec2 GetWorldPosition(const TileMapGrid* grid, const Entity& entity)
 
 inline bool HasGridCollision(const TileMapGrid* grid, ivec2 position)
 {
-    return grid->SafeGet(position, 0) != 0;
+    return TileMapGrid_SafeGet(grid, position, 0) != 0;
 }
 
 inline bool HasEntityCollision(const Entity& a, const Entity& b)
@@ -183,9 +184,9 @@ void CreateSpriteBatch(const int32_t levelHeight, const LDtkLayer* layer)
     const SpriteSheet spritesheet = spritesheets[tileset->index];
 
     SpriteBatch spriteBatch = {};
-    spriteBatch.Create(&spritesheets[tileset->index], (int32_t)layer->tileCount * 6);
+    SpriteBatch_Create(&spriteBatch, &spritesheets[tileset->index], (int32_t)layer->tileCount * 6);
     
-    spriteBatch.Begin();
+    SpriteBatch_Begin(&spriteBatch);
     for (int i = 0; i < layer->tileCount; i++)
     {
         const LDtkTile& tile = layer->tiles[i];
@@ -194,9 +195,9 @@ void CreateSpriteBatch(const int32_t levelHeight, const LDtkLayer* layer)
         const Sprite* sprite = &spritesheet.sprites[rows * spritesheet.cols + cols];
         const vec2 position = vec2_new(tile.x + tileset->tileSize * 0.5f, levelHeight - tile.y - tileset->tileSize * 0.5f);
         const vec2 scale = vec2_new(tile.flipX ? -1.0f : 1.0f, tile.flipY ? -1.0f : 1.0f);
-        spriteBatch.DrawSprite(sprite, position, 0.0f, scale, vec3_new1(1.0f));
+        SpriteBatch_DrawSprite(&spriteBatch, sprite, position, 0.0f, scale, vec3_new1(1.0f));
     }
-    spriteBatch.End();
+    SpriteBatch_End(&spriteBatch);
 
     spriteBatchs[layer->name] = spriteBatch;
 }
@@ -293,7 +294,7 @@ bool Game::Setup()
         }
     }
     const LDtkLayer* collisionLayer = &level.layers[collisionLayerIndex];
-    grid = TileMapGrid::FromLDtkLayer(collisionLayer);
+    grid = TileMapGrid_FromLDtkLayer(collisionLayer);
 
     frog.radius = 0.0f;
     frog.gridSize = ivec2{ 2, 2 };
@@ -328,6 +329,8 @@ bool Game::Setup()
 
 void Game::Shutdown()
 {
+    TileMapGrid_Destroy(grid);
+    grid = nullptr;
 }
 
 void Game::Load()
@@ -583,9 +586,20 @@ void Game::Render()
 #include <imgui/imgui.h>
 void Game::RenderDevTools()
 {
-    ImGui::Begin("Game Debug");
+    ImGui::Begin("Game Debug", nullptr, ImGuiWindowFlags_NoFocusOnAppearing);
 
-    ImGui::Checkbox("Draw Collision Grid", &s_drawCollisionGrid);
+    bool settingsChanged = false;
+    if (ImGui::Checkbox("Draw Collision Grid", &s_drawCollisionGrid))
+    {
+        settingsChanged = true;
+    }
+
+    if (settingsChanged)
+    {
+        Log_Info("Game", "Settings change, saving...");
+    }
 
     ImGui::End();
 }
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

@@ -531,7 +531,7 @@ void Graphics::DrawQuadLine(vec2 start, vec2 end, vec3 color)
 
 void Graphics::DrawSpriteBatch(const SpriteBatch* spriteBatch)
 {
-    assert(spriteBatch->state == SpriteBatchState::Idle);
+    assert(spriteBatch->state == SpriteBatchState_Idle);
 
     glBindVertexArray(spriteBatch->vertexArrayId);
 

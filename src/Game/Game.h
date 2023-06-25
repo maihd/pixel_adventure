@@ -16,3 +16,5 @@ namespace Game
 
     void RenderDevTools();
 }
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

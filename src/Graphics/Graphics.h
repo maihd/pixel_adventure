@@ -10,7 +10,7 @@ struct WindowDesc;
 
 /// Sprite
 /// Can be known as sub Texture
-// @note: about default values, is all zero, so { 0 } fit the purpose
+/// @note: about default values, is all zero, so { 0 } fit the purpose
 struct Sprite
 {
     float           width       = 0.0f;
@@ -24,7 +24,7 @@ struct Sprite
 
 /// SpriteSheet
 /// Simple sprite list store in columns and rows
-// @note: about default values, is all zero, so { 0 } fit the purpose
+/// @note: about default values, is all zero, so { 0 } fit the purpose
 struct SpriteSheet
 {
     uint32_t        textureId   = 0;

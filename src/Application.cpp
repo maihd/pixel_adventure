@@ -20,6 +20,7 @@
 #include "Framework/JobSystem.h"
 
 #include "Game/Game.h"
+#include "Misc/Logging.h"
 
 #include "ThirdPartyImpl/imgui_impl_sdl.h"
 #include "ThirdPartyImpl/imgui_impl_opengl3.h"
@@ -36,9 +37,14 @@ void ImGui_Free(void* ptr, void* _)
     MemoryFreeTag("ImGui", ptr);
 }
 
+LogStorage*     logStorage;
+Logger          logStorageLogger;
+
 static void Application_RenderDevTools(float deltaTime)
 {
 #ifdef BUILD_PROFILING
+    ImGui::Begin("Frame", nullptr, ImGuiWindowFlags_NoFocusOnAppearing);
+
     char fpsText[1024];
     snprintf(fpsText, sizeof(fpsText), "FPS: %.3f", deltaTime > FLOAT_EPSILON ? 1.0f / deltaTime : 0.0f);
 
@@ -51,6 +57,41 @@ static void Application_RenderDevTools(float deltaTime)
     //    vec2_new(fpsTextSize.x + 10.0f, (float)Window::GetHeight() - 1.5f * fpsTextSize.y - 10.0f),
     //    vec3_new1(0.0f));
     //Graphics::DrawText(fpsText, vec2_new(5.0f, (float)Window::GetHeight() - 5.0f), vec3_new(0.25f, 0.5f, 1.0f));
+
+    ImGui::End();
+
+    ImGui::Begin("Logs", nullptr, ImGuiWindowFlags_NoFocusOnAppearing);
+
+    ImGui::Columns(3);
+    ImGui::SetColumnWidth(0, 80);
+    ImGui::SetColumnWidth(1, 120);
+
+    ImGui::Text("Level");
+    ImGui::NextColumn();
+    ImGui::Text("Tag");
+    ImGui::NextColumn();
+    ImGui::Text("Text");
+    ImGui::NextColumn();
+
+    ImGui::Columns(1);
+    if (ImGui::BeginChild("Records List"))
+    {
+        ImGui::Columns(3);
+        ImGui::SetColumnWidth(0, 72);
+        ImGui::SetColumnWidth(1, 120);
+        for (LogRecord* record = logStorage->head; record != NULL; record = record->next)
+        {
+            ImGui::Text("%d", record->level);
+            ImGui::NextColumn();
+            ImGui::Text("%s", record->tag);
+            ImGui::NextColumn();
+            ImGui::Text("%s", record->text);
+            ImGui::NextColumn();
+        }
+    }
+    ImGui::EndChild();
+
+    ImGui::End();
 #endif
 
     ImGui::DumpMemoryAllocs();
@@ -139,6 +180,10 @@ int ApplicationMain(int argc, char* argv[])
 
     Window::RequestFocus();
 
+    logStorage = LogStorage_Create(1024);
+    logStorageLogger = LogStorage_GetLogger(logStorage);
+    Log_AddLogger(&logStorageLogger);
+
     ImGuiIO& io = ImGui::GetIO();
     MainLoop: while ((window.flags & WindowFlags::Quiting) == 0)
     {
@@ -212,6 +257,9 @@ int ApplicationMain(int argc, char* argv[])
         Input::EndFrame();
         Timer::EndFrame();
     }
+
+    LogStorage_Destroy(logStorage);
+    Log_SetLogger(Log_GetTTYLogger());
 
     ShutdownDevTools:
     {

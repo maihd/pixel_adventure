@@ -7,13 +7,36 @@ typedef enum LogLevel
     LogLevel_Error,
 } LogLevel;
 
-typedef struct Logger
+typedef struct Logger Logger;
+struct Logger
 {
     Logger* next;
     void*   data;
 
     void (*LogFn)(void* data, LogLevel level, const char* tag, const char* text);
-} Logger;
+};
+
+typedef struct LogRecord LogRecord;
+struct LogRecord
+{
+    LogRecord*      next;
+
+    LogLevel        level;
+    const char*     tag;
+    const char*     text;
+};
+
+typedef struct LogStorage LogStorage;
+struct LogStorage
+{
+    int             count;
+    LogRecord*      head;
+    LogRecord*      tail;
+    LogRecord*      free;
+
+    LogStorage*     prev;
+    LogStorage*     current;
+};
 
 #ifdef LOGGING
 #define Log_Info(tag, fmt, ...)  Log_InfoImpl(tag, fmt, ##__VA_ARGS__)
@@ -29,16 +52,22 @@ typedef struct Logger
 extern "C" {
 #endif
 
-void    Log_InfoImpl(const char* tag, const char* fmt, ...);
-void    Log_WarnImpl(const char* tag, const char* fmt, ...);
-void    Log_ErrorImpl(const char* tag, const char* fmt, ...);
+void        Log_InfoImpl(const char* tag, const char* fmt, ...);
+void        Log_WarnImpl(const char* tag, const char* fmt, ...);
+void        Log_ErrorImpl(const char* tag, const char* fmt, ...);
 
-void    Log_AddLogger(Logger* logger);
-void    Log_SetLogger(Logger* logger);
+void        Log_AddLogger(Logger* logger);
+void        Log_SetLogger(Logger* logger);
 
-Logger* Log_GetTTYLogger(void);
-Logger* Log_GetRootLogger(void);
-Logger* Log_GetLastLogger(void);
+Logger*     Log_GetTTYLogger(void);
+Logger*     Log_GetRootLogger(void);
+Logger*     Log_GetLastLogger(void);
+
+LogStorage* LogStorage_Create(int recordCount);
+void        LogStorage_Destroy(LogStorage* storage);
+void        LogStorage_AddRecord(LogStorage* storage, LogLevel level, const char* tag, const char* text);
+void        LogStorage_FreeRecord(LogStorage* storage, LogRecord* record);
+Logger      LogStorage_GetLogger(LogStorage* storage);
 
 #ifdef __cplusplus
 }

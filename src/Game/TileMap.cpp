@@ -5,7 +5,7 @@
 #include "Graphics/Graphics.h"
 #include "Graphics/SpriteBatch.h"
 
-TileMapGrid* TileMapGrid::FromLDtkLayer(const LDtkLayer* layer)
+TileMapGrid* TileMapGrid_FromLDtkLayer(const LDtkLayer* layer)
 {
     int32_t memoryBlockSize = (int32_t)(sizeof(TileMapGrid) + layer->cols * layer->rows * sizeof(int32_t));
     TileMapGrid* grid = (TileMapGrid*)MemoryAllocTag("TileMapGrid", memoryBlockSize, alignof(int32_t));
@@ -29,9 +29,9 @@ TileMapGrid* TileMapGrid::FromLDtkLayer(const LDtkLayer* layer)
     return grid;
 }
 
-void TileMapGrid::Destroy()
+void TileMapGrid_Destroy(TileMapGrid* grid)
 {
-    MemoryFreeTag("TileMapGrid", this);
+    MemoryFreeTag("TileMapGrid", grid);
 }
 
 //! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

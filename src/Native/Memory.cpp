@@ -317,7 +317,7 @@ void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
     bool openWindow = (flags & ImGuiDumpMemoryFlags_OpenWindow) != 0;
     if (openWindow)
     {
-        render = ImGui::Begin("Memory Allocations");
+        render = ImGui::Begin("Memory Allocations", nullptr, ImGuiWindowFlags_NoFocusOnAppearing);
     }
 
     #if BUILD_PROFILING
@@ -394,18 +394,18 @@ void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
                     ImGui::NextColumn();
 
                     // Implement goto file
-                    if (ImGui::IsItemHovered())
-                    {
-                        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-                    }
-                    if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-                    {
-                        char command[1024];
-                        sprintf(command, "code --goto %s:%d", allocDesc->file, allocDesc->line);
-                        system(command);
-
-                        ImGui::SetNextFrameWantCaptureMouse(false);
-                    }
+                    //if (ImGui::IsItemHovered())
+                    //{
+                    //    ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+                    //}
+                    //if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+                    //{
+                    //    char command[1024];
+                    //    sprintf(command, "code --goto %s:%d", allocDesc->file, allocDesc->line);
+                    //    system(command);
+                    //
+                    //    ImGui::SetNextFrameWantCaptureMouse(false);
+                    //}
 
                     allocDesc = allocDesc->next;
                 }
