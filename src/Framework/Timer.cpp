@@ -15,7 +15,7 @@ static int64_t  gTimerTicks         = 0;
 static int64_t  gTimerInterval      = 0;
 static double   gInvTimerFrequency  = 0.0;
 
-void Timer::NewFrame(void)
+void Timer_NewFrame(void)
 {
     if (gTimerTicks == 0)
     {
@@ -27,7 +27,7 @@ void Timer::NewFrame(void)
     gInvTimerFrequency  = 1.0 / (double)gTimerFrequency;
 }
 
-void Timer::EndFrame(void)
+void Timer_EndFrame(void)
 {
     int64_t currentTicks = ThreadSystem::GetCpuTicks();
     int64_t elapsedTicks = currentTicks - gTimerTicks;
@@ -47,32 +47,34 @@ void Timer::EndFrame(void)
     gTimerTicks += elapsedTicks;
 }
 
-float Timer::GetDeltaTime(void)
+float Timer_GetDeltaTime(void)
 {
     return gDeltaTime;
 }
 
-float Timer::GetTotalTime(void)
+float Timer_GetTotalTime(void)
 {
     return gTotalTime;
 }
 
-void Timer::SetFrameRate(float frameRate)
+void Timer_SetFrameRate(float frameRate)
 {
     gFrameRate = frameRate;
 }
 
-float Timer::GetFrameRate(void)
+float Timer_GetFrameRate(void)
 {
     return gFrameRate;
 }
 
-void Timer::SetTimeScale(float timeScale)
+void Timer_SetTimeScale(float timeScale)
 {
     gTimeScale = timeScale;
 }
 
-float Timer::GetTimeScale(void)
+float Timer_GetTimeScale(void)
 {
     return gTimeScale;
 }
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

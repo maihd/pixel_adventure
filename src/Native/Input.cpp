@@ -445,3 +445,5 @@ const char* Input_GetTextInput(void)
 {
     return gInputText;
 }
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

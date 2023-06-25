@@ -202,12 +202,11 @@ int ApplicationMain(int argc, char* argv[])
         }
 
         // Start new frame
-        Timer::NewFrame();
+        Timer_NewFrame();
         Input_NewFrame();
         
-        float totalTime = Timer::GetTotalTime();
-        float deltaTime = Timer::GetDeltaTime();
-
+        const float totalTime = Timer_GetTotalTime();
+        const float deltaTime = Timer_GetDeltaTime();
         Game_Update(totalTime, deltaTime);
 
         Graphics_Clear();
@@ -241,7 +240,7 @@ int ApplicationMain(int argc, char* argv[])
 
         // Frame end
         Input_EndFrame();
-        Timer::EndFrame();
+        Timer_EndFrame();
     }
 
     LogStorage_Destroy(logStorage);
