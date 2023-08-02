@@ -278,4 +278,8 @@ namespace Input
     bool            GetButton(int32_t gamepadId, GamepadButton button);
     bool            GetButtonUp(int32_t gamepadId, GamepadButton button);
     bool            GetButtonDown(int32_t gamepadId, GamepadButton button);
+
+    void            Bind(uint32_t action, KeyCode key);
+    void            Bind(uint32_t action, MouseButton mouseButton);
+    void            Bind(uint32_t action, GamepadButton button);
 }
