@@ -3,60 +3,66 @@
 #include <stdint.h>
 #include "Misc/Compiler.h"
 
+// @todo: Add Arena
+// @todo: Refactor to MaiCStyle
+
 // --------------------------------------
 // Memory constructor & destructor
 // --------------------------------------
+
+#ifdef __cplusplus
 
 struct MemoryNewWrapper {};
 __forceinline void* operator new(size_t, MemoryNewWrapper, void* ptr) { return ptr; }
 __forceinline void  operator delete(void*, MemoryNewWrapper, void*)   {             } // This is only required so we can use the symmetrical new()
 
-#define MemoryNewPlacement(ptr)                 new (MemoryNewWrapper(), ptr)
-#define MemoryNew(Type)                         new (MemoryNewWrapper(), MemoryAllocImpl(sizeof(Type), alignof(Type)))
-#define MemoryDelete(ptr)                       MemoryDeleteImpl(ptr)
+#define Memory_NewPlacement(ptr)                (new (MemoryNewWrapper(), ptr))
+#define Memory_New(Type)                        (new (MemoryNewWrapper(), Memory_AllocTag("C++", sizeof(Type), alignof(Type))))
+#define Memory_Delete(ptr)                      (Memory_CallDestructor(ptr), Memory_FreeTag("C++", ptr))
 
 template <typename T>
-__forceinline void MemoryDeleteImpl(T* ptr)
+__forceinline void Memory_CallDestructor(T* ptr)
 { 
     if (ptr)
     { 
         ptr->~T();
-        MemoryFree(ptr);
     }
 }
+
+#endif
 
 // --------------------------------------
 // Memory allocations API
 // --------------------------------------
 
 /// Allocate memory with given size and align, with given specify tag for tracking
-#define MemoryAllocTag(tag, size, align)                MemoryAllocImpl(tag, size, align)
+#define Memory_AllocTag(tag, size, align)               Memory_AllocImpl(tag, size, align)
 
 /// Resize and realign a memory block, with given specify tag for tracking
 /// Allocate new if required
-#define MemoryReallocTag(tag, ptr, size, align)         MemoryReallocImpl(tag, ptr, size, align)
+#define Memory_ReallocTag(tag, ptr, size, align)        Memory_ReallocImpl(tag, ptr, size, align)
 
 /// Free memory block, with given specify tag for tracking
-#define MemoryFreeTag(tag, ptr)                         MemoryFreeImpl(tag, ptr)
+#define Memory_FreeTag(tag, ptr)                        Memory_FreeImpl(tag, ptr)
 
 /// Allocate memory with given size and align
-#define MemoryAlloc(size, align)                        MemoryAllocImpl("Common", size, align)
+#define Memory_Alloc(size, align)                       Memory_AllocImpl("Common", size, align)
 
 /// Resize and realign a memory block
 /// Allocate new if required
-#define MemoryRealloc(ptr, size, align)                 MemoryReallocImpl("Common", ptr, size, align)
+#define Memory_Realloc(ptr, size, align)                Memory_ReallocImpl("Common", ptr, size, align)
 
-/// Free memory block
-#define MemoryFree(ptr)                                 MemoryFreeImpl("Common", ptr)
+/// Free memory block   
+#define Memory_Free(ptr)                                Memory_FreeImpl("Common", ptr)
 
 #if !defined(NDEBUG)
-#define MemoryAllocImpl(tag, size, align)               MemoryAllocDebug(tag, size, align, __FUNCTION__, __FILE__, __LINE__)
-#define MemoryReallocImpl(tag, ptr, size, align)        MemoryReallocDebug(tag, ptr, size, align, __FUNCTION__, __FILE__, __LINE__)
-#define MemoryFreeImpl(tag, ptr)                        MemoryFreeDebug(tag, ptr, __FUNCTION__, __FILE__, __LINE__)
+#define Memory_AllocImpl(tag, size, align)              Memory_AllocDebug(tag, size, align, __FUNCTION__, __FILE__, __LINE__)
+#define Memory_ReallocImpl(tag, ptr, size, align)       Memory_ReallocDebug(tag, ptr, size, align, __FUNCTION__, __FILE__, __LINE__)
+#define Memory_FreeImpl(tag, ptr)                       Memory_FreeDebug(tag, ptr, __FUNCTION__, __FILE__, __LINE__)
 #else
-#define MemoryAllocImpl(tag, size, align)               MemoryAllocNDebug(size, align)
-#define MemoryReallocImpl(tag, ptr, size, align)        MemoryReallocNDebug(ptr, size, align)
-#define MemoryFreeImpl(tag, ptr)                        MemoryFreeNDebug(ptr)
+#define Memory_AllocImpl(tag, size, align)              Memory_AllocNDebug(size, align)
+#define Memory_ReallocImpl(tag, ptr, size, align)       Memory_ReallocNDebug(ptr, size, align)
+#define Memory_FreeImpl(tag, ptr)                       Memory_FreeNDebug(ptr)
 #endif
 
 // --------------------------------------
@@ -64,38 +70,40 @@ __forceinline void MemoryDeleteImpl(T* ptr)
 // --------------------------------------
 
 #if !defined(NDEBUG)
-void*   MemoryAllocDebug(const char* tag, int32_t size, int32_t align, const char* func, const char* file, int32_t line);
-void*   MemoryReallocDebug(const char* tag, void* ptr, int32_t size, int32_t align, const char* func, const char* file, int32_t line);
-void    MemoryFreeDebug(const char* tag, void* ptr, const char* func, const char* file, int32_t line);
+void*   Memory_AllocDebug(const char* tag, int32_t size, int32_t align, const char* func, const char* file, int32_t line);
+void*   Memory_ReallocDebug(const char* tag, void* ptr, int32_t size, int32_t align, const char* func, const char* file, int32_t line);
+void    Memory_FreeDebug(const char* tag, void* ptr, const char* func, const char* file, int32_t line);
 #else
-void*   MemoryAllocNDebug(int32_t size, int32_t align);
-void*   MemoryReallocNDebug(void* ptr, int32_t size, int32_t align);
-void    MemoryFreeNDebug(void* ptr);
+void*   Memory_AllocNDebug(int32_t size, int32_t align);
+void*   Memory_ReallocNDebug(void* ptr, int32_t size, int32_t align);
+void    Memory_FreeNDebug(void* ptr);
 #endif
 
 // --------------------------------------
 // Memory manipulating
 // --------------------------------------
 
-void*   MemoryInit(void* ptr, const int32_t value, const int32_t size);
-void*   MemoryCopy(void* dst, const void* src, const int32_t size);
-void*   MemoryMove(void* dst, const void* src, const int32_t size);
+void*   Memory_Init(void* ptr, const int32_t value, const int32_t size);
+void*   Memory_Copy(void* dst, const void* src, const int32_t size);
+void*   Memory_Move(void* dst, const void* src, const int32_t size);
 
 // --------------------------------------
 // Report memory
 // --------------------------------------
 
-void MemoryDumpAllocs(void);
+void    Memory_DumpAllocs(void);
 
 // ------------------------------------
 // Memory system information functions
 // ------------------------------------
 
-int MemoryPageSize(void);
+int32_t Memory_PageSize(void);
 
 // --------------------------------------
 // Utils
 // --------------------------------------
+
+#ifdef __cplusplus
 
 #ifndef DISABLE_MEMORY_TRACKING
 #define MEMORY_TRACKING() MemoryTracker __MEMORY_TRACKER_##__LINE__##__
@@ -103,6 +111,7 @@ int MemoryPageSize(void);
 #define MEMORY_TRACKING() do {} while(0)
 #endif
 
+// @todo: Convert to C version
 struct MemoryTracker
 {
     int32_t     markAllocations;
@@ -125,5 +134,7 @@ namespace ImGui
     // Open an debug window to view your memory allocations
     void DumpMemoryAllocs(ImGuiDumpMemoryFlags flags = ImGuiDumpMemoryFlags_Default);
 }
+
+#endif
 
 //! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

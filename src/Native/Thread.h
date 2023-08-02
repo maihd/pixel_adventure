@@ -5,6 +5,7 @@
 typedef int32_t     (ThreadFunc)(void*);
 typedef void        (ThreadFiberFunc)(void*);
 
+// @todo: convert to C ABI
 struct ThreadMutex
 {
     void*       handle = nullptr;
@@ -17,6 +18,7 @@ struct ThreadMutex
     bool        TryLock();
 };
 
+// @todo: convert to C ABI
 struct ThreadSignal
 {
     void*       handle = nullptr;
@@ -31,6 +33,7 @@ struct ThreadSignal
     void        Broadcast(void);
 };
 
+// @todo: convert to C ABI
 struct ThreadSemaphore
 {
     void*       handle  = nullptr;
@@ -44,6 +47,7 @@ struct ThreadSemaphore
     bool        TryWait(void);
 };
 
+// @todo: convert to C ABI
 struct ThreadFiber
 {
     void*               handle;
@@ -56,6 +60,7 @@ struct ThreadFiber
     void                SwitchTo();
 };
 
+// @todo: convert to C ABI
 struct Thread
 {
     uint64_t            id;
@@ -74,6 +79,7 @@ struct Thread
     void                Wait(void);
 };
 
+// @todo: convert to C ABI
 namespace ThreadSystem
 {
     void        Setup();

@@ -1,15 +1,25 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
 
-namespace Game
-{
-    void Setup();
-    void Shutdown();
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    void Load();
-    void Unload();
+bool Game_Setup(void);
+void Game_Shutdown(void);
 
-    void Update(float time, float deltaTime);
-    void Render();
+void Game_Load(void);
+void Game_Unload(void);
+
+void Game_Update(float time, float deltaTime);
+void Game_Render(void);
+
+void Game_RenderDevTools(void);
+
+#ifdef __cplusplus
 }
+#endif
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

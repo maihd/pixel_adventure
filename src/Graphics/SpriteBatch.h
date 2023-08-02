@@ -1,52 +1,51 @@
 #pragma once
 
+#include "Misc/Compiler.h"
 #include <vectormath/vectormath_types.h>
 
+struct Sprite;
 struct SpriteSheet;
 
-enum struct SpriteBatchState : uint32_t
+/// SpriteBatchState
+enum SpriteBatchState __enum_type(uint32_t)
 {
-    UnCreated,
-
-    Idle,
-    Batching,
+    SpriteBatchState_Idle,
+    SpriteBatchState_Batching,
 };
 
-struct SpriteBatch
+/// SpriteBatch
+typedef struct SpriteBatch
 {
-public: // Constants
-    static constexpr const char* TAG = "SpriteBatch";
-
-public: // Fields
-    SpriteBatchState    state               = SpriteBatchState::UnCreated;
+    SpriteBatchState    state               __default_init(SpriteBatchState_Idle);
     
-    uint32_t            textureId           = 0;
-    uint32_t            vertexArrayId       = 0;
-    uint32_t            verticesBufferId    = 0;
-    uint32_t            uvsBufferId         = 0;
-    uint32_t            colorsBufferId      = 0;
+    uint32_t            textureId           __default_init(0);
+    uint32_t            vertexArrayId       __default_init(0);
+    uint32_t            verticesBufferId    __default_init(0);
+    uint32_t            uvsBufferId         __default_init(0);
+    uint32_t            colorsBufferId      __default_init(0);
     
-    int32_t             count               = 0;
-    int32_t             capacity            = 0;
+    int32_t             count               __default_init(0);
+    int32_t             capacity            __default_init(0);
 
-    vec2*               vertices            = nullptr;
-    vec2*               uvs                 = nullptr;
-    vec3*               colors              = nullptr;
+    vec2*               vertices            __default_init(nullptr);
+    vec2*               uvs                 __default_init(nullptr);
+    vec3*               colors              __default_init(nullptr);
+} SpriteBatch;
 
-public: // Methods
-    void                Create(const SpriteSheet* sheet, int32_t vertexCapacity);
-    void                Destroy(void);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    void                Begin(void);
-    void                End(void);
+void            SpriteBatch_Create(SpriteBatch* spriteBatch, const SpriteSheet* sheet, int32_t vertexCapacity);
+void            SpriteBatch_Destroy(SpriteBatch* spriteBatch);
 
-    [[deprecated]]
-    inline void         DrawSprite(const Sprite* sprite, vec2 position, float rotation, vec2 scale, vec3 color)
-    {
-        BatchSprite(sprite, position, rotation, scale, color);
-    }
+void            SpriteBatch_Begin(SpriteBatch* spriteBatch);
+void            SpriteBatch_End(SpriteBatch* spriteBatch);
 
-    void                BatchSprite(const Sprite* sprite, vec2 position, float rotation, vec2 scale, vec3 color);
-};
+void            SpriteBatch_DrawSprite(SpriteBatch* spriteBatch, const Sprite* sprite, vec2 position, float rotation, vec2 scale, vec3 color);
+
+#ifdef __cplusplus
+}
+#endif
 
 //! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

@@ -38,11 +38,11 @@ do
         --"FatalCompileWarnings",
     }
 
-    cppdialect "C++17"
+    cppdialect "C++14"
     staticruntime "On"
     omitframepointer "On"
 
-    rtti "On"
+    rtti "Off"
     exceptionhandling "Off"
 
     filter { "configurations:*Debug*" }
@@ -97,6 +97,7 @@ do
     kind "ConsoleApp"
 
     defines {
+        "LOGGING",
         "IMGUI_IMPL_OPENGL_LOADER_CUSTOM",
         "IMGUI_USER_CONFIG=<ThirdPartyImpl/imconfig.h>"
     }
@@ -109,7 +110,6 @@ do
     includedirs {
         path.join(ROOT_DIR, "src"),
         path.join(ROOT_DIR, "3rd_party"),
-        path.join(ROOT_DIR, "3rd_party/rmem/inc"),
         path.join(ROOT_DIR, "3rd_party/glad/include"),
         path.join(ROOT_DIR, "3rd_party/LDtkLoader/include"),
     }
@@ -131,9 +131,6 @@ do
         
         "3rd_party/imgui",
         "3rd_party/glad/src",
-        "3rd_party/rmem/inc",
-        "3rd_party/rmem/src",
-        "3rd_party/LDtkLoader/src",
 
         "src/ThirdPartyImpl",
     }

@@ -1,49 +1,51 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
+#include "Misc/Compiler.h"
 
 struct FileInterface;
 
-namespace FileModes
+typedef uint32_t FileMode;
+enum FileModes __enum_type(uint32_t)
 {
-    enum Type : uint32_t
-    {
-        None               = 0,
-        Read               = 1 << 0,
-        Write              = 1 << 1,
-        Append             = 1 << 2,
-        Binary             = 1 << 3,
+    FileMode_None               = 0,
+    FileMode_Read               = 1 << 0,
+    FileMode_Write              = 1 << 1,
+    FileMode_Append             = 1 << 2,
+    FileMode_Binary             = 1 << 3,
 
-        ReadBinary         = Read | Binary,
-        WriteBinary        = Write | Binary,
+    FileMode_ReadBinary         = FileMode_Read | FileMode_Binary,
+    FileMode_WriteBinary        = FileMode_Write | FileMode_Binary,
 
-        ReadWrite          = Read | Write,
-        ReadWriteBinary    = Read | Write | Binary,
-    };
-}
-using FileMode = FileModes::Type;
-
-enum struct SeekOffset : uint32_t
-{
-    StartOfFile,
-    CurrentPosition,
-    EndOfFile,
+    FileMode_ReadWrite          = FileMode_Read | FileMode_Write,
+    FileMode_ReadWriteBinary    = FileMode_Read | FileMode_Write | FileMode_Binary,
 };
 
-struct MemoryStream
+typedef enum SeekOffset __enum_type(uint32_t)
 {
-    enum Flags : uint32_t
-    {
-        BufferOwner = 1 << 0
-    };
+    SeekOffset_StartOfFile,
+    SeekOffset_CurrentPosition,
+    SeekOffset_EndOfFile,
+} SeekOffset;
 
+// @todo: convert to C ABI
+typedef struct MemoryStream
+{
     void*               buffer;
     int32_t             length;
     int32_t             cursor;
-    Flags               flags;
+    uint32_t            flags;
+} MemoryStream;
+
+enum MemoryStreamFlags __enum_type(uint32_t)
+{
+    MemoryStreamFlags_None          = 0,
+    MemoryStreamFlags_BufferOwner   = 1 << 0
 };
 
-struct FileStream
+// @todo: convert to C ABI
+typedef struct FileStream
 {
     FileInterface*      inteface;
     union
@@ -51,23 +53,9 @@ struct FileStream
         void*           handle;
         MemoryStream    memory;
     };
+} FileStream;
 
-    bool                Open(const char* path, const FileMode mode);
-    bool                Open(void* buffer, int32_t bufferSize);
-    bool                Close(void);
-
-    int32_t             Read(void* outputBuffer, int32_t bufferSizeInBytes);
-    int32_t             Write(const void* inputBuffer, int32_t bufferSizeInBytes);
-
-    bool                Seek(SeekOffset offset, int32_t position);
-    bool                Flush(void);
-
-    int32_t             GetSize(void) const;
-    int32_t             GetCursor(void) const;
-    bool                IsAtEnd(void) const;
-};
-
-struct FileInterface
+typedef struct FileInterface
 {
     void*                 const Open;
     bool                (*const Close)(FileStream* stream);
@@ -81,25 +69,33 @@ struct FileInterface
     
     bool                (*const Flush)(FileStream* stream);
     bool                (*const IsAtEnd)(const FileStream* stream);
-};
+} FileInterface;
 
 // -------------------------------------------------------------
 // FileSystem functions
 // -------------------------------------------------------------
 
-namespace FileSystem
-{
-    bool            AddSearchPath(const char* path);
-    bool            RemoveSearchPath(const char* path);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    bool            GetExistsPath(char* buffer, int32_t length, const char* path);
+bool            FileSystem_AddSearchPath(const char* path);
+bool            FileSystem_RemoveSearchPath(const char* path);
 
-    //bool            GetAbsolutePath(char* buffer, int32_t length, const char* path);
-    //bool            GetRelativePath(char* buffer, int32_t length, const char* path);
+bool            FileSystem_GetExistsPath(char* buffer, int32_t length, const char* path);
 
-    bool            LoadZipFile(const char* path);
-    bool            UnloadZipFile(const char* path);
+//bool          FileSystem_GetAbsolutePath(char* buffer, int32_t length, const char* path);
+//bool          FileSystem_GetRelativePath(char* buffer, int32_t length, const char* path);
+
+bool            FileSystem_LoadZipFile(const char* path);
+bool            FileSystem_UnloadZipFile(const char* path);
+
+bool            FileStream_Open(FileStream* stream, const char* path, FileMode mode);
+bool            FileStream_FromMemory(FileStream* stream, void* buffer, int32_t bufferSize);
+
+#ifdef __cplusplus
 }
+#endif
 
 // -------------------------------------------------------------
 // FilePath functions
@@ -109,42 +105,44 @@ namespace FileSystem
 // FileStream functions
 // -------------------------------------------------------------
 
-inline bool FileStream::Close(void)
+inline bool FileStream_Close(FileStream* stream)
 {
-    return this->inteface->Close(this);
+    return stream->inteface->Close(stream);
 }
 
-inline int32_t FileStream::Read(void* outputBuffer, int32_t bufferSizeInBytes)
+inline int32_t FileStream_Read(FileStream* stream, void* outputBuffer, int32_t bufferSizeInBytes)
 {
-    return this->inteface->Read(this, outputBuffer, bufferSizeInBytes);
+    return stream->inteface->Read(stream, outputBuffer, bufferSizeInBytes);
 }
 
-inline int32_t FileStream::Write(const void* inputBuffer, int32_t bufferSizeInBytes)
+inline int32_t FileStream_Write(FileStream* stream, const void* inputBuffer, int32_t bufferSizeInBytes)
 {
-    return this->inteface->Write(this, inputBuffer, bufferSizeInBytes);
+    return stream->inteface->Write(stream, inputBuffer, bufferSizeInBytes);
 }
 
-inline bool FileStream::Seek(SeekOffset offset, int32_t position)
+inline bool FileStream_Seek(FileStream* stream, SeekOffset offset, int32_t position)
 {
-    return this->inteface->Seek(this, offset, position);
+    return stream->inteface->Seek(stream, offset, position);
 }
 
-inline int32_t FileStream::GetSize(void) const
+inline int32_t FileStream_GetSize(const FileStream* stream)
 {
-    return this->inteface->GetSize(this);
+    return stream->inteface->GetSize(stream);
 }
 
-inline int32_t FileStream::GetCursor(void) const
+inline int32_t FileStream_GetCursor(const FileStream* stream)
 {
-    return this->inteface->GetCursor(this);
+    return stream->inteface->GetCursor(stream);
 }
 
-inline bool FileStream::Flush(void)
+inline bool FileStream_Flush(FileStream* stream)
 {
-    return this->inteface->Flush(this);
+    return stream->inteface->Flush(stream);
 }
 
-inline bool FileStream::IsAtEnd(void) const
+inline bool FileStream_IsAtEnd(const FileStream* stream)
 {
-    return this->inteface->IsAtEnd(this);
+    return stream->inteface->IsAtEnd(stream);
 }
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

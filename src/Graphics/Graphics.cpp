@@ -10,6 +10,8 @@
 
 #include "Graphics.h"
 #include "SpriteBatch.h"
+
+#include "Misc/Logging.h"
 #include "Native/Window.h"
 #include "Native/FileSystem.h"
 
@@ -164,44 +166,44 @@ static void APIENTRY DebugOutput(
     // ignore non-significant error/warning codes
     if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
 
-    printf("---------------\n");
-    printf("Debug message (%d): %s\n", id, message);
+    Log_Info("Graphics", "---------------");
+    Log_Info("Graphics", "Debug message (%d): %s", id, message);
 
     switch (source)
     {
-    case GL_DEBUG_SOURCE_API:             printf("Source: API\n");              break;
-    case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   printf("Source: Window System\n");    break;
-    case GL_DEBUG_SOURCE_SHADER_COMPILER: printf("Source: Shader Compiler\n");  break;
-    case GL_DEBUG_SOURCE_THIRD_PARTY:     printf("Source: Third Party\n");      break;
-    case GL_DEBUG_SOURCE_APPLICATION:     printf("Source: Application\n");      break;
-    case GL_DEBUG_SOURCE_OTHER:           printf("Source: Other\n");            break;
+    case GL_DEBUG_SOURCE_API:             Log_Error("Graphics", "Source: API");              break;
+    case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   Log_Error("Graphics", "Source: Window System");    break;
+    case GL_DEBUG_SOURCE_SHADER_COMPILER: Log_Error("Graphics", "Source: Shader Compiler");  break;
+    case GL_DEBUG_SOURCE_THIRD_PARTY:     Log_Error("Graphics", "Source: Third Party");      break;
+    case GL_DEBUG_SOURCE_APPLICATION:     Log_Error("Graphics", "Source: Application");      break;
+    case GL_DEBUG_SOURCE_OTHER:           Log_Error("Graphics", "Source: Other");            break;
     };
 
     switch (type)
     {
-    case GL_DEBUG_TYPE_ERROR:               printf("Type: Error\n");                break;
-    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: printf("Type: Deprecated Behaviour\n"); break;
-    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  printf("Type: Undefined Behaviour\n");  break;
-    case GL_DEBUG_TYPE_PORTABILITY:         printf("Type: Portability\n");          break;
-    case GL_DEBUG_TYPE_PERFORMANCE:         printf("Type: Performance\n");          break;
-    case GL_DEBUG_TYPE_MARKER:              printf("Type: Marker\n");               break;
-    case GL_DEBUG_TYPE_PUSH_GROUP:          printf("Type: Push Group\n");           break;
-    case GL_DEBUG_TYPE_POP_GROUP:           printf("Type: Pop Group\n");            break;
-    case GL_DEBUG_TYPE_OTHER:               printf("Type: Other\n");                break;
+    case GL_DEBUG_TYPE_ERROR:               Log_Error("Graphics", "Type: Error\n");                break;
+    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: Log_Error("Graphics", "Type: Deprecated Behaviour\n"); break;
+    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  Log_Error("Graphics", "Type: Undefined Behaviour\n");  break;
+    case GL_DEBUG_TYPE_PORTABILITY:         Log_Error("Graphics", "Type: Portability\n");          break;
+    case GL_DEBUG_TYPE_PERFORMANCE:         Log_Error("Graphics", "Type: Performance\n");          break;
+    case GL_DEBUG_TYPE_MARKER:              Log_Error("Graphics", "Type: Marker\n");               break;
+    case GL_DEBUG_TYPE_PUSH_GROUP:          Log_Error("Graphics", "Type: Push Group\n");           break;
+    case GL_DEBUG_TYPE_POP_GROUP:           Log_Error("Graphics", "Type: Pop Group\n");            break;
+    case GL_DEBUG_TYPE_OTHER:               Log_Error("Graphics", "Type: Other\n");                break;
     };
 
     switch (severity)
     {
-    case GL_DEBUG_SEVERITY_HIGH:         printf("Severity: high\n");            break;
-    case GL_DEBUG_SEVERITY_MEDIUM:       printf("Severity: medium\n");          break;
-    case GL_DEBUG_SEVERITY_LOW:          printf("Severity: low\n");             break;
-    case GL_DEBUG_SEVERITY_NOTIFICATION: printf("Severity: notification\n");    break;
+    case GL_DEBUG_SEVERITY_HIGH:         Log_Error("Graphics", "Severity: high\n");            break;
+    case GL_DEBUG_SEVERITY_MEDIUM:       Log_Error("Graphics", "Severity: medium\n");          break;
+    case GL_DEBUG_SEVERITY_LOW:          Log_Error("Graphics", "Severity: low\n");             break;
+    case GL_DEBUG_SEVERITY_NOTIFICATION: Log_Error("Graphics", "Severity: notification\n");    break;
     };
 
-    printf("---------------\n");
+    Log_Info("Graphics", "---------------\n");
 }
 
-GraphicsError Graphics::Setup(struct WindowDesc* window)
+GraphicsError Graphics_Setup(struct WindowDesc* window)
 {
     assert(gMainWindow == NULL && gGLContext == NULL);
 
@@ -223,14 +225,14 @@ GraphicsError Graphics::Setup(struct WindowDesc* window)
     gGLContext = SDL_GL_CreateContext((SDL_Window*)window->handle);
     if (!gGLContext)
     {
-        return GraphicsError::CreateContextFailed;
+        return GraphicsError_CreateContextFailed;
     }
 
     // Load OpenGL Driver
     // @note: we can support Zink (GL on Vulkan), MGL (GL on metal) later
     if (!gladLoadGL())
     {
-        return GraphicsError::LoadDriverFailed;
+        return GraphicsError_LoadDriverFailed;
     }
 
     // Store main window for use later
@@ -266,10 +268,10 @@ GraphicsError Graphics::Setup(struct WindowDesc* window)
     glBindVertexArray(gIbo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gVbo);
 
-    return GraphicsError::None;
+    return GraphicsError_None;
 }
 
-void Graphics::Shutdown(struct WindowDesc* window)
+void Graphics_Shutdown(struct WindowDesc* window)
 {
     if (gGLContext)
     {
@@ -286,7 +288,7 @@ void Graphics::Shutdown(struct WindowDesc* window)
     }
 }
 
-void Graphics::Clear()
+void Graphics_Clear(void)
 {
     assert(gMainWindow != NULL && gGLContext != NULL);
     
@@ -298,7 +300,7 @@ void Graphics::Clear()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // use depth buffer to ordering objects
 }
 
-void Graphics::Present()
+void Graphics_Present(void)
 {
     assert(gMainWindow != NULL && gGLContext != NULL);
 
@@ -306,7 +308,7 @@ void Graphics::Present()
     SDL_GL_SwapWindow((SDL_Window*)gMainWindow->handle);
 }
 
-bool Graphics::LoadSpriteSheet(SpriteSheet* spriteSheet, const char* file, int32_t cols, int32_t rows)
+bool Graphics_LoadSpriteSheet(SpriteSheet* spriteSheet, const char* file, int32_t cols, int32_t rows)
 {
     glGenTextures(1, &spriteSheet->textureId);
     glBindTexture(GL_TEXTURE_2D, spriteSheet->textureId);
@@ -317,11 +319,12 @@ bool Graphics::LoadSpriteSheet(SpriteSheet* spriteSheet, const char* file, int32
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // Nearest are more better for pixel game
 
     char existsPath[1024];
-    if (!FileSystem::GetExistsPath(existsPath, sizeof(existsPath), file))
+    if (!FileSystem_GetExistsPath(existsPath, sizeof(existsPath), file))
     {
         return false;
     }
 
+    // @todo: use temp buffer
     int width, height, channels;
     void* pixels = stbi_load(existsPath, &width, &height, &channels, 0);
     if (!pixels)
@@ -331,6 +334,7 @@ bool Graphics::LoadSpriteSheet(SpriteSheet* spriteSheet, const char* file, int32
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, channels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, pixels);
     free(pixels);
+    // @end-todo
     
     int32_t spriteCount = cols * rows;
     spriteSheet->sprites = (Sprite*)malloc(spriteCount * sizeof(Sprite));
@@ -364,7 +368,7 @@ bool Graphics::LoadSpriteSheet(SpriteSheet* spriteSheet, const char* file, int32
     return true;
 }
 
-void Graphics::UnloadSpriteSheet(SpriteSheet* spriteSheet)
+void Graphics_UnloadSpriteSheet(SpriteSheet* spriteSheet)
 {
     glDeleteTextures(1, &spriteSheet->textureId);
 
@@ -379,7 +383,7 @@ void Graphics::UnloadSpriteSheet(SpriteSheet* spriteSheet)
     spriteSheet->spriteCount = 0;
 }
 
-void Graphics::DrawSprite(const Sprite* sprite, vec2 position, float rotation, vec2 scale, vec3 color)
+void Graphics_DrawSprite(const Sprite* sprite, vec2 position, float rotation, vec2 scale, vec3 color)
 {
     glBindVertexArray(gVao);
     glBindBuffer(GL_ARRAY_BUFFER, gVbo);
@@ -418,12 +422,12 @@ void Graphics::DrawSprite(const Sprite* sprite, vec2 position, float rotation, v
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-vec2 Graphics::TextSize(const char* text)
+vec2 Graphics_TextSize(const char* text)
 {
     return vec2_mul1(vec2_new((float)stb_easy_font_width((char*)text), (float)stb_easy_font_height((char*)text)), 3.0f);
 }
 
-void Graphics::DrawText(const char* text, vec2 position, vec3 color)
+void Graphics_DrawText(const char* text, vec2 position, vec3 color)
 {
     static float    vertices[4 * 10 * 1024]; // ~2000 chars
     static uint16_t indices[(sizeof(vertices) / sizeof(vertices[0])) / 4 * 6];
@@ -462,7 +466,7 @@ void Graphics::DrawText(const char* text, vec2 position, vec3 color)
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_SHORT, NULL);
 }
 
-void Graphics::DrawQuad(vec2 start, vec2 end, vec3 color)
+void Graphics_DrawQuad(vec2 start, vec2 end, vec3 color)
 {
     const vec2 pos0 = start;
     const vec2 pos1 = end;
@@ -495,7 +499,7 @@ void Graphics::DrawQuad(vec2 start, vec2 end, vec3 color)
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-void Graphics::DrawQuadLine(vec2 start, vec2 end, vec3 color)
+void Graphics_DrawQuadLine(vec2 start, vec2 end, vec3 color)
 {
     const vec2 pos0 = start;
     const vec2 pos1 = end;
@@ -511,6 +515,7 @@ void Graphics::DrawQuadLine(vec2 start, vec2 end, vec3 color)
         pos1.x, pos0.y,     uv1.x, uv0.y,
         pos0.x, pos0.y,     uv0.x, uv0.y,
     };
+    const int32_t verticesCount = (int32_t)(sizeof(vertices) / (sizeof(float) * 4));
 
     glBindVertexArray(gVao);
     glBindBuffer(GL_ARRAY_BUFFER, gVbo);
@@ -523,12 +528,12 @@ void Graphics::DrawQuadLine(vec2 start, vec2 end, vec3 color)
     glUniformMatrix4fv(glGetUniformLocation(gProgramDrawText, "Projection"), 1, false, (const float*)&gProjection);
     glUniform3f(glGetUniformLocation(gProgramDrawText, "Color"), color.x, color.y, color.z);
 
-    glDrawArrays(GL_LINE_STRIP, 0, 4);
+    glDrawArrays(GL_LINE_STRIP, 0, verticesCount);
 }
 
-void Graphics::DrawSpriteBatch(const SpriteBatch* spriteBatch)
+void Graphics_DrawSpriteBatch(const SpriteBatch* spriteBatch)
 {
-    assert(spriteBatch->state == SpriteBatchState::Idle);
+    assert(spriteBatch->state == SpriteBatchState_Idle);
 
     glBindVertexArray(spriteBatch->vertexArrayId);
 

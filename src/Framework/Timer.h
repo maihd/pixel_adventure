@@ -1,16 +1,23 @@
 #pragma once
 
-namespace Timer
-{
-    void    NewFrame(void);
-    void    EndFrame(void);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    float   GetDeltaTime(void);
-    float   GetTotalTime(void);
+void    Timer_NewFrame(void);
+void    Timer_EndFrame(void);
 
-    void    SetFrameRate(float frameRate);
-    float   GetFrameRate(void);
+float   Timer_GetDeltaTime(void);
+float   Timer_GetTotalTime(void);
 
-    void    SetTimeScale(float timeScale);
-    float   GetTimeScale(void);
+void    Timer_SetFrameRate(float frameRate);
+float   Timer_GetFrameRate(void);
+
+void    Timer_SetTimeScale(float timeScale);
+float   Timer_GetTimeScale(void);
+
+#ifdef __cplusplus
 }
+#endif
+
+//! LEAVE AN EMPTY LINE HERE, REQUIRE BY GCC/G++

@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "Functional.h"
 
+// @note: unused
 template <typename TFunc>
 struct Delegate
 {

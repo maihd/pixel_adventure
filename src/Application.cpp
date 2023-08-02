@@ -20,25 +20,19 @@
 #include "Framework/JobSystem.h"
 
 #include "Game/Game.h"
+#include "Misc/Logging.h"
 
 #include "ThirdPartyImpl/imgui_impl_sdl.h"
 #include "ThirdPartyImpl/imgui_impl_opengl3.h"
 
-[[maybe_unused]]
-static void* ImGui_Alloc(size_t size, void* _)
-{
-    return MemoryAllocTag("ImGui", size, 16);
-}
-
-[[maybe_unused]]
-void ImGui_Free(void* ptr, void* _)
-{
-    MemoryFreeTag("ImGui", ptr);
-}
+LogStorage*     logStorage;
+Logger          logStorageLogger;
 
 static void Application_RenderDevTools(float deltaTime)
 {
 #ifdef BUILD_PROFILING
+    ImGui::Begin("Frame", nullptr, ImGuiWindowFlags_NoFocusOnAppearing);
+
     char fpsText[1024];
     snprintf(fpsText, sizeof(fpsText), "FPS: %.3f", deltaTime > FLOAT_EPSILON ? 1.0f / deltaTime : 0.0f);
 
@@ -51,6 +45,41 @@ static void Application_RenderDevTools(float deltaTime)
     //    vec2_new(fpsTextSize.x + 10.0f, (float)Window::GetHeight() - 1.5f * fpsTextSize.y - 10.0f),
     //    vec3_new1(0.0f));
     //Graphics::DrawText(fpsText, vec2_new(5.0f, (float)Window::GetHeight() - 5.0f), vec3_new(0.25f, 0.5f, 1.0f));
+
+    ImGui::End();
+
+    ImGui::Begin("Logs", nullptr, ImGuiWindowFlags_NoFocusOnAppearing);
+
+    ImGui::Columns(3);
+    ImGui::SetColumnWidth(0, 80);
+    ImGui::SetColumnWidth(1, 120);
+
+    ImGui::Text("Level");
+    ImGui::NextColumn();
+    ImGui::Text("Tag");
+    ImGui::NextColumn();
+    ImGui::Text("Text");
+    ImGui::NextColumn();
+
+    ImGui::Columns(1);
+    if (ImGui::BeginChild("Records List"))
+    {
+        ImGui::Columns(3);
+        ImGui::SetColumnWidth(0, 72);
+        ImGui::SetColumnWidth(1, 120);
+        for (LogRecord* record = logStorage->head; record != NULL; record = record->next)
+        {
+            ImGui::Text("%d", record->level);
+            ImGui::NextColumn();
+            ImGui::Text("%s", record->tag);
+            ImGui::NextColumn();
+            ImGui::Text("%s", record->text);
+            ImGui::NextColumn();
+        }
+    }
+    ImGui::EndChild();
+
+    ImGui::End();
 #endif
 
     ImGui::DumpMemoryAllocs();
@@ -75,45 +104,47 @@ int ApplicationMain(int argc, char* argv[])
     window.title    = "Pixel Adventure";
     window.x        = -1;
     window.y        = -1;
-    window.width    = 448;
+    window.width    = 448;//1024;
     window.height   = 256;
-    window.flags    = WindowFlags::Default;
+    window.flags    = WindowFlags_Default;
 
-    Setup:
+    //Setup:
     {
-        if (!Window::Open(&window))
+        if (!Window_Open(&window))
         {
             Application_HandleWindowError();
             return -1;
         }
 
-        const GraphicsError graphicsError = Graphics::Setup(&window);
-        if (graphicsError != GraphicsError::None)
+        const GraphicsError graphicsError = Graphics_Setup(&window);
+        if (graphicsError != GraphicsError_None)
         {
             Application_HandleRendererError(graphicsError);
-            Window::Close(&window);
+            Window_Close(&window);
             return -(int)graphicsError;
         }
 
         // Setup subsystems
         JobSystem::Setup();
-        Input::Setup();
+        Input_Setup();
 
-        Game::Setup();
+        if (!Game_Setup())
+        {
+            Window_Close(&window);
+            return -10;
+        }
     }
 
-    DevTools:
+    // @todo: make DevTools module
+    //DevTools:
     {
         IMGUI_CHECKVERSION();
 
-        // Tracking ImGui allocation
-        //ImGui::SetAllocatorFunctions(ImGui_Alloc, ImGui_Free);
-
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO();
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
+        // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
         //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+        //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 
         // Setup Dear ImGui style
@@ -132,52 +163,57 @@ int ApplicationMain(int argc, char* argv[])
         ImGui_ImplOpenGL3_Init();
     }
 
-    ImGuiIO& io = ImGui::GetIO();
-    MainLoop: while ((window.flags & WindowFlags::Quiting) == 0)
+    Window_RequestFocus();
+
+    logStorage = LogStorage_Create(1024);
+    logStorageLogger = LogStorage_GetLogger(logStorage);
+    Log_AddLogger(&logStorageLogger);
+
+    //MainLoop: 
+    while ((window.flags & WindowFlags_Quiting) == 0)
     {
         // Poll events
-        Window::PollEvents();
+        Window_PollEvents();
 
         // Handle window state
-        if (window.resetScenario != WindowResetScenario::None)
+        if (window.resetScenario != WindowResetScenario_None)
         {
             // OpenGL handle device internal, but what about OpenGL ES?
-            if (window.resetScenario & WindowResetScenario::DeviceLost)
+            if (window.resetScenario & WindowResetScenario_DeviceLost)
             {
-                window.resetScenario &= ~WindowResetScenario::DeviceLost;
+                window.resetScenario &= ~WindowResetScenario_DeviceLost;
                 continue;
             }
         
             // When application awake or after device lost
-            if (window.resetScenario & WindowResetScenario::Reload)
+            if (window.resetScenario & WindowResetScenario_Reload)
             {
-                Game::Unload();
+                // Reload actually is unload then load again
+                Game_Unload();
+                Game_Load();
         
-                Game::Load();
-        
-                window.resetScenario &= ~WindowResetScenario::Reload;
+                window.resetScenario &= ~WindowResetScenario_Reload;
                 continue;
             }
         
             // Application running smoothly
-            window.resetScenario = WindowResetScenario::None;
+            window.resetScenario = WindowResetScenario_None;
             continue;
         }
 
         // Start new frame
-        Timer::NewFrame();
-        Input::NewFrame();
+        Timer_NewFrame();
+        Input_NewFrame();
         
-        float totalTime = Timer::GetTotalTime();
-        float deltaTime = Timer::GetDeltaTime();
+        const float totalTime = Timer_GetTotalTime();
+        const float deltaTime = Timer_GetDeltaTime();
+        Game_Update(totalTime, deltaTime);
 
-        Game::Update(totalTime, deltaTime);
-
-        Graphics::Clear();
+        Graphics_Clear();
         
-        Game::Render();
+        Game_Render();
 
-        RenderDevTools:
+        //RenderDevTools:
         {
             // Start the Dear ImGui frame
             ImGui_ImplOpenGL3_NewFrame();
@@ -185,32 +221,32 @@ int ApplicationMain(int argc, char* argv[])
             ImGui::NewFrame();
 
             Application_RenderDevTools(deltaTime);
+            Game_RenderDevTools();
 
             // Rendering Imgui
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-            // Update and Render additional Platform Windows
-            // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
-            //  For this specific demo app we could also call SDL_GL_MakeCurrent(window, gl_context) directly)
+            // Update and Render additional Platform 
+            ImGuiIO& io = ImGui::GetIO();
             if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
             {
-                SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-                SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
                 ImGui::UpdatePlatformWindows();
                 ImGui::RenderPlatformWindowsDefault();
-                SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
             }
         }
 
-        Graphics::Present();
+        Graphics_Present();
 
         // Frame end
-        Input::EndFrame();
-        Timer::EndFrame();
+        Input_EndFrame();
+        Timer_EndFrame();
     }
 
-    ShutdownDevTools:
+    LogStorage_Destroy(logStorage);
+    Log_SetLogger(Log_GetTTYLogger());
+
+    //ShutdownDevTools:
     {
         // Cleanup ImGui
         ImGui_ImplOpenGL3_Shutdown();
@@ -218,17 +254,17 @@ int ApplicationMain(int argc, char* argv[])
         ImGui::DestroyContext();
     }
 
-    Shutdown:
+    //Shutdown:
     {
-        Game::Shutdown();
+        Game_Shutdown();
 
         // Shutdown subsystems
-        Input::Shutdown();
+        Input_Shutdown();
         JobSystem::Shutdown();
 
-        Graphics::Shutdown(&window);
+        Graphics_Shutdown(&window);
 
-        Window::Close(&window);
+        Window_Close(&window);
     }
     
     return 0;

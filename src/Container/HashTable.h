@@ -6,6 +6,7 @@
 
 #include "Native/Memory.h"
 
+// @note: unused
 template <typename T>
 struct HashTable
 {
@@ -68,8 +69,8 @@ struct: // Methods
     // Clean memory usage
     inline void CleanUp(void)
     {
-        MemoryFreeTag(nexts);
-        MemoryFreeTag(hashs);
+        Memory_FreeTag(nexts);
+        Memory_FreeTag(hashs);
 
         this->count     = 0;
         this->capacity  = 0;
@@ -157,7 +158,7 @@ struct: // Methods
             if (!this->hashs)
             {
                 assert(this->hashCount > 0, "Your hashCount is invalid, maybe it has been detach or cleanup?");
-                this->hashs = (int*)MemoryAllocTag(TAG, sizeof(int) * hashCount, sizeof(*this->hashs));
+                this->hashs = (int*)Memory_AllocTag(TAG, sizeof(int) * hashCount, sizeof(*this->hashs));
                 assert(this->hashs && "Out of memory");
                 
                 for (int i = 0; i < hashCount; i++)
@@ -175,7 +176,7 @@ struct: // Methods
                 const int oldCapacity = this->capacity;
                 const int newCapactiy = oldCapacity > 0 ? oldCapacity * 2 : 32;
 
-                void* newNexts  = MemoryAllocTag(TAG, newCapactiy * (sizeof(int) + sizeof(uint32_t) + sizeof(T)), alignof(int));
+                void* newNexts  = Memory_AllocTag(TAG, newCapactiy * (sizeof(int) + sizeof(uint32_t) + sizeof(T)), alignof(int));
                 void* newKeys   = (char*)newNexts + newCapactiy * sizeof(int);
                 void* newValues = (char*)newKeys + newCapactiy * sizeof(uint32_t);
 
@@ -185,11 +186,11 @@ struct: // Methods
                 }
                 else
                 {
-                    MemoryMove(newNexts, this->nexts, oldCapacity * sizeof(int));
-                    MemoryMove(newKeys, this->keys, oldCapacity * sizeof(uint32_t));
-                    MemoryMove(newValues, this->values, oldCapacity * sizeof(T));
+                    Memory_Move(newNexts, this->nexts, oldCapacity * sizeof(int));
+                    Memory_Move(newKeys, this->keys, oldCapacity * sizeof(uint32_t));
+                    Memory_Move(newValues, this->values, oldCapacity * sizeof(T));
 
-                    MemoryFreeTag(TAG, this->nexts);
+                    Memory_FreeTag(TAG, this->nexts);
                 
                     this->capacity = newCapactiy;
                     this->nexts    = (int*)newNexts;

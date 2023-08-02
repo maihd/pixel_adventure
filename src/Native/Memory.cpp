@@ -4,10 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include <rmem.h>
 
 #include "Memory.h"
 #include "HeapLayers.h"
+#include "Misc/Logging.h"
 
 #if !defined(NDEBUG)
 
@@ -154,7 +154,7 @@ static void RemoveAlloc(void* ptr, const char* tag, const char* func, const char
     gAllocStore.allocations--;
 }
 
-void* MemoryAllocDebug(const char* tag, int32_t size, int32_t align, const char* func, const char* file, int32_t line)
+void* Memory_AllocDebug(const char* tag, int32_t size, int32_t align, const char* func, const char* file, int32_t line)
 {
     assert(size > 0 && "Request size must be greater than 0.");
 
@@ -162,11 +162,10 @@ void* MemoryAllocDebug(const char* tag, int32_t size, int32_t align, const char*
 
     void* ptr = _aligned_malloc((size_t)size, (size_t)align);
     AddAlloc(ptr, size, align, tag, func, file, line);
-    rmemAlloc(0, ptr, (uint32_t)size, (uint32_t)(size + align));
     return ptr;
 }
 
-void* MemoryReallocDebug(const char* tag, void* ptr, int32_t size, int32_t align, const char* func, const char* file, int32_t line)
+void* Memory_ReallocDebug(const char* tag, void* ptr, int32_t size, int32_t align, const char* func, const char* file, int32_t line)
 {
     assert(size > 0 && "Request size must be greater than 0.");
 
@@ -181,11 +180,10 @@ void* MemoryReallocDebug(const char* tag, void* ptr, int32_t size, int32_t align
     {
         UpdateAlloc(ptr, newPtr, size, align, tag, func, file, line);
     }
-    rmemRealloc(0, newPtr, (uint32_t)size, (uint32_t)(size + align), ptr);
     return newPtr;
 }
 
-void MemoryFreeDebug(const char* tag, void* ptr, const char* func, const char* file, int32_t line)
+void Memory_FreeDebug(const char* tag, void* ptr, const char* func, const char* file, int32_t line)
 {
     //DebugAssert(ptr != nullptr, "Attempt free nullptr at %s:%d:%s", func, file, line);
     gAllocStore.freeCalled++;
@@ -193,28 +191,27 @@ void MemoryFreeDebug(const char* tag, void* ptr, const char* func, const char* f
     if (ptr)
     {
         RemoveAlloc(ptr, func, tag, file, line);
-        rmemFree(0, ptr);
         _aligned_free(ptr);
     }
 }
 
-void MemoryDumpAllocs(void)
+void Memory_DumpAllocs(void)
 {
     assert(gAllocStore.allocations >= 0 && "Internal system error!");
 
     if (gAllocStore.allocations == 0)
     {
-        printf("No memory allocations\n");
+        Log_Info("Memory", "No memory allocations\n");
         return;
     }
 
-    printf("Address\t\tSize\t\tModified\tSource\n");
+    Log_Info("Memory", "Address\t\tSize\t\tModified\tSource\n");
     for (int32_t i = 0; i < ALLOC_DESC_COUNT; i++)
     {
         AllocDesc* allocDesc = gAllocStore.hashAllocDescs[i];
         while (allocDesc != nullptr)
         {
-            printf("0x%p\t%d\t\t%d\t\t%s:%d:%s\n", 
+            Log_Info("Memory", "0x%p\t%d\t\t%d\t\t%s:%d:%s\n",
                 allocDesc->ptr, 
                 allocDesc->size, 
                 allocDesc->modifiedCount, 
@@ -237,17 +234,17 @@ MemoryTracker::~MemoryTracker()
 }
 // END OF #if !defined(NDEBUG)
 #else
-void* MemoryAllocNDebug(int32_t size, int32_t align)
+void* Memory_AllocNDebug(int32_t size, int32_t align)
 {
     return _aligned_malloc((size_t)size, (size_t)align);
 }
 
-void* MemoryReallocNDebug(void* ptr, int32_t size, int32_t align)
+void* Memory_ReallocNDebug(void* ptr, int32_t size, int32_t align)
 {
     return _aligned_realloc(ptr, (size_t)size, (size_t)align);
 }
 
-void MemoryFreeNDebug(void* ptr)
+void Memory_FreeNDebug(void* ptr)
 {
     _aligned_free(ptr);
 }
@@ -266,17 +263,17 @@ MemoryTracker::~MemoryTracker()
 }
 #endif
 
-void* MemoryInit(void* ptr, const int32_t value, const int32_t size)
+void* Memory_Init(void* ptr, const int32_t value, const int32_t size)
 {
     return memset(ptr, value, (size_t)size);
 }
 
-void* MemoryCopy(void* dst, const void* src, const int32_t size)
+void* Memory_Copy(void* dst, const void* src, const int32_t size)
 {
     return memcpy(dst, src, (size_t)size);
 }
 
-void* MemoryMove(void* dst, const void* src, const int32_t size)
+void* Memory_Move(void* dst, const void* src, const int32_t size)
 {
     return memmove(dst, src, size);
 }
@@ -289,7 +286,7 @@ void* MemoryMove(void* dst, const void* src, const int32_t size)
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-int32_t MemoryPageSize(void)
+int32_t Memory_PageSize(void)
 {
     SYSTEM_INFO systemInfo;
     GetSystemInfo(&systemInfo);
@@ -320,9 +317,10 @@ void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
     bool openWindow = (flags & ImGuiDumpMemoryFlags_OpenWindow) != 0;
     if (openWindow)
     {
-        render = ImGui::Begin("Memory Allocations");
+        render = ImGui::Begin("Memory Allocations", nullptr, ImGuiWindowFlags_NoFocusOnAppearing);
     }
 
+    #if BUILD_PROFILING
     if (render)
     {
         ImGui::Text("AllocSize: %.2lfKB", gAllocStore.allocSize / 1024.0);
@@ -333,7 +331,7 @@ void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
 
         ImGui::Columns(8);
         ImGui::SetColumnWidth(0, 120);
-        ImGui::SetColumnWidth(1, 88);
+        ImGui::SetColumnWidth(1, 144);
         ImGui::SetColumnWidth(2, 88);
         ImGui::SetColumnWidth(3, 88);
         ImGui::SetColumnWidth(4, 120);
@@ -362,7 +360,7 @@ void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
         {
             ImGui::Columns(8);
             ImGui::SetColumnWidth(0, 112);
-            ImGui::SetColumnWidth(1, 88);
+            ImGui::SetColumnWidth(1, 144);
             ImGui::SetColumnWidth(2, 88);
             ImGui::SetColumnWidth(3, 88);
             ImGui::SetColumnWidth(4, 120);
@@ -396,18 +394,18 @@ void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
                     ImGui::NextColumn();
 
                     // Implement goto file
-                    if (ImGui::IsItemHovered())
-                    {
-                        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-                    }
-                    if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-                    {
-                        char command[1024];
-                        sprintf(command, "code --goto %s:%d", allocDesc->file, allocDesc->line);
-                        system(command);
-
-                        ImGui::SetNextFrameWantCaptureMouse(false);
-                    }
+                    //if (ImGui::IsItemHovered())
+                    //{
+                    //    ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+                    //}
+                    //if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+                    //{
+                    //    char command[1024];
+                    //    sprintf(command, "code --goto %s:%d", allocDesc->file, allocDesc->line);
+                    //    system(command);
+                    //
+                    //    ImGui::SetNextFrameWantCaptureMouse(false);
+                    //}
 
                     allocDesc = allocDesc->next;
                 }
@@ -416,6 +414,9 @@ void ImGui::DumpMemoryAllocs(ImGuiDumpMemoryFlags flags)
 
         ImGui::EndChild();
     }
+    #else
+    ImGui::Text("Profiling is not enabled!");
+    #endif
 
     if (openWindow)
     {
