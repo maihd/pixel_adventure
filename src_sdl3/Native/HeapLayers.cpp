@@ -3,12 +3,11 @@
 #include <assert.h>
 
 #include "HeapLayers.h"
-#include <SDL2/SDL.h>
 
 #if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-#elif defined(__unix__)
+#elif defined(__unix__) || defined(__APPLE__)
 #include <sys/mman.h>
 #else
 #error "The current system doesnot support paged allocations"
@@ -57,7 +56,7 @@ void* PagedFreeList::Alloc(int32_t size)
 
     #if defined(_WIN32)
         Page* page = (Page*)VirtualAlloc(nullptr, (SIZE_T)allocSize, MEM_COMMIT, PAGE_READWRITE);
-    #elif defined(__unix__)
+    #elif defined(__unix__) || defined(__APPLE__)
         Page* page = (Page*)mmap(nullptr, (size_t)allocSize, PROT_READ | PROT_WRITE, MAP_PRIVATE, 0, 0);
     #else
         #error "The current system doesnot support paged allocations"

@@ -1,3 +1,4 @@
+#include <malloc/_malloc.h>
 #include <time.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -8,6 +9,12 @@
 #include "Memory.h"
 #include "HeapLayers.h"
 #include "Misc/Logging.h"
+
+#ifndef _WIN32
+#define _aligned_malloc     aligned_alloc
+#define _aligned_realloc(ptr, alignment, size)    ({ typeof(ptr) ptr_x; posix_memalign(&ptr_x, alignment, size); ptr; })
+#define _aligned_free(ptr)  (posix_memalign(&(ptr), 0, 0))
+#endif
 
 #if !defined(NDEBUG)
 
@@ -306,7 +313,6 @@ int32_t MemoryPageSize(void)
 }
 #endif
 
-#include <SDL2/SDL.h>
 #include <imgui/imgui.h>
 
 // Open an debug window to view your memory allocations

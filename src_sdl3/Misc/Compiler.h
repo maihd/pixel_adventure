@@ -6,7 +6,7 @@
 
 #if defined(__GNUC__)
 #   define __vectorcall  /* NO VECTORCALL SUPPORTED */
-#   define __forceinline static __attribute__((always_inline))
+#   define __forceinline __attribute__((always_inline))
 #endif
 
 #if !defined(__cplusplus) && !defined(constexpr)
@@ -19,9 +19,17 @@
 
 #if !defined(__deprecated)
 #if defined(_MSC_VER)
-#define __deprecated(msg) __declspec(deprecated)
+#define __deprecated __declspec(deprecated)
 #else
-#define __deprecated(msg) __attribute__((deprecated("" msg)))
+#define __deprecated __attribute__((deprecated("" msg)))
+#endif
+#endif
+
+#if !defined(__deprecated_msg)
+#if defined(_MSC_VER)
+#define __deprecated_msg(msg) __declspec(deprecated(msg))
+#else
+#define __deprecated_msg(msg) __attribute__((deprecated(msg)))
 #endif
 #endif
 
@@ -35,7 +43,8 @@
 
 #if !defined(__name_of)
 #define __name_of(T) (__name_of_impl(), __typename(T))
-__deprecated("Use __typename instead!")
+
+__deprecated_msg("Use __typename instead!")
 static inline void __name_of_impl(void){}
 #endif
 

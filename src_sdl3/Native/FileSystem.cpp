@@ -124,7 +124,7 @@ static bool     FileSystem_StdIO_IsAtEnd(const FileStream* stream);
 // -------------------------------------------------------------
 
 static FileInterface gMemoryFileSystem = {
-    FileSystem_MemoryStream_Open,
+    (void*)FileSystem_MemoryStream_Open,
     FileSystem_MemoryStream_Close,
 
     FileSystem_MemoryStream_Read,
@@ -139,7 +139,7 @@ static FileInterface gMemoryFileSystem = {
 };
 
 static FileInterface gStdFileSystem = {
-    FileSystem_StdIO_Open,
+    (void*)FileSystem_StdIO_Open,
     FileSystem_StdIO_Close,
 
     FileSystem_StdIO_Read,

@@ -1,7 +1,7 @@
 #include "JobSystem.h"
 
 #include "Native/Thread.h"
-#include <vectormath/stdmath_extensions.h>
+#include <vectormath/scalarmath.h>
 
 constexpr int32_t JOB_SYSTEM_MAX_WORKERS    = 16;
 constexpr int32_t JOB_SYSTEM_MAX_JOBS       = 32;

@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
+
 #include "Text/String.h"
 #include "Native/Memory.h"
 #include "Native/AtomicOps.h"

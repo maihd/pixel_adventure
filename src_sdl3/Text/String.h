@@ -2,7 +2,9 @@
 
 #include <assert.h>
 #include <stdint.h>
+#include <stdarg.h>
 #include <stdbool.h>
+
 #include "Misc/Compiler.h"
 
 constexpr uint32_t STRING_MEMTAG_HEAP = 0xac8b19d1U;

@@ -1453,8 +1453,7 @@ static bool LDtkReadFileLinux(const char* fileName, void* buffer, int32_t* buffe
 		return false;
 	}
 
-	lseek(file, 0, SEEK_END);
-	off_t fileSize = tell(file);
+	off_t fileSize = lseek(file, 0, SEEK_END);
 	lseek(file, 0, SEEK_SET);
 
 	if (buffer)
