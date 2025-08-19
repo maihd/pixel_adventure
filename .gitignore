@@ -1,5 +1,8 @@
 .vs
 
+/libs
+/build
+
 /projects
 /projects/**/vs
 /projects/**/bin

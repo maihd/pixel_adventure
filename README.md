@@ -18,6 +18,8 @@ Free open source game remake from [Pixel Frog's Pixel Adventure](https://pixelfr
 - Open projects/vs<Visual Studio version>/PixelAdventure.<Visual Studio version>.sln with your Visual Studio
 - Run project
 
+## Building with Cmake
+
 ## Acknowledge
 - Pixel Frog
 - Deepnight and his LDtk, gameBase
@@ -25,7 +27,7 @@ Free open source game remake from [Pixel Frog's Pixel Adventure](https://pixelfr
 - Sean Barrett's stb
 - Dear ImGui
 - Premake
-- SDL
+- SDL and community
 - GLAD
 
 ## Meta
